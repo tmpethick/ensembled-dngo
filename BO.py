@@ -7,21 +7,14 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 from scipy.stats import multivariate_normal
 
-# TODO:
-# - use GP-UCB √
-# - put distribution over √
-# - Take M hyperparameter samples from p(theta|D) using mcmc. √
-# - when acq is evaluated: average over all theta samples √ 
-# - Gradients not possible?
-
-
 class GBUCB(object):
     def __init__(self, beta = lambda t: 2):
         self.get_beta = beta
 
     def update_model(self, m, theta):
-        for i, param_name in enumerate(m.parameter_names()):
-            m[param_name] = theta[i]
+        m[:] = theta
+        # for i, param_name in enumerate(m.parameter_names()):
+        #    m[param_name] = theta[i]
 
     def eval(self, x, t, m, thetas):
         """`x` is (n,d)
@@ -44,7 +37,7 @@ class BO(object):
     - set parameters on m (copy ideally)
     """
 
-    def __init__(self, obj_func, kernel, acquisition, bounds, M=1000, hyperparam_point_estimate=False):
+    def __init__(self, obj_func, kernel, acquisition, bounds, M=50, hyperparam_point_estimate=False):
         self.obj_func = obj_func
         self.M = M
         self.kernel = kernel
@@ -58,7 +51,10 @@ class BO(object):
 
     def sample_thetas(self):
         if self.hyperparam_point_estimate:
-            self.m.optimize()
+            # Reset parameters before optimizing to prevent being stuck in local minimum.
+            self.m[:] = np.random.normal(self.m.size)
+            
+            self.m.optimize(messages=True)
             return np.array([self.m.param_array])
         else:
             hmc = GPy.inference.mcmc.HMC(self.m)
@@ -110,9 +106,9 @@ class BO(object):
         x0 = self.random_grid_samples(2)
         y0 = self.obj_func(x0)
 
-        self.m = GPy.models.GPRegression(x0, y0, kernel=self.kernel)
+        self.m = GPy.models.GPRegression(x0, y0, kernel=self.kernel, noise_var=0.01)
 
-        # set hyperpriors
+        # set hyperprior
         if not self.hyperparam_point_estimate:
             hyperprior = GPy.priors.Gamma.from_EV(0.5, 1)
             self.m.kern.lengthscale.set_prior(hyperprior)
@@ -140,14 +136,4 @@ class BO(object):
                 
             self.update_posterior(xnew)
         return xnew
-
-# Example
-
-
-# Test BNN
-# Test Spearmint (slice sampling)
-# Built NN (train on what?)
-    # Reasons: 
-    #   scalable (linear, parallel)..
-    #   Non-stationarity?
 
