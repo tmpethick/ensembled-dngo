@@ -30,6 +30,9 @@
 - Access to cluster 
   - Right now I have setup docker instance
   - Do not need it now but good to know how it is structured.
+- How to compare uncertainty measure? 
+  - KL divergence for infinitely many RV?...
+  - KL divergence provides similarity but not whether estimation is more optimistic or pessimistic.
 
 ## Questions
 
