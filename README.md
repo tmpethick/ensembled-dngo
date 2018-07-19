@@ -1,5 +1,7 @@
 ## Bayesian Optimization
 
+## The Article Archives
+
 - Non-stationary: [3], [22], [54], [70], [118], [121], [126], [132], [141]
 - Non-differentiable: https://arxiv.org/pdf/1402.5876.pdf
 - DBN learn covariance (unsupervised training): https://papers.nips.cc/paper/3211-using-deep-belief-nets-to-learn-covariance-kernels-for-gaussian-processes.pdf
@@ -9,43 +11,20 @@
 - Induced point / Tensor training: https://arxiv.org/pdf/1710.07324.pdf
 - Deep Kernel Learning (Add RBF/Spectral mixture covariance instead of linear): https://arxiv.org/pdf/1511.02222.pdf
 
-## Meeting 
+- Batch: http://zi-wang.com/pub/wang-aistats18.pdf
+- Marginalize mixture: https://ieeexplore-ieee-org.proxy.findit.dtu.dk/stamp/stamp.jsp?arnumber=5499041
 
-- Done so far
-  - Experimented with RoBO and Spearmint
-    - (*) run both on simple example that fails
-  - ML (point estimate)
-  - Marginalize hyperparams using HMC (with gamma prior)
-  - DNGO network
-  - DNGO in BO
-- Found interesting approaches by Andrew Gordon Wilson (DKL) and Induced point
-  - (*) Print and bring
-  - Does not deal with BO however (few datapoints)
-- Goal of project?
-  - BO for many datapoints?
-  - Non-stationarity?
-- How to do ensemble?
-- Problem with getting small network to work
-- Look into sparse GP?
-- Access to cluster 
-  - Right now I have setup docker instance
-  - Do not need it now but good to know how it is structured.
-- How to compare uncertainty measure? 
-  - KL divergence for infinitely many RV?...
-  - KL divergence provides similarity but not whether estimation is more optimistic or pessimistic.
-
-## Questions
-
-- RoBO understand weights (pretrained?)
+TODO:
+- save model
+- predict batch √
+- Pre-train (on what?) and no training during BO.
+- Reproduce results from RoBO
+- linear regression (no need for cholesky decomp.)
 
 
-## TODO
+## Linear in O(n)
 
-- RoBO and Spearmint on 1d example (find problems)
-- Implement basis function regression
-- make sure basis function leads to positive semi-definite matrix..
-- Implement DNGO
-
+"The equations for linear regression can be performed in primal form (e.g. the regular normal equations), where there is one parameter per input variable, or dual form (e.g. kernel ridge regression with a linear kernel) where there is one parameter per training example. This means you can choose which form to use depending on which is more efficient, if N>>d then use the normal equation, which is O(N), if d>>N then use kernel ridge regression with a linear kernel, where d is the number of attributes. Bayesian linear regression is to GP with a linear covariance function what linear regression is to kernel ridge regression with a linear kernel."
 
 ## RoBO
 
@@ -55,6 +34,7 @@
 - `stop`  Stop container.
 - `start` Start stopped container.
 - `clear` Delete both container and image.
+
 
 ## Spearmint
 
