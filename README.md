@@ -1,5 +1,7 @@
 ## Bayesian Optimization
 
+Good resource: https://github.com/gpschool/gprs15b
+
 ## The Article Archives
 
 - Non-stationary: [3], [22], [54], [70], [118], [121], [126], [132], [141]
@@ -13,13 +15,18 @@
 
 - Batch: http://zi-wang.com/pub/wang-aistats18.pdf
 - Marginalize mixture: https://ieeexplore-ieee-org.proxy.findit.dtu.dk/stamp/stamp.jsp?arnumber=5499041
+- Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
 
 TODO:
-- save model
-- predict batch √
-- Pre-train (on what?) and no training during BO.
-- Reproduce results from RoBO
-- linear regression (no need for cholesky decomp.)
+- Prior in GPy?
+
+- Plot in normalized space an outside
+- (Linear regression HMC)
+- Play with relu and l2
+- On sinOne, sinc
+- Summary Felix and meeting
+  - Normalization
+  - Re-train on every step (=> what running time?)
 
 
 ## Linear in O(n)
