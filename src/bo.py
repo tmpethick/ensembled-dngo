@@ -18,7 +18,10 @@ from .neural_network import *
 from .priors import *
 from .acquisition_functions import UCB, EI
 
-def random_grid_samples(n_samples, bounds):
+def vectorize(f):
+    return lambda X: np.apply_along_axis(f, -1, X)[..., None]
+
+def random_hypercube_samples(n_samples, bounds):
     """Random sample from d-dimensional hypercube (d = bounds.shape[0]).
 
     Returns: (n_samples, dim)
@@ -53,7 +56,7 @@ class BO(object):
             return -self.model.acq(x, self.acquisition_function.calc)[0]
 
         # TODO: turn into numpy operations to parallelize
-        for x0 in random_grid_samples(n_starts, self.bounds):
+        for x0 in random_hypercube_samples(n_starts, self.bounds):
             res = minimize(min_obj, x0=x0, bounds=self.bounds, method='L-BFGS-B')        
             if res.fun < min_y:
                 min_y = res.fun
@@ -62,18 +65,40 @@ class BO(object):
         return min_x
 
     def plot_prediction(self, x_new=None):
-        X_line = np.linspace(self.bounds[:, 0], self.bounds[:, 1], 100)[:, None]
-        Y_line = self.obj_func(X_line)
+        dims = self.bounds.shape[0]
+        if dims == 2:
+            x0 = np.linspace(self.bounds[0,0], self.bounds[0,1], 100)
+            x1 = np.linspace(self.bounds[1,0], self.bounds[1,1], 100)
+            x0v, x1v = np.meshgrid(x0, x1)
+            xinput = np.swapaxes(np.array([x0v, x1v]), 0, -1)
+            origin_shape = xinput.shape[:-1]
+            
 
-        plt.subplot(1, 2, 1)
-        self.model.plot_prediction(X_line, Y_line, x_new=x_new)
-        plt.subplot(1, 2, 2)
-        self.model.plot_acq(X_line, self.acquisition_function.calc)
-        plt.show()
+            flattenxinput = xinput.reshape(-1, dims)
+            y = self.model.acq(flattenxinput, self.acquisition_function.calc)
+            y= np.reshape(y, origin_shape)
+
+            # TODO: plot points
+            plt.subplot(1, 2, 1)
+            plt.contourf(x0v,x1v, y)
+            plt.subplot(1, 2, 2)
+            y = self.obj_func(xinput)[..., 0]
+            plt.contourf(x0v,x1v, y)
+            plt.show()
+
+        elif dims == 1:
+            X_line = np.linspace(self.bounds[:, 0], self.bounds[:, 1], 100)[:, None]
+            Y_line = self.obj_func(X_line)
+
+            plt.subplot(1, 2, 1)
+            self.model.plot_prediction(X_line, Y_line, x_new=x_new)
+            plt.subplot(1, 2, 2)
+            self.model.plot_acq(X_line, self.acquisition_function.calc)
+            plt.show()
 
     def run(self, n_kickstart=2, do_plot=True):
         # Data
-        X = random_grid_samples(n_kickstart, self.bounds)
+        X = random_hypercube_samples(n_kickstart, self.bounds)
         Y = self.obj_func(X)
         self.model.init(X,Y)
 
