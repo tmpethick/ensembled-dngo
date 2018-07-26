@@ -1,6 +1,10 @@
 build:
 	docker build -t robo .
 
+attach: removecontainer
+	docker run -d -it --name robo1 -p 8888:8888 -v "$$(pwd)/shared":/root/shared robo
+	docker attach robo1
+
 run: removecontainer
 	docker run -d -it --name robo1 -p 8888:8888 -v "$$(pwd)/shared":/root/shared robo jupyter lab --ip=0.0.0.0 --no-browser --allow-root /root/shared
 	@echo $(docker logs robo1)

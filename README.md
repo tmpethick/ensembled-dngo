@@ -18,16 +18,29 @@ Good resource: https://github.com/gpschool/gprs15b
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
 
 TODO:
-- Prior in GPy?
+- Fix log/mcmc problems (try ROBO without bounds. Then understand need of bounds..)
+- Test on branin
 
-- Plot in normalized space an outside
-- (Linear regression HMC)
-- Play with relu and l2
-- On sinOne, sinc
+- Prior in GPy?
 - Summary Felix and meeting
   - Normalization
   - Re-train on every step (=> what running time?)
+  - Mixture of GPs: Average over all like with hyperparam samples?
+  - Hyperprior is very important in point estimate version
 
+Questions:
+- What to do about high UCB at boundaries?
+- What to do to prevent linear fit with high variance
+
+Testing:
+- Test wider input domain (np.sinc(x * 10 - 5).sum(axis=1)[:, None] * 100000 on [0,10] interval) (i.e. spike)
+- noise
+- Play with relu and l2
+
+Research:
+- Efficient linear bayesian fit (bishop)
+- alpha / beta
+- What prior? How to sample
 
 ## Linear in O(n)
 
@@ -95,6 +108,13 @@ conda create -n <name> python=3.6 scipy jupyterlab matplotlib
 conda install -c conda-forge ipympl
 conda install nodejs
 jupyter labextension install @jupyter-widgets/jupyterlab-manager
+
+git clone https://github.com/automl/HPOlib2.git
+cd HPOlib2
+for i in `cat requirements.txt`; do pip install $i; done
+for i in `cat optional_requirements.txt`; do pip install $i; done
+python setup.py install
+cd ..
 ```
 
 `.autoenv.zsh`:

@@ -1,0 +1,4 @@
+[
+  "tests/test_dngo.py::test_dngo_MAP",
+  "tests/test_dngo.py::test_dngo_approximate_marginalisation_of_hyperparameters"
+]
