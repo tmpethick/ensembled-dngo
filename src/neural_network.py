@@ -27,7 +27,7 @@ def zero_mean_unit_var_unnormalization(X_normalized, mean, std):
     return X_normalized * std + mean
 
 class TFModel(object):
-    def __init__(self, dim_basis=50, epochs=10000, batch_size=10):
+    def __init__(self, input_dim=1, dim_basis=50, epochs=10000, batch_size=10):
         self.X_mean = None
         self.X_std = None
         self.normalize_input = True
@@ -41,7 +41,7 @@ class TFModel(object):
         self.batch_size = batch_size
 
         with tf.name_scope('placeholders'):
-            self.x = tf.placeholder('float', [None, 1])
+            self.x = tf.placeholder('float', [None, input_dim])
             self.y_true = tf.placeholder('float', [None, 1])
 
         with tf.name_scope('neural_network'):

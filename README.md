@@ -18,12 +18,17 @@ Good resource: https://github.com/gpschool/gprs15b
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
 
 TODO:
-- Fix log/mcmc problems (try ROBO without bounds. Then understand need of bounds..)
+- EI
 - Test on branin
+- 2d plot
+- 2d train...
 
 - Prior in GPy?
 - Summary Felix and meeting
-  - Normalization
+  - Fixed problems
+    - Normalization
+    - Batch size
+    - Not recalc basis function
   - Re-train on every step (=> what running time?)
   - Mixture of GPs: Average over all like with hyperparam samples?
   - Hyperprior is very important in point estimate version

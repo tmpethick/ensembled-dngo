@@ -16,17 +16,31 @@ from .dngo import *
 from .bayesian_linear_regression import *
 from .neural_network import *
 from .priors import *
+from .acquisition_functions import UCB, EI
 
 def random_grid_samples(n_samples, bounds):
+    """Random sample from d-dimensional hypercube (d = bounds.shape[0]).
+
+    Returns: (n_samples, dim)
+    """
+
     dims = bounds.shape[0]
-    return np.random.uniform(bounds[:, 0], bounds[:, 1], size=(n_samples, dims))
+    a = np.random.uniform(0, 1, (dims, n_samples))
+    bounds_repeated = np.repeat(bounds[:, :, None], n_samples, axis=2)
+    samples = a * np.abs(bounds_repeated[:,1] - bounds_repeated[:,0]) + bounds_repeated[:,0]
+    return np.swapaxes(samples, 0, 1)
 
 class BO(object):
-    def __init__(self, obj_func, model, n_iter = 10, bounds=np.array([[0,1]])):
+    def __init__(self, obj_func, model, acquisition_function=None, n_iter = 10, bounds=np.array([[0,1]])):
         self.n_iter = n_iter
         self.bounds = bounds
         self.obj_func = obj_func
         self.model = model
+
+        if acquisition_function is None:
+            self.acquisition_function = UCB(self.model)
+        else:
+            self.acquisition_function = acquisition_function
 
     def max_acq(self, n_starts=100):        
         min_y = float("inf")
@@ -36,7 +50,7 @@ class BO(object):
             """lift into array and negate.
             """
             x = np.array([x])
-            return -self.model.acq(x)[0]
+            return -self.model.acq(x, self.acquisition_function.calc)[0]
 
         # TODO: turn into numpy operations to parallelize
         for x0 in random_grid_samples(n_starts, self.bounds):
@@ -54,7 +68,7 @@ class BO(object):
         plt.subplot(1, 2, 1)
         self.model.plot_prediction(X_line, Y_line, x_new=x_new)
         plt.subplot(1, 2, 2)
-        self.model.plot_acq(X_line)
+        self.model.plot_acq(X_line, self.acquisition_function.calc)
         plt.show()
 
     def run(self, n_kickstart=2, do_plot=True):

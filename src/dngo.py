@@ -54,19 +54,19 @@ class BOModel(object):
         # Fit BLR
         self.gp.fit(self.D, self.nn_model.y)
 
-    def acq(self, X):
+    def get_incumbent(self):
+        i = np.argmin(self.Y)
+        return self.X[i], self.Y[i]
+
+    def acq(self, X, acq):
         """Note prediction is done in normalized space.
         """
 
-        beta = 16
         D = self.nn_model.predict_basis(self.sess, X)
         sample_predictions = self.gp.predict_all(D)
 
-        def _calc(mean, var):    
-            return mean + np.sqrt(beta) * np.sqrt(var)
-
         # Average over all sampled hyperparameter predictions
-        return np.average(np.array([_calc(mean, var) for (mean, var) in sample_predictions]), axis=0)
+        return np.average(np.array([acq(mean, var) for (mean, var) in sample_predictions]), axis=0)
 
     def predict_from_basis(self, D, theta=None):
         mean, var = self.gp.predict(D, theta=theta)
@@ -81,8 +81,8 @@ class BOModel(object):
         D = self.nn_model.predict_basis(self.sess, X)
         return self.predict_from_basis(D)
 
-    def plot_acq(self, X_line):
-        plt.plot(X_line, self.acq(X_line), color="red")
+    def plot_acq(self, X_line, acq):
+        plt.plot(X_line, self.acq(X_line, acq), color="red")
 
     def plot_prediction(self, X_line, Y_line, x_new=None):
         D_line = self.nn_model.predict_basis(self.sess, X_line)
