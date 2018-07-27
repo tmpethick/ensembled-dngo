@@ -55,7 +55,7 @@ class BOModel(object):
         self.gp.fit(self.D, self.nn_model.y)
 
     def get_incumbent(self):
-        i = np.argmin(self.Y)
+        i = np.argmax(self.Y)
         return self.X[i], self.Y[i]
 
     def acq(self, X, acq):

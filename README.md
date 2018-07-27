@@ -122,6 +122,12 @@ python setup.py install
 cd ..
 ```
 
+Plotly requirement in jupyterlab:
+
+```
+jupyter labextension install @jupyterlab/plotly-extension
+```
+
 `.autoenv.zsh`:
 
 ```

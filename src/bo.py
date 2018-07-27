@@ -64,26 +64,103 @@ class BO(object):
 
         return min_x
 
+    def plot_2D_surface(self, use_plotly=False):
+        dims = self.bounds.shape[0]
+
+        if dims != 2:
+            raise Exception("Input has to be 2-dimensional")
+
+        x0 = np.linspace(self.bounds[0,0], self.bounds[0,1], 50)
+        x1 = np.linspace(self.bounds[1,0], self.bounds[1,1], 100)
+        x0v, x1v = np.meshgrid(x0, x1)
+        xinput = np.swapaxes(np.array([x0v, x1v]), 0, -1) # set dim axis to last
+        xinput = np.swapaxes(xinput, 0, 1)                # swap x0 and x1 axis
+
+        # Calc prediction on grid
+        origin_shape = xinput.shape[:-1]
+        flattenxinput = xinput.reshape(-1, dims)
+        mean, var = self.model.predict(flattenxinput)
+        mean = np.reshape(mean, origin_shape)
+        var = np.reshape(var, origin_shape)
+        acq = self.model.acq(flattenxinput, self.acquisition_function.calc)
+        acq = np.reshape(acq, origin_shape)
+
+        y = self.obj_func(xinput)[..., 0]
+
+        if use_plotly:
+            import plotly.plotly as py
+            import plotly.tools as tls
+            import plotly.graph_objs as go
+
+            layout = dict(
+                width=1000,
+                height=1000,
+                autosize=False,
+                margin = dict(t=0, b=0, r=0, l=0),
+            )
+            fig = tls.make_subplots(rows=2, cols=2, specs=[[{'is_3d': True}] * 2] * 2)
+            fig['layout'].update(**layout)
+
+            scatter = go.Scatter3d(x=self.model.X[:,0], y=self.model.X[:,1], z=self.model.Y[:,0], mode = 'markers')            
+            surface1 = go.Surface(x=x0v, y=x1v, z=mean)
+            surface2 = go.Surface(x=x0v, y=x1v, z=mean + np.sqrt(var), opacity=0.5)
+            fig.append_trace(scatter, 1, 1)
+            fig.append_trace(surface1, 1, 1)
+            fig.append_trace(surface2, 1, 1)
+
+            surface1 = go.Surface(x=x0v, y=x1v, z=y)
+            fig.append_trace(scatter, 1, 2)
+            fig.append_trace(surface1, 1, 2)
+
+            surface1 = go.Surface(x=x0v, y=x1v, z=acq)
+            fig.append_trace(surface1, 2, 1)
+
+            return fig
+        else:
+            # Plot prediction
+            fig = plt.figure()
+            ax = fig.add_subplot(121, projection='3d')
+            ax.scatter(self.model.X[:,0], self.model.X[:,1], self.model.Y[:,0], color="red")
+            ax.plot_surface(x0v, x1v, mean)
+            ax.plot_surface(x0v, x1v, mean + np.sqrt(var), alpha=0.5)
+
+            ax = fig.add_subplot(122, projection='3d')
+            ax.scatter(self.model.X[:,0], self.model.X[:,1], self.model.Y[:,0], color="red")
+            ax.plot_surface(x0v, x1v, y)
+            return fig
+
     def plot_prediction(self, x_new=None):
         dims = self.bounds.shape[0]
         if dims == 2:
             x0 = np.linspace(self.bounds[0,0], self.bounds[0,1], 100)
             x1 = np.linspace(self.bounds[1,0], self.bounds[1,1], 100)
             x0v, x1v = np.meshgrid(x0, x1)
-            xinput = np.swapaxes(np.array([x0v, x1v]), 0, -1)
+            xinput = np.swapaxes(np.array([x0v, x1v]), 0, -1) # set dim axis to last
+            xinput = np.swapaxes(xinput, 0, 1)                # swap x0 and x1 axis
+
             origin_shape = xinput.shape[:-1]
-            
-
             flattenxinput = xinput.reshape(-1, dims)
-            y = self.model.acq(flattenxinput, self.acquisition_function.calc)
-            y= np.reshape(y, origin_shape)
-
-            # TODO: plot points
-            plt.subplot(1, 2, 1)
-            plt.contourf(x0v,x1v, y)
-            plt.subplot(1, 2, 2)
+            acq = self.model.acq(flattenxinput, self.acquisition_function.calc)
+            acq = np.reshape(acq, origin_shape)
+            
             y = self.obj_func(xinput)[..., 0]
+            
+            # Plot acq
+            plt.subplot(1, 2, 1)
+            plt.contourf(x0v,x1v, acq)
+            plt.scatter(self.model.X[:,0], self.model.X[:,1])
+
+            if x_new is not None:
+                plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
+
+            # Plot f
+            plt.subplot(1, 2, 2)
             plt.contourf(x0v,x1v, y)
+            plt.scatter(self.model.X[:,0], self.model.X[:,1])
+            
+            if x_new is not None:
+                plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
+            
             plt.show()
 
         elif dims == 1:
