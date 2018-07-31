@@ -89,12 +89,13 @@ class BayesianLinearRegression(object):
                 # TODO: rename to models
                 self._current_thetas = [copy_model(alpha, beta) for alpha, beta in hyper_pairs]
             else:
-                res = optimize.fmin(self.negative_mll, np.random.rand(2))
+                res = optimize.fmin(self.negative_mll, np.random.rand(2), disp=False)
                 self.alpha = np.exp(res[0])
                 self.beta = np.exp(res[1])
 
         S_inv = self.beta * np.dot(self.X.T, self.X) + np.eye(self.X.shape[1]) * self.alpha
 
+        # TODO: use cholesky to make numerically stable
         S = np.linalg.inv(S_inv)
         m = self.beta * np.dot(np.dot(S, self.X.T), self.y)
 
@@ -116,46 +117,49 @@ class BayesianLinearRegression(object):
         v = v[:, None]
         return m, v
 
+# class GPyLinearRegression(GPyRegression):
+#     def __init__(**kwargs):
+#         super().__init__(kernel=GPy.kern.Linear(dim_basis), **kwargs)
 
-class GPyLinearRegression(object):
-    def __init__(self, num_mcmc=0, do_optimize=True):
-        self._current_thetas = None
+# class GPyRegression(object):
+#     def __init__(self, kernel, num_mcmc=0, do_optimize=True):
+#         self._current_thetas = None
 
-        # If 0 max point estimate is used via max likelihood.
-        self.num_mcmc = num_mcmc
-        self.do_optimize = do_optimize
+#         # If 0 max point estimate is used via max likelihood.
+#         self.num_mcmc = num_mcmc
+#         self.do_optimize = do_optimize
+#         self.kernel = kernel
 
-    def fit(self, X, y):
-        dim_basis = X.shape[1]
-        self.kernel = GPy.kern.Linear(dim_basis)
-        self.gp = GPy.models.GPRegression(X, y, self.kernel)
+#     def fit(self, X, y):
+#         dim_basis = X.shape[1]
+#         self.gp = GPy.models.GPRegression(X, y, self.kernel)
 
-        # Set hyperpriors
-        hyperprior = GPy.priors.Gamma.from_EV(0.5, 1)
-        self.kernel.variances.set_prior(hyperprior) # log_prior()
-        self.gp.Gaussian_noise.variance.set_prior(hyperprior)
+#         # Set hyperpriors
+#         hyperprior = GPy.priors.Gamma.from_EV(0.5, 1)
+#         self.kernel.variances.set_prior(hyperprior) # log_prior()
+#         self.gp.Gaussian_noise.variance.set_prior(hyperprior)
 
-        # Optimize
-        if self.do_optimize:
-            if self.num_mcmc > 0:
-                # Most likely hyperparams given data
-                hmc = GPy.inference.mcmc.HMC(self.gp)
-                hmc.sample(num_samples=2000) # Burn-in
-                self._current_thetas = hmc.sample(num_samples=2, hmc_iters=50)
-            else:
-                self.gp.randomize()
-                self.gp.optimize()
-                self._current_thetas = [self.gp.param_array]        
+#         # Optimize
+#         if self.do_optimize:
+#             if self.num_mcmc > 0:
+#                 # Most likely hyperparams given data
+#                 hmc = GPy.inference.mcmc.HMC(self.gp)
+#                 hmc.sample(num_samples=2000) # Burn-in
+#                 self._current_thetas = hmc.sample(num_samples=2, hmc_iters=50)
+#             else:
+#                 self.gp.randomize()
+#                 self.gp.optimize()
+#                 self._current_thetas = [self.gp.param_array]        
 
-    def predict_all(self, X):
-        predictions = np.zeros((len(self._current_thetas), 2))
-        for i, theta in enumerate(self._current_thetas):
-            self.gp[:] = self._current_thetas[0]
-            predictions[i, :] = self.gp.predict(X)
-        return predictions
+#     def predict_all(self, X):
+#         predictions = np.zeros((len(self._current_thetas), 2))
+#         for i, theta in enumerate(self._current_thetas):
+#             self.gp[:] = self._current_thetas[0]
+#             predictions[i, :] = self.gp.predict(X)
+#         return predictions
 
-    def predict(self, X, theta=None):
-        # TODO: use aggregate of samples
-        if theta is not None:
-            self.gp[:] = theta
-        return self.gp.predict(X)
+#     def predict(self, X, theta=None):
+#         # TODO: use aggregate of samples
+#         if theta is not None:
+#             self.gp[:] = theta
+#         return self.gp.predict(X)

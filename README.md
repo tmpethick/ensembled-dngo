@@ -18,34 +18,20 @@ Good resource: https://github.com/gpschool/gprs15b
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
 
 TODO:
-- EI
-- Test on branin
-- 2d plot
-- 2d train...
+- Cleanup GPLinearRegression mess
+- Develop GP approach
+- Find case in which it does not work (modified branin with drop in unexplored area)
+- Ensemble using max, average, median
+- Felix benchmark functions
 
-- Prior in GPy?
-- Summary Felix and meeting
-  - Fixed problems
-    - Normalization
-    - Batch size
-    - Not recalc basis function
-  - Re-train on every step (=> what running time?)
-  - Mixture of GPs: Average over all like with hyperparam samples?
-  - Hyperprior is very important in point estimate version
-
-Questions:
-- What to do about high UCB at boundaries?
-- What to do to prevent linear fit with high variance
+Hyperparameters:
+- MAP / Marginalize hyperparameters
+- Batch size
 
 Testing:
 - Test wider input domain (np.sinc(x * 10 - 5).sum(axis=1)[:, None] * 100000 on [0,10] interval) (i.e. spike)
 - noise
 - Play with relu and l2
-
-Research:
-- Efficient linear bayesian fit (bishop)
-- alpha / beta
-- What prior? How to sample
 
 ## Linear in O(n)
 

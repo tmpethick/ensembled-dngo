@@ -12,22 +12,10 @@ from scipy.optimize import minimize
 from scipy import optimize
 from scipy.stats import multivariate_normal
 
-def zero_mean_unit_var_normalization(X, mean=None, std=None):
-    if mean is None:
-        mean = np.mean(X, axis=0)
-    if std is None:
-        std = np.std(X, axis=0)
-
-    X_normalized = (X - mean) / std
-
-    return X_normalized, mean, std
-
-
-def zero_mean_unit_var_unnormalization(X_normalized, mean, std):
-    return X_normalized * std + mean
+from .normalization import zero_mean_unit_var_normalization, zero_mean_unit_var_unnormalization
 
 class TFModel(object):
-    def __init__(self, input_dim=1, dim_basis=50, epochs=10000, batch_size=10):
+    def __init__(self, input_dim=1, dim_basis=50, dim_h1=50, dim_h2=50, epochs=10000, batch_size=10):
         self.X_mean = None
         self.X_std = None
         self.normalize_input = True
@@ -45,11 +33,11 @@ class TFModel(object):
             self.y_true = tf.placeholder('float', [None, 1])
 
         with tf.name_scope('neural_network'):
-            h1 = tf.contrib.layers.fully_connected(self.x, 50, 
+            h1 = tf.contrib.layers.fully_connected(self.x, dim_h1, 
                             activation_fn=tf.nn.tanh)
                             # # biases_regularizer=tf.contrib.layers.l2_regularizer(0.001),
                             # # weights_regularizer=tf.contrib.layers.l2_regularizer(0.001))
-            h2 = tf.contrib.layers.fully_connected(h1, 50, 
+            h2 = tf.contrib.layers.fully_connected(h1, dim_h2, 
                             activation_fn=tf.nn.tanh) 
                             # # biases_regularizer=tf.contrib.layers.l2_regularizer(0.001),
                             # # weights_regularizer=tf.contrib.layers.l2_regularizer(0.001))
@@ -113,7 +101,11 @@ class TFModel(object):
         
         return sess.run(self.basis, {self.x: x})
 
-    def plot_basis_functions(self, sess, x):
+    def plot_basis_functions(self, sess, bounds):
+        if bounds.shape is not (1, 2):
+            raise "Only supports 1D"
+
+        x = np.linspace(bounds[:,0], bounds[:,1])[:, None]
         D = self.predict_basis(sess, x)
         for i in range(self.dim_basis):
             plt.plot(x, D[:, i])

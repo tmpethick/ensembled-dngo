@@ -30,12 +30,20 @@ class HorseshoePrior(object):
 
 class BLRPrior(object):
     def __init__(self):
+        # equivalent to normal around 0
         self.ln_prior_alpha = scipy.stats.lognorm(0.1, loc=-10)
+
+        # sigma^2 = 1 / beta
         self.horseshoe = HorseshoePrior(scale=0.1)
 
     def lnprob(self, theta):
+        # theta0 = ln alpha
+        # if X is log normal then Y = lg X is normal.. 
+        # lg (X) is normal
+
+        # theta1 = ln beta
         return self.ln_prior_alpha.logpdf(theta[0]) \
-             + self.horseshoe.lnprob(1 / theta[1])
+             + self.horseshoe.lnprob(1 / np.exp(theta[1]))
 
     def rvs(self, num_samples):
         p0 = np.zeros([num_samples, 2])
@@ -43,5 +51,5 @@ class BLRPrior(object):
 
         sigmas = self.horseshoe.rvs(num_samples) # Noise sigma^2
         p0[:, -1] = np.log(1 / np.exp(sigmas))   # Beta
-        
+
         return p0

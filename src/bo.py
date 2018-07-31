@@ -1,3 +1,5 @@
+from functools import wraps
+
 import numpy as np
 import tensorflow as tf
 import GPy
@@ -19,7 +21,10 @@ from .priors import *
 from .acquisition_functions import UCB, EI
 
 def vectorize(f):
-    return lambda X: np.apply_along_axis(f, -1, X)[..., None]
+    @wraps(f)
+    def wrapper(X):
+        return np.apply_along_axis(f, -1, X)[..., None]
+    return wrapper
 
 def random_hypercube_samples(n_samples, bounds):
     """Random sample from d-dimensional hypercube (d = bounds.shape[0]).
@@ -137,7 +142,6 @@ class BO(object):
             x0v, x1v = np.meshgrid(x0, x1)
             xinput = np.swapaxes(np.array([x0v, x1v]), 0, -1) # set dim axis to last
             xinput = np.swapaxes(xinput, 0, 1)                # swap x0 and x1 axis
-
             origin_shape = xinput.shape[:-1]
             flattenxinput = xinput.reshape(-1, dims)
             acq = self.model.acq(flattenxinput, self.acquisition_function.calc)
@@ -180,6 +184,8 @@ class BO(object):
         self.model.init(X,Y)
 
         for i in range(0, self.n_iter):
+            print("... starting round", i, "/", self.n_iter)
+
             # new datapoint from acq
             x_new = self.max_acq()
             X_new = np.array([x_new])
@@ -192,3 +198,7 @@ class BO(object):
 
         if do_plot:
             self.plot_prediction()
+
+        # TODO: Move session outside..         
+        self.model.sess.close()
+        self.model.sess = None
