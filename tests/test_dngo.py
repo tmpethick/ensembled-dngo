@@ -24,7 +24,7 @@ def test_dngo_MAP():
 
 def test_dngo_approximate_marginalisation_of_hyperparameters():  
   def f(x):
-      return np.sinc(x * 10 - 5).sum(axis=1)[:, None] # * 100000
+      return np.sinc(x * 10 - 5).sum(axis=1)[:, None] * 100000
 
   rng = np.random.RandomState(42)
   x_train = rng.uniform(0, 1, 10)[:, None]

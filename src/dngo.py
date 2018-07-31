@@ -14,19 +14,27 @@ from scipy.stats import multivariate_normal
 
 from .bayesian_linear_regression import BayesianLinearRegression
 from .neural_network import zero_mean_unit_var_unnormalization
+from .normalization import zero_mean_unit_var_normalization, zero_mean_unit_var_unnormalization
 
 class BOModel(object):
     # def __enter__(self)
     # def __exit__(self, exc_type, exc_value, tracepck)
 
-    def __init__(self, nn, num_mcmc=0, regressor=None):
+    def __init__(self, nn, num_mcmc=0, regressor=None, normalize_input=True, normalize_output=True):
         # NN
         self.sess = tf.Session()
         self.nn_model = nn
 
+        self.X_mean = None
+        self.X_std = None
+        self.normalize_input = normalize_input
+
+        self.y_mean = None
+        self.y_std = None
+        self.normalize_output = normalize_output
+
         # GP
         if regressor is None:
-            # self.gp = GPyLinearRegression(num_mcmc=0)
             self.gp = BayesianLinearRegression(num_mcmc=0)
         else:
             self.gp = regressor
@@ -34,25 +42,32 @@ class BOModel(object):
     def init(self, X, Y, train_nn=True):
         self.X = X
         self.Y = Y
+        self.fit(self.X, self.Y, train_nn=train_nn)
 
-        # NN
-        if train_nn:
-            self.nn_model.fit(self.sess, self.X, self.Y)
-            self.D = self.nn_model.predict_basis(self.sess, self.X)
-
-        self.gp.fit(self.D, self.nn_model.y)
-
-    def add_observations(self, X_new, Y_new):
+    def add_observations(self, X_new, Y_new, train_nn=True):
         # Update data
         self.X = np.concatenate([self.X, X_new])
         self.Y = np.concatenate([self.Y, Y_new])
+        
+        self.fit(self.X, self.Y, train_nn=train_nn)
 
-        # Fit NN and recalculate basis functions
-        self.nn_model.fit(self.sess, self.X, self.Y)
-        self.D = self.nn_model.predict_basis(self.sess, self.X)
+    def fit(self, X, Y, train_nn=True):
+        if self.normalize_input:
+            self.transformed_X, self.X_mean, self.X_std = zero_mean_unit_var_normalization(X)
+        else:
+            self.transformed_X = X
 
-        # Fit BLR
-        self.gp.fit(self.D, self.nn_model.y)
+        if self.normalize_output:
+            self.transformed_Y, self.y_mean, self.y_std = zero_mean_unit_var_normalization(Y)
+        else:
+            self.transformed_Y = Y
+
+        # NN
+        if train_nn:
+            self.nn_model.fit(self.sess, self.transformed_X, self.transformed_Y)
+            self.transformed_D = self.nn_model.predict_basis(self.sess, self.transformed_X)
+
+        self.gp.fit(self.transformed_D, self.transformed_Y)
 
     def get_incumbent(self):
         i = np.argmax(self.Y)
@@ -62,58 +77,52 @@ class BOModel(object):
         """Note prediction is done in normalized space.
         """
 
-        D = self.nn_model.predict_basis(self.sess, X)
-        sample_predictions = self.gp.predict_all(D)
+        D = self.predict_basis(X)
+        transformed_sample_predictions = self.gp.predict_all(D)
 
         # Average over all sampled hyperparameter predictions
-        return np.average(np.array([acq(mean, var) for (mean, var) in sample_predictions]), axis=0)
+        return np.average(np.array([acq(mean, var) for (mean, var) in transformed_sample_predictions]), axis=0)
 
-    def predict_from_basis(self, D, theta=None):
-        mean, var = self.gp.predict(D, theta=theta)
+    def predict_basis(self, X):
+        if self.normalize_input:
+            X, _, _ = zero_mean_unit_var_normalization(X, mean=self.X_mean, std=self.X_std)
 
-        if self.nn_model.y_std is not None:
-            mean = zero_mean_unit_var_unnormalization(mean, self.nn_model.y_mean, self.nn_model.y_std)
-            var = var * self.nn_model.y_std ** 2
+        return self.nn_model.predict_basis(self.sess, X)
+        
+    def predict_from_basis(self, transformed_D, theta=None):
+        mean, var = self.gp.predict(transformed_D, theta=theta)
+
+        if self.normalize_output is not None:
+            mean = zero_mean_unit_var_unnormalization(mean, self.y_mean, self.y_std)
+            var = var * self.y_std ** 2
 
         return mean, var
 
     def predict(self, X):
-        D = self.nn_model.predict_basis(self.sess, X)
+        D = self.predict_basis(X)
         return self.predict_from_basis(D)
 
     def plot_acq(self, X_line, acq):
         plt.plot(X_line, self.acq(X_line, acq), color="red")
 
     def plot_prediction(self, X_line, Y_line, x_new=None):
-        D_line = self.nn_model.predict_basis(self.sess, X_line)
+        D_line = self.predict_basis(X_line)
 
         if self.gp.num_mcmc > 0:
             for theta in self.gp._current_thetas:
-                nnmean = self.nn_model.predict(X_line)
                 mean, var = self.predict_from_basis(D_line, theta=theta)
                 plt.fill_between(X_line.reshape(-1), (mean + np.sqrt(var)).reshape(-1), (mean - np.sqrt(var)).reshape(-1), alpha=.2)
-                plt.plot(X_line, nnmean, color="red")
-                # plt.plot(X_line, mean)
+                plt.plot(X_line, mean)
         else:
-            nnmean = self.nn_model.predict(self.sess, X_line)
             mean, var = self.predict_from_basis(D_line)
             plt.fill_between(X_line.reshape(-1), (mean + np.sqrt(var)).reshape(-1), (mean - np.sqrt(var)).reshape(-1), alpha=.2)
             plt.plot(X_line, mean)
-            plt.plot(X_line, nnmean, color="red")
-            
 
         if x_new is not None:
             plt.axvline(x=x_new, ls='--', c='k', lw=1, label='Next sampling location')
 
-        # TODO: remember to normalize if normalization is pulled out into BOModel
         plt.scatter(self.X, self.Y)
         plt.plot(X_line, Y_line, dashes=[2, 2], color='black')
-        # plt.plot(X_line, self.acq(X_line), color='red')
-
-
-# Move normalization
-# move out session
-# save / restore tf model
 
 
 # class BOModel(object):

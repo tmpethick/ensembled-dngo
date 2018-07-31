@@ -16,14 +16,6 @@ from .normalization import zero_mean_unit_var_normalization, zero_mean_unit_var_
 
 class TFModel(object):
     def __init__(self, input_dim=1, dim_basis=50, dim_h1=50, dim_h2=50, epochs=10000, batch_size=10):
-        self.X_mean = None
-        self.X_std = None
-        self.normalize_input = True
-
-        self.y_mean = None
-        self.y_std = None
-        self.normalize_output = True
-
         self.dim_basis = dim_basis
         self.epochs = epochs
         self.batch_size = batch_size
@@ -53,19 +45,9 @@ class TFModel(object):
             self.train_op = tf.train.AdamOptimizer(learning_rate=0.01).minimize(self.loss)
 
     def fit(self, sess, X, y):
-        # with tf.Session() as sess:
-        if self.normalize_input:
-            X, self.X_mean, self.X_std = zero_mean_unit_var_normalization(X)
-        
-        if self.normalize_output:
-            y, self.y_mean, self.y_std = zero_mean_unit_var_normalization(y)
-
-        self.X = X
-        self.y = y
-
         sess.run(tf.global_variables_initializer())
 
-        batch_size = min(self.X.shape[0], self.batch_size)
+        batch_size = min(X.shape[0], self.batch_size)
 
         for i in range(self.epochs):
             for input_batch, output_batch in self.iterate_batches(X, y, shuffle=True, batch_size=batch_size):
@@ -85,20 +67,9 @@ class TFModel(object):
             yield inputs[excerpt], targets[excerpt]
 
     def predict(self, sess, x):
-        if self.normalize_input:
-            x, _, _ = zero_mean_unit_var_normalization(x, mean=self.X_mean, std=self.X_std)
+        return sess.run(self.y_pred, {self.x: x})
 
-        y_pred = sess.run(self.y_pred, {self.x: x})
-        
-        if self.normalize_output:
-            return zero_mean_unit_var_unnormalization(y_pred, self.y_mean, self.y_std)
-        else:
-            return y_pred
-
-    def predict_basis(self, sess, x):
-        if self.normalize_input:
-            x, _, _ = zero_mean_unit_var_normalization(x, mean=self.X_mean, std=self.X_std)
-        
+    def predict_basis(self, sess, x):        
         return sess.run(self.basis, {self.x: x})
 
     def plot_basis_functions(self, sess, bounds):
