@@ -26,6 +26,13 @@ TODO:
 - Ensemble using max, average, median
 - Felix benchmark functions
 
+
+- Loop training networks (basis functions) (consider paralizability)
+- GP on each
+- BOModel specifies in `acq` how to aggregate 
+  (calc for all, then call `ensemble_aggregator`)
+- 
+
 Hyperparameters:
 - MAP / Marginalize hyperparameters
 - Batch size

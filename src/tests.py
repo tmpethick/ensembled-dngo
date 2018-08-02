@@ -55,7 +55,7 @@ def test_random_sample(f, bounds, n_iter=100):
 
 def test_gp(f, bounds, n_iter, do_plot=False):
     import GPy
-    from .dngo import GPyBOModel
+    from .models import GPyBOModel
     from .acquisition_functions import UCB
     from .bo import BO
 
@@ -72,14 +72,14 @@ def test_gp(f, bounds, n_iter, do_plot=False):
 
 
 def test_dngo_10_10_10_pe(f, bounds, n_iter, do_plot=False):
-    from .bo import BO, random_hypercube_samples, vectorize
+    from .bo import BO
     from .acquisition_functions import EI, UCB
     from .bayesian_linear_regression import BayesianLinearRegression
-    from .dngo import BOModel
-    from .neural_network import TFModel
+    from .models import BOModel
+    from .neural_network import NNRegressionModel
 
     input_dim = bounds.shape[0]
-    nn = TFModel(input_dim=input_dim, dim_basis=10, dim_h1=10, dim_h2=10, epochs=1000, batch_size=10)
+    nn = NNRegressionModel(input_dim=input_dim, dim_basis=10, dim_h1=10, dim_h2=10, epochs=1000, batch_size=10)
     reg = BayesianLinearRegression(num_mcmc=0)
     model = BOModel(nn, regressor=reg)
     # acq = EI(model, par=0.01)
@@ -91,14 +91,14 @@ def test_dngo_10_10_10_pe(f, bounds, n_iter, do_plot=False):
 
 def test_dngo_50_50_50_pe(f, bounds, n_iter, do_plot=False):
 
-    from .bo import BO, random_hypercube_samples, vectorize
+    from .bo import BO
     from .acquisition_functions import EI, UCB
     from .bayesian_linear_regression import BayesianLinearRegression
-    from .dngo import BOModel
-    from .neural_network import TFModel
+    from .models import BOModel
+    from .neural_network import NNRegressionModel
 
     input_dim = bounds.shape[0]
-    nn = TFModel(input_dim=input_dim, dim_basis=50, epochs=1000, batch_size=10)
+    nn = NNRegressionModel(input_dim=input_dim, dim_basis=50, epochs=1000, batch_size=10)
     reg = BayesianLinearRegression(num_mcmc=0)
     model = BOModel(nn, regressor=reg)
     # acq = EI(model, par=0.01)
@@ -110,14 +110,14 @@ def test_dngo_50_50_50_pe(f, bounds, n_iter, do_plot=False):
 
 
 def test_dngo_50_50_50_marg(f, bounds, n_iter, do_plot=False):
-    from .bo import BO, random_hypercube_samples, vectorize
+    from .bo import BO
     from .acquisition_functions import EI, UCB
     from .bayesian_linear_regression import BayesianLinearRegression
-    from .dngo import BOModel
-    from .neural_network import TFModel
+    from .models import BOModel
+    from .neural_network import NNRegressionModel
 
     input_dim = bounds.shape[0]
-    nn = TFModel(input_dim=input_dim, dim_basis=50, epochs=1000, batch_size=10)
+    nn = NNRegressionModel(input_dim=input_dim, dim_basis=50, epochs=1000, batch_size=10)
     reg = BayesianLinearRegression(num_mcmc=20, burn_in=1000, mcmc_steps=1000)
     model = BOModel(nn, regressor=reg)
     # acq = EI(model, par=0.01)

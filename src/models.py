@@ -1,6 +1,7 @@
+from copy import deepcopy
+
 import numpy as np
 import tensorflow as tf
-
 import matplotlib.pyplot as plt
 
 from .bayesian_linear_regression import BayesianLinearRegression, GPyRegression
@@ -44,9 +45,9 @@ class BOModel(BOBaseModel):
     # def __enter__(self)
     # def __exit__(self, exc_type, exc_value, tracepck)
 
-    def __init__(self, nn, regressor=None, normalize_input=True, normalize_output=True):
+    def __init__(self, nn, regressor=None, num_nn=1, ensemble_aggregator=np.max, normalize_input=True, normalize_output=True):
         # NN
-        self.sess = tf.Session()
+        self.sessions = [tf.Session() for _ in range(num_nn)]
         self.nn_model = nn
 
         self.X_mean = None
@@ -57,11 +58,14 @@ class BOModel(BOBaseModel):
         self.y_std = None
         self.normalize_output = normalize_output
 
+        self.ensemble_aggregator = ensemble_aggregator
+        self.num_nn = num_nn
+
         # GP
         if regressor is None:
-            self.gp = BayesianLinearRegression(num_mcmc=0)
+            self.gps = [BayesianLinearRegression(num_mcmc=0) for _ in range(num_nn)]
         else:
-            self.gp = regressor
+            self.gps = [deepcopy(regressor) for _ in range(num_nn)]
 
     def fit(self, X, Y, train_nn=True):
         if self.normalize_input:
@@ -74,39 +78,73 @@ class BOModel(BOBaseModel):
         else:
             self.transformed_Y = Y
 
-        # NN
-        if train_nn:
-            self.nn_model.fit(self.sess, self.transformed_X, self.transformed_Y)
-            self.transformed_D = self.nn_model.predict_basis(self.sess, self.transformed_X)
+        for i, sess in enumerate(self.sessions):
+            if train_nn:
+                # NN
+                self.nn_model.fit(sess, self.transformed_X, self.transformed_Y)
+                transformed_D = self.nn_model.predict_basis(sess, self.transformed_X)
 
-        self.gp.fit(self.transformed_D, self.transformed_Y)
+                self.gps[i].fit(transformed_D, self.transformed_Y)
 
     def acq(self, X, acq):
-        """Note prediction is done in normalized space.
+        """Note: prediction is done in normalized space.
         """
 
-        D = self.predict_basis(X)
-        # Note: no need to denormalize.
-        transformed_sample_predictions = self.gp.predict_all(D)
+        Ds = self.predict_basis(X)
 
-        asd = np.array([acq(pred[0, :], pred[1, :]) for pred in transformed_sample_predictions])
+        idxs = np.arange(self.num_nn)
+        def predict_all(i):
+            return self.gps[i].predict_all(Ds[i])
+        predict_all = np.vectorize(predict_all, signature='()->(m,t,n)')
+
+        transformed_sample_predictions = predict_all(idxs)
+        # shape: (ensemble, gphyperparams, summarystats, samples)
+
+        # Calc acq
+        acq_values = np.apply_along_axis(lambda x: acq(x[0], x[1]), 2, transformed_sample_predictions)
+        # shape: (ensemble, gphyperparams, samples)
+
         # Average over all sampled hyperparameter predictions
-        return np.average(asd, axis=0)
+        hyper_average = np.average(acq_values, 1)
+        # shape: (ensemble, samples)
+
+        # Second aggregate ensemble
+        ensemble_agg = self.ensemble_aggregator(hyper_average, axis=0)
+        return ensemble_agg
 
     def predict_basis(self, X):
+        """ 
+        return -- shape: (ensemble, samples, basisfunctions)
+        """
         if self.normalize_input:
             X, _, _ = zero_mean_unit_var_normalization(X, mean=self.X_mean, std=self.X_std)
 
-        return self.nn_model.predict_basis(self.sess, X)
+        idxs = np.arange(self.num_nn)
+        def _predict_basis(i):
+            return self.nn_model.predict_basis(self.sessions[i], X)
+        return np.vectorize(_predict_basis, signature='()->(m,n)')(idxs)
         
     def predict_from_basis(self, transformed_D, theta=None):
-        mean, var = self.gp.predict(transformed_D, theta=theta)
+        """
+        transformed_D -- shape: (ensemble, samples, basisfunctions)
+        return        -- shape: (ensemble, gphyperparams, summarystats, samples)
+        """
+
+        idxs = np.arange(self.num_nn)
+        def _predict_from_basis(i):
+            return self.gps[i].predict_all(transformed_D[i])
+        predictions = np.vectorize(_predict_from_basis, signature='()->(h,s,n)')(idxs)
+        # (ensemble, hyperparams, summarystats, samples)
 
         if self.normalize_output is not None:
-            mean = zero_mean_unit_var_unnormalization(mean, self.y_mean, self.y_std)
-            var = var * self.y_std ** 2
+            def normalize(summ):
+                mean = zero_mean_unit_var_unnormalization(summ[0], self.y_mean, self.y_std)
+                var = summ[1] * self.y_std ** 2
+                return np.array([mean[0], var[0]])
 
-        return mean, var
+            predictions = np.apply_along_axis(normalize, 2, predictions)
+
+        return predictions
 
     def predict(self, X):
         D = self.predict_basis(X)
@@ -115,13 +153,11 @@ class BOModel(BOBaseModel):
     def plot_prediction(self, X_line, Y_line, x_new=None):
         D_line = self.predict_basis(X_line)
 
-        if self.gp.num_mcmc > 0:
-            for theta in self.gp._current_thetas:
-                mean, var = self.predict_from_basis(D_line, theta=theta)
-                plt.fill_between(X_line.reshape(-1), (mean + np.sqrt(var)).reshape(-1), (mean - np.sqrt(var)).reshape(-1), alpha=.2)
-                plt.plot(X_line, mean)
-        else:
-            mean, var = self.predict_from_basis(D_line)
+
+        predictions = self.predict_from_basis(D_line) # shape: (ensemble, gphyperparams, summ, samples)
+        for summ in predictions.reshape(-1, predictions.shape[2], predictions.shape[3]): # (models, summ, samples)
+            mean = summ[0, :]
+            var = summ[1, :]
             plt.fill_between(X_line.reshape(-1), (mean + np.sqrt(var)).reshape(-1), (mean - np.sqrt(var)).reshape(-1), alpha=.2)
             plt.plot(X_line, mean)
 

@@ -98,26 +98,24 @@ class BayesianLinearRegression(object):
         self.S = S
 
     def predict_all(self, X):
+        """ 
+        X -- shape: (samples, dimension)
+        return -- shape: (hyperparams, summ, samples)
+        """
         num_X = X.shape[0]
         predictions = np.zeros((len(self._current_thetas), 2, num_X))
         for i, theta in enumerate(self._current_thetas):
             gp = theta
-            mean, var = gp.predict(X)
-            predictions[i, 0, :] = mean[:, 0]
-            predictions[i, 1, :] = var[:, 0]
+            summ = gp.predict(X)
+            predictions[i, ...] = summ
         return predictions
 
-    def predict(self, X, theta=None):
-        if theta is not None:
-            model = theta
-            return model.predict(X)
-
+    def predict(self, X):
         m = np.dot(self.m.T, X.T)
         v = np.diag(np.dot(np.dot(X, self.S), X.T)) + 1. / self.beta
-        m = m.T
+        m = m[0] # remove 1 element dimension
         v = np.clip(v, np.finfo(v.dtype).eps, np.inf)
-        v = v[:, None]
-        return m, v
+        return np.stack([m, v], 0)
 
 
 class GPyRegression(object):

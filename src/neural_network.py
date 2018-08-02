@@ -4,7 +4,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 
-class TFModel(object):
+class NNRegressionModel(object):
     def __init__(self, input_dim=1, dim_basis=50, dim_h1=50, dim_h2=50, epochs=10000, batch_size=10):
         self.dim_basis = dim_basis
         self.epochs = epochs
