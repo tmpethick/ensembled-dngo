@@ -80,13 +80,21 @@ class BO(object):
         x0v, x1v = np.meshgrid(x0, x1)
         xinput = np.swapaxes(np.array([x0v, x1v]), 0, -1) # set dim axis to last
         xinput = np.swapaxes(xinput, 0, 1)                # swap x0 and x1 axis
+        # xinput -- shape: (n,d)
 
         # Calc prediction on grid
         origin_shape = xinput.shape[:-1]
         flattenxinput = xinput.reshape(-1, dims)
-        mean, var = self.model.predict(flattenxinput)
-        mean = np.reshape(mean, origin_shape)
-        var = np.reshape(var, origin_shape)
+        predictions = self.model.predict(flattenxinput)
+
+        # Collapse hyperparam and ensemble dimensions
+        predictions = predictions.reshape(-1, 2, xinput.shape[0], xinput.shape[1])
+
+        # Plot one of the means + vars
+        summ = predictions[0]
+        mean = np.reshape(summ[0], origin_shape)
+        var = np.reshape(summ[1], origin_shape)
+
         acq = self.model.acq(flattenxinput, self.acquisition_function.calc)
         acq = np.reshape(acq, origin_shape)
 
