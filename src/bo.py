@@ -38,6 +38,14 @@ def random_hypercube_samples(n_samples, bounds):
     samples = a * np.abs(bounds_repeated[:,1] - bounds_repeated[:,0]) + bounds_repeated[:,0]
     return np.swapaxes(samples, 0, 1)
 
+
+def constrain_point(x, bounds):
+    minx = bounds[:, 0]
+    maxx = bounds[:, 1]
+    x = np.maximum(x, minx)
+    return np.minimum(x, maxx)
+
+
 class BO(object):
     def __init__(self, obj_func, model, acquisition_function=None, n_iter = 10, bounds=np.array([[0,1]])):
         self.n_iter = n_iter
@@ -62,6 +70,10 @@ class BO(object):
 
         # TODO: turn into numpy operations to parallelize
         for x0 in random_hypercube_samples(n_starts, self.bounds):
+            # This handles the case where the sample is slightly above or below the bounds
+            # due to floating point precision.
+            x0 = constrain_point(x0, self.bounds)
+            
             res = minimize(min_obj, x0=x0, bounds=self.bounds, method='L-BFGS-B')        
             if res.fun < min_y:
                 min_y = res.fun
@@ -199,6 +211,7 @@ class BO(object):
         if do_plot:
             self.plot_prediction()
 
-        # TODO: Move session outside..         
-        self.model.sess.close()
-        self.model.sess = None
+        # TODO: Move session outside..
+        if hasattr(self.model, "sess"):
+            self.model.sess.close()
+            self.model.sess = None

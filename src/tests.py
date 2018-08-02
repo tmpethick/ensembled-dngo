@@ -1,9 +1,13 @@
 from functools import wraps
+from operator import itemgetter
 
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pathos.multiprocessing as mp
+from hpolib.benchmarks.synthetic_functions import Branin
 
-from src.bo import random_hypercube_samples, vectorize
+from .bo import random_hypercube_samples, vectorize
 
 def immidiate_regret(y, y_opt):
     return np.abs(y - y_opt)
@@ -44,12 +48,30 @@ def test_random_sample(f, bounds, n_iter=100):
     return R_samples, R_values
 
 
+def test_gp(f, bounds, n_iter, do_plot=False):
+    import GPy
+    from .dngo import GPyBOModel
+    from .acquisition_functions import UCB
+    from .bo import BO
+
+    input_dim = bounds.shape[0]
+
+    kernel = GPy.kern.RBF(input_dim)
+    kernel.variance.set_prior(GPy.priors.LogGaussian(0.005, 0.5)) # log_prior()
+    model = GPyBOModel(kernel=kernel, num_mcmc=0, fix_noise=True)
+
+    acq = UCB(model)
+    bo = BO(f, model, acquisition_function=acq, n_iter=n_iter, bounds=bounds)
+    bo.run(do_plot=do_plot)
+    return bo
+
+
 def test_dngo_10_10_10_pe(f, bounds, n_iter, do_plot=False):
-    from src.bo import BO, random_hypercube_samples, vectorize
-    from src.acquisition_functions import EI, UCB
-    from src.bayesian_linear_regression import BayesianLinearRegression
-    from src.dngo import BOModel
-    from src.neural_network import TFModel
+    from .bo import BO, random_hypercube_samples, vectorize
+    from .acquisition_functions import EI, UCB
+    from .bayesian_linear_regression import BayesianLinearRegression
+    from .dngo import BOModel
+    from .neural_network import TFModel
 
     input_dim = bounds.shape[0]
     nn = TFModel(input_dim=input_dim, dim_basis=10, dim_h1=10, dim_h2=10, epochs=1000, batch_size=10)
@@ -64,11 +86,11 @@ def test_dngo_10_10_10_pe(f, bounds, n_iter, do_plot=False):
 
 def test_dngo_50_50_50_pe(f, bounds, n_iter, do_plot=False):
 
-    from src.bo import BO, random_hypercube_samples, vectorize
-    from src.acquisition_functions import EI, UCB
-    from src.bayesian_linear_regression import BayesianLinearRegression
-    from src.dngo import BOModel
-    from src.neural_network import TFModel
+    from .bo import BO, random_hypercube_samples, vectorize
+    from .acquisition_functions import EI, UCB
+    from .bayesian_linear_regression import BayesianLinearRegression
+    from .dngo import BOModel
+    from .neural_network import TFModel
 
     input_dim = bounds.shape[0]
     nn = TFModel(input_dim=input_dim, dim_basis=50, epochs=1000, batch_size=10)
@@ -82,11 +104,11 @@ def test_dngo_50_50_50_pe(f, bounds, n_iter, do_plot=False):
     return bo # bo.model.X, bo.model.Y, f_opt
 
 def test_dngo_50_50_50_marg(f, bounds, n_iter, do_plot=False):
-    from src.bo import BO, random_hypercube_samples, vectorize
-    from src.acquisition_functions import EI, UCB
-    from src.bayesian_linear_regression import BayesianLinearRegression
-    from src.dngo import BOModel
-    from src.neural_network import TFModel
+    from .bo import BO, random_hypercube_samples, vectorize
+    from .acquisition_functions import EI, UCB
+    from .bayesian_linear_regression import BayesianLinearRegression
+    from .dngo import BOModel
+    from .neural_network import TFModel
 
     input_dim = bounds.shape[0]
     nn = TFModel(input_dim=input_dim, dim_basis=50, epochs=1000, batch_size=10)
@@ -98,3 +120,33 @@ def test_dngo_50_50_50_marg(f, bounds, n_iter, do_plot=False):
     bo.run(do_plot=do_plot)
 
     return bo # bo.model.X, bo.model.Y, f_opt
+
+
+def test_multiple(bo_methods, n_iter=200):
+    """
+    Arguments:
+        bo_methods -- dictionary of functions returning BOBaseModel
+    """
+
+    f, bounds, f_opt = prepare_benchmark(Branin())
+
+    # Random baseline
+    rand_arg_his, rand_f_his = test_random_sample(f, bounds, n_iter)
+    
+    # Run models asynchronously
+    pool = mp.Pool()
+    results_dict = { name: pool.apply_async(method, [f, bounds, n_iter]) for name, method in bo_methods.items() }
+    bo_models_tuple = [ (name, result.get()) for name, result in results_dict.items() ]
+    bo_names = list(map(itemgetter(0), bo_models_tuple))
+    bo_models = list(map(itemgetter(1), bo_models_tuple))
+    ir = [acc_ir(bo.model.Y, f_opt) for bo in bo_models]
+
+    ir.insert(0, acc_ir(rand_f_his, f_opt))
+    bo_names.insert(0, "random")
+
+    sns.set_style("darkgrid")
+    plot_ir(ir)
+    plt.legend(bo_names)
+    plt.show()
+
+    return bo_models, bo_names, ir

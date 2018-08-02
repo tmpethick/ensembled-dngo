@@ -18,8 +18,10 @@ Good resource: https://github.com/gpschool/gprs15b
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
 
 TODO:
-- Cleanup GPLinearRegression mess
-- Develop GP approach
+- Fix GP random configuration bug
+- (Save / restore models)
+- Find good GP kernel
+- Run all models
 - Find case in which it does not work (modified branin with drop in unexplored area)
 - Ensemble using max, average, median
 - Felix benchmark functions
