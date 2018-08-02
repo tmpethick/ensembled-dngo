@@ -9,18 +9,22 @@ from hpolib.benchmarks.synthetic_functions import Branin
 
 from .bo import random_hypercube_samples, vectorize
 
+
 def immidiate_regret(y, y_opt):
     return np.abs(y - y_opt)
+
 
 def acc_ir(history, y_opt):
     max_history = -np.maximum.accumulate(history)
     regret_history = immidiate_regret(max_history, y_opt)
     return regret_history
 
+
 def plot_ir(acc_ir_arrays):
     for acc_ir in acc_ir_arrays:
         plt.plot(acc_ir)
     plt.yscale('log')
+
 
 def prepare_benchmark(func):
     """"
@@ -39,6 +43,7 @@ def prepare_benchmark(func):
         return -func(x)
     
     return vectorize(wrapper), bounds, info['f_opt']
+
 
 def test_random_sample(f, bounds, n_iter=100):
     # Random sample
@@ -102,6 +107,7 @@ def test_dngo_50_50_50_pe(f, bounds, n_iter, do_plot=False):
     bo.run(do_plot=do_plot)
     
     return bo # bo.model.X, bo.model.Y, f_opt
+
 
 def test_dngo_50_50_50_marg(f, bounds, n_iter, do_plot=False):
     from .bo import BO, random_hypercube_samples, vectorize

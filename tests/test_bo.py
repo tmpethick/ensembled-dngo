@@ -1,11 +1,11 @@
+import numpy as np
 import GPy
 
+from src.bayesian_linear_regression import BayesianLinearRegression
 from src.bo import BO
-from src.dngo import GPyBOModel
-from src.acquisition_functions import EI, UCB
-
-from src.bo import *
-from src.dngo import *
+from src.dngo import GPyBOModel, BOModel
+from src.acquisition_functions import UCB
+from src.neural_network import TFModel
 
 
 def test_bo_gp():
@@ -17,8 +17,9 @@ def test_bo_gp():
     model = GPyBOModel(kernel=kernel, num_mcmc=0, fix_noise=True)
 
     acq = UCB(model)
-    bo = BO(f, model, acquisition_function=acq, n_iter=1, bounds=np.array([[0,1]]))
+    bo = BO(f, model, acquisition_function=acq, n_iter=1, bounds=np.array([[0, 1]]))
     bo.run(do_plot=False)
+
 
 def test_bo_dngo():
     def f(x):

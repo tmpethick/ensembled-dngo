@@ -1,20 +1,11 @@
 import numpy as np
 import tensorflow as tf
-import GPy
-from GPy.core.parameterization.priors import Gaussian, LogGaussian, Prior
-from paramz.domains import _REAL
-
-GPy.plotting.change_plotting_library('matplotlib')
 
 import matplotlib.pyplot as plt
-import scipy
-from scipy.optimize import minimize
-from scipy import optimize
-from scipy.stats import multivariate_normal
 
 from .bayesian_linear_regression import BayesianLinearRegression, GPyRegression
-from .neural_network import zero_mean_unit_var_unnormalization
 from .normalization import zero_mean_unit_var_normalization, zero_mean_unit_var_unnormalization
+
 
 class BOBaseModel(object):
     def get_incumbent(self):
@@ -53,7 +44,7 @@ class BOModel(BOBaseModel):
     # def __enter__(self)
     # def __exit__(self, exc_type, exc_value, tracepck)
 
-    def __init__(self, nn, num_mcmc=0, regressor=None, normalize_input=True, normalize_output=True):
+    def __init__(self, nn, regressor=None, normalize_input=True, normalize_output=True):
         # NN
         self.sess = tf.Session()
         self.nn_model = nn

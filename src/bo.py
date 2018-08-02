@@ -1,30 +1,18 @@
 from functools import wraps
 
-import numpy as np
-import tensorflow as tf
-import GPy
-from GPy.core.parameterization.priors import Gaussian, LogGaussian, Prior
-from paramz.domains import _REAL
-
-GPy.plotting.change_plotting_library('matplotlib')
-
 import matplotlib.pyplot as plt
-import scipy
 from scipy.optimize import minimize
-from scipy import optimize
-from scipy.stats import multivariate_normal
 
-from .dngo import *
-from .bayesian_linear_regression import *
-from .neural_network import *
 from .priors import *
-from .acquisition_functions import UCB, EI
+from .acquisition_functions import UCB
+
 
 def vectorize(f):
     @wraps(f)
     def wrapper(X):
         return np.apply_along_axis(f, -1, X)[..., None]
     return wrapper
+
 
 def random_hypercube_samples(n_samples, bounds):
     """Random sample from d-dimensional hypercube (d = bounds.shape[0]).
@@ -105,7 +93,6 @@ class BO(object):
         y = self.obj_func(xinput)[..., 0]
 
         if use_plotly:
-            import plotly.plotly as py
             import plotly.tools as tls
             import plotly.graph_objs as go
 
@@ -113,7 +100,7 @@ class BO(object):
                 width=1000,
                 height=1000,
                 autosize=False,
-                margin = dict(t=0, b=0, r=0, l=0),
+                margin=dict(t=0, b=0, r=0, l=0),
             )
             fig = tls.make_subplots(rows=2, cols=2, specs=[[{'is_3d': True}] * 2] * 2)
             fig['layout'].update(**layout)

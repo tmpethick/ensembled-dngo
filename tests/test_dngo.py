@@ -1,8 +1,11 @@
+import GPy
 import numpy as np
 import matplotlib.pyplot as plt
 
-from src.bo import *
-from src.dngo import *
+from src.bayesian_linear_regression import BayesianLinearRegression
+from src.dngo import GPyBOModel, BOModel
+from src.neural_network import TFModel
+
 
 def test_gp():
     def f(x):
@@ -22,6 +25,7 @@ def test_gp():
     model.plot_prediction(x,y)
     plt.show(block=True)
 
+
 def test_dngo_MAP():  
   def f(x):
       return np.sinc(x * 10 - 5).sum(axis=1)[:, None] * 100000
@@ -39,6 +43,7 @@ def test_dngo_MAP():
   y = f(x)
   model.plot_prediction(x,y)
   plt.show(block=True)
+
 
 def test_dngo_approximate_marginalisation_of_hyperparameters():  
   def f(x):

@@ -1,16 +1,8 @@
 import numpy as np
-import tensorflow as tf
-import GPy
-from GPy.core.parameterization.priors import Gaussian, LogGaussian, Prior
+import scipy
+from scipy.stats import multivariate_normal
 from paramz.domains import _REAL
 
-GPy.plotting.change_plotting_library('matplotlib')
-
-import matplotlib.pyplot as plt
-import scipy
-from scipy.optimize import minimize
-from scipy import optimize
-from scipy.stats import multivariate_normal    
 
 class HorseshoePrior(object):
     domain = _REAL
@@ -27,6 +19,7 @@ class HorseshoePrior(object):
         lamda = np.abs(np.random.standard_cauchy(size=num_samples))
         p0 = np.log(np.abs(np.random.randn() * lamda * self.scale))
         return p0
+
 
 class BLRPrior(object):
     def __init__(self):

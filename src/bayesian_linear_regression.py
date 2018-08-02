@@ -1,31 +1,25 @@
-import numpy as np
-import tensorflow as tf
 import GPy
-from GPy.core.parameterization.priors import Gaussian, LogGaussian, Prior
-from paramz.domains import _REAL
-
-GPy.plotting.change_plotting_library('matplotlib')
-
-import matplotlib.pyplot as plt
-import scipy
-from scipy.optimize import minimize
-from scipy import optimize
-from scipy.stats import multivariate_normal
 import emcee
+import numpy as np
+from scipy import optimize
 
 from .priors import BLRPrior
+
 
 class BayesianLinearRegression(object):
     def __init__(self, alpha=1, beta=1000, prior=None, num_mcmc=4, burn_in=1000, mcmc_steps=1000, do_optimize=True):
         self.alpha = alpha
         self.beta = beta
-        
+
         self.do_optimize = do_optimize
         self.num_mcmc = num_mcmc
         self.burn_in = burn_in
         self.mcmc_steps = mcmc_steps
-        
+
         self.prior = prior if prior is not None else BLRPrior()
+
+        self.X = None
+        self.y = None
 
     def marginal_log_likelihood(self, theta):
         """Note that theta is transformed using log scale.
@@ -45,9 +39,9 @@ class BayesianLinearRegression(object):
         M = Theta.shape[1]
         N = Theta.shape[0]
 
-        A = beta * np.dot(Theta.T, Theta) + np.eye(M) * alpha # (3.81)
+        A = beta * np.dot(Theta.T, Theta) + np.eye(M) * alpha  # (3.81)
         A_inv = np.linalg.inv(A)
-        m = np.dot(beta * np.dot(A_inv, Theta.T), t)          # (3.53)
+        m = np.dot(beta * np.dot(A_inv, Theta.T), t)  # (3.53)
 
         # TODO: understand why not always positive
         detA = np.linalg.det(A)
@@ -55,13 +49,13 @@ class BayesianLinearRegression(object):
             return -np.float("inf")
 
         # (3.86)
-        mll  = M / 2 * np.log(alpha)          #   M/2 ln alpha
-        mll += N / 2 * np.log(beta)           # + N/2 ln beta
-        mll -= N / 2 * np.log(2 * np.pi)      # - N/2 ln (2 pi)
+        mll = M / 2 * np.log(alpha)  # M/2 ln alpha
+        mll += N / 2 * np.log(beta)  # + N/2 ln beta
+        mll -= N / 2 * np.log(2 * np.pi)  # - N/2 ln (2 pi)
         mll -= beta / 2. * np.linalg.norm(t - np.dot(Theta, m), 2)
-        mll -= alpha / 2. * np.dot(m.T, m)    # - E(mN) (3.82)
-        mll -= 0.5 * np.log(np.linalg.det(A)) # - 1/2 ln |A|
-        
+        mll -= alpha / 2. * np.dot(m.T, m)  # - E(mN) (3.82)
+        mll -= 0.5 * np.log(np.linalg.det(A))  # - 1/2 ln |A|
+
         l = mll + self.prior.lnprob(theta)
         return l
 
@@ -80,7 +74,7 @@ class BayesianLinearRegression(object):
         if self.do_optimize:
             if self.num_mcmc > 0:
                 ndim, nwalkers = 2, self.num_mcmc
-                p0 = [np.random.rand(ndim) for i in range(nwalkers)] # self.prior.rvs(nwalkers)
+                p0 = [np.random.rand(ndim) for i in range(nwalkers)]  # self.prior.rvs(nwalkers)
 
                 sampler = emcee.EnsembleSampler(nwalkers, ndim, self.marginal_log_likelihood)
                 sampler.run_mcmc(p0, self.burn_in + self.mcmc_steps)
@@ -100,7 +94,7 @@ class BayesianLinearRegression(object):
         S = np.linalg.inv(S_inv)
         m = self.beta * np.dot(np.dot(S, self.X.T), self.y)
 
-        self.m = m 
+        self.m = m
         self.S = S
 
     def predict_all(self, X):
@@ -109,15 +103,15 @@ class BayesianLinearRegression(object):
         for i, theta in enumerate(self._current_thetas):
             gp = theta
             mean, var = gp.predict(X)
-            predictions[i, 0, :] = mean[:,0]
-            predictions[i, 1, :] = var[:,0]
+            predictions[i, 0, :] = mean[:, 0]
+            predictions[i, 1, :] = var[:, 0]
         return predictions
 
     def predict(self, X, theta=None):
         if theta is not None:
             model = theta
             return model.predict(X)
- 
+
         m = np.dot(self.m.T, X.T)
         v = np.diag(np.dot(np.dot(X, self.S), X.T)) + 1. / self.beta
         m = m.T
@@ -146,7 +140,7 @@ class GPyRegression(object):
 
             if self.noise_prior:
                 self.gp.Gaussian_noise.variance.set_prior(self.noise_prior)
-            
+
             if self.fix_noise:
                 self.gp.Gaussian_noise.fix(0)
         else:
@@ -157,12 +151,12 @@ class GPyRegression(object):
             if self.num_mcmc > 0:
                 # Most likely hyperparams given data
                 hmc = GPy.inference.mcmc.HMC(self.gp)
-                hmc.sample(num_samples=1000) # Burn-in
+                hmc.sample(num_samples=1000)  # Burn-in
                 self._current_thetas = hmc.sample(num_samples=self.num_mcmc, hmc_iters=50)
             else:
                 self.gp.randomize()
                 self.gp.optimize()
-                self._current_thetas = [self.gp.param_array]        
+                self._current_thetas = [self.gp.param_array]
 
     def predict_all(self, X):
         num_X = X.shape[0]
@@ -170,8 +164,8 @@ class GPyRegression(object):
         for i, theta in enumerate(self._current_thetas):
             self.gp[:] = theta
             mean, var = self.gp.predict(X)
-            predictions[i, 0, :] = mean[:,0]
-            predictions[i, 1, :] = var[:,0]
+            predictions[i, 0, :] = mean[:, 0]
+            predictions[i, 1, :] = var[:, 0]
         return predictions
 
     def predict(self, X, theta=None):
