@@ -175,4 +175,4 @@ class GPyRegression(object):
 
 class GPyLinearRegression(GPyRegression):
     def __init__(self, input_dim=1, **kwargs):
-        super(GPyLinearRegression).__init__(kernel=GPy.kern.Linear(input_dim), **kwargs)
+        super(GPyLinearRegression, self).__init__(kernel=GPy.kern.Linear(input_dim), **kwargs)

@@ -70,6 +70,42 @@ def test_gp(f, bounds, n_iter, do_plot=False):
     bo.run(do_plot=do_plot)
     return bo
 
+def test_dngo_10_10_10_marg(f, bounds, n_iter, do_plot=False):
+    from .bo import BO
+    from .acquisition_functions import EI, UCB
+    from .bayesian_linear_regression import BayesianLinearRegression
+    from .models import BOModel
+    from .neural_network import NNRegressionModel
+
+    input_dim = bounds.shape[0]
+    nn = NNRegressionModel(input_dim=input_dim, dim_basis=10, dim_h1=10, dim_h2=10, epochs=1000, batch_size=10)
+    reg = BayesianLinearRegression(num_mcmc=6)
+    model = BOModel(nn, regressor=reg)
+    # acq = EI(model, par=0.01)
+    acq = UCB(model)
+    bo = BO(f, model, acquisition_function=acq, n_iter=n_iter, bounds=bounds)
+    bo.run(do_plot=do_plot)
+    
+    return bo
+
+def test_dngo_10_10_10_pe_ensemble(f, bounds, n_iter, do_plot=False):
+    from .bo import BO
+    from .acquisition_functions import EI, UCB
+    from .bayesian_linear_regression import BayesianLinearRegression
+    from .models import BOModel
+    from .neural_network import NNRegressionModel
+
+    input_dim = bounds.shape[0]
+    nn = NNRegressionModel(input_dim=input_dim, dim_basis=10, dim_h1=10, dim_h2=10, epochs=1000, batch_size=10)
+    reg = BayesianLinearRegression(num_mcmc=0)
+    model = BOModel(nn, regressor=reg, num_nn=5)
+    # acq = EI(model, par=0.01)
+    acq = UCB(model)
+    bo = BO(f, model, acquisition_function=acq, n_iter=n_iter, bounds=bounds)
+    bo.run(do_plot=do_plot)
+    
+    return bo
+
 
 def test_dngo_10_10_10_pe(f, bounds, n_iter, do_plot=False):
     from .bo import BO
@@ -87,7 +123,7 @@ def test_dngo_10_10_10_pe(f, bounds, n_iter, do_plot=False):
     bo = BO(f, model, acquisition_function=acq, n_iter=n_iter, bounds=bounds)
     bo.run(do_plot=do_plot)
     
-    return bo # bo.model.X, bo.model.Y, f_opt
+    return bo
 
 def test_dngo_50_50_50_pe(f, bounds, n_iter, do_plot=False):
 
@@ -106,7 +142,7 @@ def test_dngo_50_50_50_pe(f, bounds, n_iter, do_plot=False):
     bo = BO(f, model, acquisition_function=acq, n_iter=n_iter, bounds=bounds)
     bo.run(do_plot=do_plot)
     
-    return bo # bo.model.X, bo.model.Y, f_opt
+    return bo
 
 
 def test_dngo_50_50_50_marg(f, bounds, n_iter, do_plot=False):
@@ -125,16 +161,18 @@ def test_dngo_50_50_50_marg(f, bounds, n_iter, do_plot=False):
     bo = BO(f, model, acquisition_function=acq, n_iter=n_iter, bounds=bounds)
     bo.run(do_plot=do_plot)
 
-    return bo # bo.model.X, bo.model.Y, f_opt
+    return bo
 
 
-def test_multiple(bo_methods, n_iter=200):
+def test_multiple(bo_methods, n_iter=200, Benchmark=None):
     """
     Arguments:
         bo_methods -- dictionary of functions returning BOBaseModel
     """
 
-    f, bounds, f_opt = prepare_benchmark(Branin())
+    benchmark = Benchmark() if Benchmark is not None else Branin()
+
+    f, bounds, f_opt = prepare_benchmark(benchmark)
 
     # Random baseline
     rand_arg_his, rand_f_his = test_random_sample(f, bounds, n_iter)

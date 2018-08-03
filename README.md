@@ -18,10 +18,7 @@ Good resource: https://github.com/gpschool/gprs15b
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
 
 TODO:
-- Fix GP random configuration bug
-- (Save / restore models)
-- Find good GP kernel
-- Run all models
+
 - Find case in which it does not work (modified branin with drop in unexplored area)
 - Ensemble using max, average, median
 - Felix benchmark functions
@@ -35,7 +32,10 @@ TODO:
 
 Hyperparameters:
 - MAP / Marginalize hyperparameters
-- Batch size
+- Batch size 
+  - big is smooth. What for noisy functions?
+  - How it works for big n when bath size become relatively small.
+- How big an ensemble?
 
 Testing:
 - Test wider input domain (np.sinc(x * 10 - 5).sum(axis=1)[:, None] * 100000 on [0,10] interval) (i.e. spike)
