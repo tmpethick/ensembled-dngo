@@ -59,20 +59,20 @@ class TorchRegressionModel(object):
         X = X.to(device)
 
         with torch.no_grad():
-            return self.model(X)
+            return self.model(X).numpy()
 
     def predict_basis(self, X):
         X = torch.from_numpy(X).float()
         X = X.to(device)
 
         with torch.no_grad():
-            return self.basis(X)
+            return self.basis(X).numpy()
 
-    def plot_basis_functions(self, sess, bounds):
+    def plot_basis_functions(self, bounds):
         if bounds.shape is not (1, 2):
             raise Exception("Only supports 1D")
 
-        x = np.linspace(bounds[:, 0], bounds[:, 1])[:, None]
+        X = np.linspace(bounds[:, 0], bounds[:, 1])[:, None]
         D = self.predict_basis(X)
         for i in range(self.dim_basis):
             plt.plot(x, D[:, i])

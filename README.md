@@ -13,11 +13,18 @@ Good resource: https://github.com/gpschool/gprs15b
 - Induced point / Tensor training: https://arxiv.org/pdf/1710.07324.pdf
 - Deep Kernel Learning (Add RBF/Spectral mixture covariance instead of linear): https://arxiv.org/pdf/1511.02222.pdf
 
+- Dropout equivalence to GPs: https://arxiv.org/pdf/1506.02142.pdf (1)
+- Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles: https://arxiv.org/pdf/1612.01474v1.pdf (2)
+
 - Batch: http://zi-wang.com/pub/wang-aistats18.pdf
 - Marginalize mixture: https://ieeexplore-ieee-org.proxy.findit.dtu.dk/stamp/stamp.jsp?arnumber=5499041
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
 
 TODO:
+
+- Removing data: doesn't this lead to miscalibrated uncertainty estimates? => prediction wrong about something of which it should be certain. (inspired by (2))
+- Test Dropout? (Inspired by (1) and (2))
+- 
 
 - Find case in which it does not work (modified branin with drop in unexplored area)
 - Ensemble using max, average, median

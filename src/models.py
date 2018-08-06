@@ -47,8 +47,15 @@ class BOModel(BOBaseModel):
 
     def __init__(self, nn, regressor=None, num_nn=1, ensemble_aggregator=np.max, normalize_input=True, normalize_output=True):
         # NN
-        self.sessions = [tf.Session() for _ in range(num_nn)]
-        self.nn_model = nn
+        self.nn_models = [deepcopy(nn) for _ in range(num_nn)]
+
+        # reinit weights
+        for m in self.nn_models:
+            def weights_init(m):
+                if hasattr(m, 'reset_parameters'):
+                    m.reset_parameters()
+            m.model.apply(weights_init)
+
 
         self.X_mean = None
         self.X_std = None
@@ -78,11 +85,11 @@ class BOModel(BOBaseModel):
         else:
             self.transformed_Y = Y
 
-        for i, sess in enumerate(self.sessions):
+        for i, nn in enumerate(self.nn_models):
             if train_nn:
                 # NN
-                self.nn_model.fit(sess, self.transformed_X, self.transformed_Y)
-                transformed_D = self.nn_model.predict_basis(sess, self.transformed_X)
+                nn.fit(self.transformed_X, self.transformed_Y)
+                transformed_D = nn.predict_basis(self.transformed_X)
 
                 self.gps[i].fit(transformed_D, self.transformed_Y)
 
@@ -121,7 +128,7 @@ class BOModel(BOBaseModel):
 
         idxs = np.arange(self.num_nn)
         def _predict_basis(i):
-            return self.nn_model.predict_basis(self.sessions[i], X)
+            return self.nn_models[i].predict_basis(X)
         return np.vectorize(_predict_basis, signature='()->(m,n)')(idxs)
         
     def predict_from_basis(self, transformed_D, theta=None):

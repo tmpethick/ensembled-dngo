@@ -205,9 +205,3 @@ class BO(object):
 
         if do_plot:
             self.plot_prediction()
-
-        # TODO: Move session outside..
-        if hasattr(self.model, "sessions"):
-            for sess in self.model.sessions:
-                sess.close()
-            self.model.sessions = None
