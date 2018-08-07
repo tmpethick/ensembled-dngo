@@ -79,7 +79,7 @@ def test_dngo_10_10_10_pe(f, bounds, n_iter, do_plot=False):
     from .neural_network import TFModel
 
     input_dim = bounds.shape[0]
-    nn = TFModel(input_dim=input_dim, dim_basis=10, dim_h1=10, dim_h2=10, epochs=1000, batch_size=10)
+    nn = TFModel(input_dim=input_dim, dim_basis=10, dim_h1=10, dim_h2=10, epochs=1000, batch_size=100)
     reg = BayesianLinearRegression(num_mcmc=0)
     model = BOModel(nn, regressor=reg)
     # acq = EI(model, par=0.01)

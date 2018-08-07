@@ -150,7 +150,7 @@ class BO(object):
             
             # Plot acq
             plt.subplot(1, 2, 1)
-            plt.contourf(x0v,x1v, acq)
+            plt.contourf(x0v,x1v, acq, 24)
             plt.scatter(self.model.X[:,0], self.model.X[:,1])
 
             if x_new is not None:
@@ -158,7 +158,7 @@ class BO(object):
 
             # Plot f
             plt.subplot(1, 2, 2)
-            plt.contourf(x0v,x1v, y)
+            plt.contourf(x0v,x1v, y, 24)
             plt.scatter(self.model.X[:,0], self.model.X[:,1])
             
             if x_new is not None:
