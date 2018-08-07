@@ -38,6 +38,11 @@ class TorchRegressionModel(object):
         dataset = torch.utils.data.TensorDataset(torch.from_numpy(X).float(), torch.from_numpy(y).float())
         dataloader = torch.utils.data.DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
 
+        def weights_init(m):
+            if hasattr(m, 'reset_parameters'):
+                m.reset_parameters()
+        self.model.apply(weights_init)
+
         # Train the model
         for epoch in range(self.epochs):
             for i, (X, y) in enumerate(dataloader):

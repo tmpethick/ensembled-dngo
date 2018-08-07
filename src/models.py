@@ -222,11 +222,13 @@ class GPyBOModel(BOBaseModel):
             mean = zero_mean_unit_var_unnormalization(mean, self.y_mean, self.y_std)
             var = var * self.y_std ** 2
 
-        return mean, var
+        return np.stack([mean, var])
 
     def plot_prediction(self, X_line, Y_line, x_new=None):
         for theta in self.gp._current_thetas:
-            mean, var = self.predict(X_line, theta=theta)
+            summ = self.predict(X_line, theta=theta)
+            mean = summ[0]
+            var = summ[1]
             plt.fill_between(X_line.reshape(-1), (mean + np.sqrt(var)).reshape(-1), (mean - np.sqrt(var)).reshape(-1), alpha=.2)
             plt.plot(X_line, mean)
 

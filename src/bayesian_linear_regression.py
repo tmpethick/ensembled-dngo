@@ -131,8 +131,6 @@ class GPyRegression(object):
         self.fix_noise = fix_noise
 
     def fit(self, X, y):
-        dim_basis = X.shape[1]
-
         if self.gp is None:
             self.gp = GPy.models.GPRegression(X, y, self.kernel)
 
@@ -162,8 +160,8 @@ class GPyRegression(object):
         for i, theta in enumerate(self._current_thetas):
             self.gp[:] = theta
             mean, var = self.gp.predict(X)
-            predictions[i, 0, :] = mean[:, 0]
-            predictions[i, 1, :] = var[:, 0]
+            predictions[i, 0, :] = mean[:, 0] # always one dimensional -1 axis
+            predictions[i, 1, :] = var[:, 0]  # always one dimensional -1 axis
         return predictions
 
     def predict(self, X, theta=None):

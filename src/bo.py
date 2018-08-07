@@ -13,6 +13,12 @@ def vectorize(f):
         return np.apply_along_axis(f, -1, X)[..., None]
     return wrapper
 
+def constrain_points(x, bounds):
+    dim = x.shape[0]
+    minx = np.repeat(bounds[:, 0][None, :], dim, axis=0)
+    maxx = np.repeat(bounds[:, 1][None, :], dim, axis=0)
+    return np.clip(x, a_min=minx, a_max=maxx)
+
 
 def random_hypercube_samples(n_samples, bounds):
     """Random sample from d-dimensional hypercube (d = bounds.shape[0]).
@@ -24,14 +30,11 @@ def random_hypercube_samples(n_samples, bounds):
     a = np.random.uniform(0, 1, (dims, n_samples))
     bounds_repeated = np.repeat(bounds[:, :, None], n_samples, axis=2)
     samples = a * np.abs(bounds_repeated[:,1] - bounds_repeated[:,0]) + bounds_repeated[:,0]
-    return np.swapaxes(samples, 0, 1)
-
-
-def constrain_point(x, bounds):
-    minx = bounds[:, 0]
-    maxx = bounds[:, 1]
-    x = np.maximum(x, minx)
-    return np.minimum(x, maxx)
+    samples = np.swapaxes(samples, 0, 1)
+    
+    # This handles the case where the sample is slightly above or below the bounds
+    # due to floating point precision.
+    return constrain_points(samples, bounds)
 
 
 class BO(object):
@@ -58,11 +61,7 @@ class BO(object):
 
         # TODO: turn into numpy operations to parallelize
         for x0 in random_hypercube_samples(n_starts, self.bounds):
-            # This handles the case where the sample is slightly above or below the bounds
-            # due to floating point precision.
-            x0 = constrain_point(x0, self.bounds)
-            
-            res = minimize(min_obj, x0=x0, bounds=self.bounds, method='L-BFGS-B')        
+            res = minimize(min_obj, x0=x0, bounds=self.bounds, method='L-BFGS-B') 
             if res.fun < min_y:
                 min_y = res.fun
                 min_x = res.x 

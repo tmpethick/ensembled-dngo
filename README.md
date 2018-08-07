@@ -15,6 +15,7 @@ Good resource: https://github.com/gpschool/gprs15b
 
 - Dropout equivalence to GPs: https://arxiv.org/pdf/1506.02142.pdf (1)
 - Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles: https://arxiv.org/pdf/1612.01474v1.pdf (2)
+  Implementation: https://github.com/vvanirudh/deep-ensembles-uncertainty
 
 - Batch: http://zi-wang.com/pub/wang-aistats18.pdf
 - Marginalize mixture: https://ieeexplore-ieee-org.proxy.findit.dtu.dk/stamp/stamp.jsp?arnumber=5499041
@@ -22,9 +23,14 @@ Good resource: https://github.com/gpschool/gprs15b
 
 TODO:
 
+- Improve DNGO to compare with GP
+- Remove batch completely? Seems to make it instable.
+
 - Removing data: doesn't this lead to miscalibrated uncertainty estimates? => prediction wrong about something of which it should be certain. (inspired by (2))
 - Test Dropout? (Inspired by (1) and (2))
-- 
+- Need to train for longer to overfit/be different. Is this good/desireable?
+- Better for e.g. noisy data?
+- Why is the speed dropping dramatically?
 
 - Find case in which it does not work (modified branin with drop in unexplored area)
 - Ensemble using max, average, median
