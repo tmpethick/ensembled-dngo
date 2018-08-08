@@ -12,6 +12,8 @@ Good resource: https://github.com/gpschool/gprs15b
 - KISS-GP with LOVE: https://arxiv.org/pdf/1803.06058.pdf
 - Induced point / Tensor training: https://arxiv.org/pdf/1710.07324.pdf
 - Deep Kernel Learning (Add RBF/Spectral mixture covariance instead of linear): https://arxiv.org/pdf/1511.02222.pdf
+- Ensemble deep kernel learning: https://www-sciencedirect-com.proxy.findit.dtu.dk/science/article/pii/S0169743917307578
+- Ensemble kernel learning with NN (not GP!): https://arxiv.org/pdf/1711.05374.pdf
 
 - Dropout equivalence to GPs: https://arxiv.org/pdf/1506.02142.pdf (1)
 - Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles: https://arxiv.org/pdf/1612.01474v1.pdf (2)
@@ -20,6 +22,39 @@ Good resource: https://github.com/gpschool/gprs15b
 - Batch: http://zi-wang.com/pub/wang-aistats18.pdf
 - Marginalize mixture: https://ieeexplore-ieee-org.proxy.findit.dtu.dk/stamp/stamp.jsp?arnumber=5499041
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
+
+How it was done:
+- Finding good weight decay:
+  - use gpy points
+  - run one step of DNGO BO
+  - Plot the mean and acq restricted to the exploited area
+
+Problems:
+
+Problem 1: don't use uncertainty estimate.. (mean is almost identical to acq)
+Problem 2: Unprecise about local behaviour. When exploiting it's still done in a relatively random fashion locally.
+Problem 3: Not exploring enough.. (only locally)
+Problem 4: Uncertainty too big (explores too much)
+
+- Should be more certain in areas with many points.
+- mcmc * ensemble: should we some how average the ensemble before mcmc to get mcmc + ensemble?
+- test performance on massive sample?
+
+Tests to run:
+- Prior (logGaussian(0, 1) for alpha), fixed zero noise)
+- Domains: discrete domain, Non-stationarity
+- run as script
+  - log progress
+  - save points
+  - params
+  - plots (, immediate regret)
+
+Assumption: ensemble will only be useful for more complex problems => test on DNGO on smaller.
+- CamelBack: 50-50-50-wd4-lr0.1
+- CamelBack: gp
+
+Questions:
+- How does data outweight prior with more data
 
 TODO:
 

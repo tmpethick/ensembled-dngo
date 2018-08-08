@@ -7,7 +7,7 @@ from src.bayesian_linear_regression import BayesianLinearRegression
 from src.bo import BO
 from src.models import GPyBOModel, BOModel
 from src.acquisition_functions import UCB
-from src.neural_network import NNRegressionModel
+from src.neural_network import TorchRegressionModel
 from src.tests import prepare_benchmark, acc_ir
 
 
@@ -34,7 +34,7 @@ def test_bo_gp():
         return np.sinc(x * 10 - 5).sum(axis=1)[:, None]
 
     kernel = GPy.kern.RBF(1)
-    kernel.variance.set_prior(GPy.priors.LogGaussian(0.005, 1)) # log_prior()
+    kernel.variance.set_prior(GPy.priors.LogGaussian(0, 1))
     model = GPyBOModel(kernel=kernel, num_mcmc=0, fix_noise=True)
 
     acq = UCB(model)
@@ -54,7 +54,7 @@ def test_bo_gp_2d():
     input_dim = bounds.shape[0]
 
     kernel = GPy.kern.RBF(input_dim, ARD=True)
-    kernel.variance.set_prior(GPy.priors.LogGaussian(0.005, 0.5))  # log_prior()
+    kernel.variance.set_prior(GPy.priors.LogGaussian(0, 1))
     model = GPyBOModel(kernel=kernel, num_mcmc=0, fix_noise=True)
 
     acq = UCB(model)
@@ -66,7 +66,7 @@ def test_bo_dngo():
     def f(x):
         return np.sinc(x * 10 - 5).sum(axis=1)[:, None]
 
-    nn = NNRegressionModel(input_dim=1, dim_basis=50, epochs=100, batch_size=10)
+    nn = TorchRegressionModel(input_dim=1, dim_basis=50, epochs=100, batch_size=10)
     reg = BayesianLinearRegression(num_mcmc=0, burn_in=1000, mcmc_steps=1000)
     model = BOModel(nn, regressor=reg)
 

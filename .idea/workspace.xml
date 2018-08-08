@@ -3,9 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="73aae37e-770c-49c7-86b9-dfc0d57df91e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/BO-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/BO-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.pytest_cache/v/cache/lastfailed" beforeDir="false" afterPath="$PROJECT_DIR$/.pytest_cache/v/cache/lastfailed" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.pytest_cache/v/cache/nodeids" beforeDir="false" afterPath="$PROJECT_DIR$/.pytest_cache/v/cache/nodeids" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Untitled.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Untitled.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bo.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/bo.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bo.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/neural_network.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/neural_network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -45,7 +50,7 @@
           <entry key="ipynb" value="4" />
           <entry key="md" value="2" />
           <entry key="pstat" value="2" />
-          <entry key="py" value="25" />
+          <entry key="py" value="26" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
@@ -53,7 +58,7 @@
           <entry key="IPNB" value="4" />
           <entry key="Markdown" value="2" />
           <entry key="Profiler Session" value="2" />
-          <entry key="Python" value="25" />
+          <entry key="Python" value="26" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -74,11 +79,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
-              <caret line="97" column="26" selection-start-line="97" selection-start-column="26" selection-end-line="97" selection-end-column="26" />
+            <state relative-caret-position="81">
+              <caret line="9" selection-start-line="9" selection-end-line="9" />
+              <folding>
+                <element signature="e#0#31#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="179">
+              <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
               </folding>
@@ -89,8 +106,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="38" selection-start-line="38" selection-end-line="38" />
+            <state relative-caret-position="-112">
+              <caret line="1" selection-start-line="1" selection-end-line="1" />
             </state>
           </provider>
         </entry>
@@ -105,22 +122,13 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/anaconda3/envs/eth/lib/python3.6/site-packages/numpy/lib/function_base.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="2307" selection-start-line="2307" selection-end-line="2307" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/test_bo.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-411">
               <caret line="31" selection-start-line="31" selection-end-line="31" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-                <marker date="1533222484000" expanded="true" signature="435:1197" ph="..." />
+                <marker date="1533632113161" expanded="true" signature="435:1197" ph="..." />
               </folding>
             </state>
           </provider>
@@ -138,8 +146,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1357">
-              <caret line="219" column="23" selection-start-line="219" selection-start-column="8" selection-end-line="219" selection-end-column="23" />
+            <state relative-caret-position="1462">
+              <caret line="226" column="23" selection-start-line="226" selection-start-column="23" selection-end-line="226" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -347,7 +355,7 @@
     <frame x="16" y="55" width="1626" height="942" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23674242" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23674242" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
@@ -355,7 +363,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.3282353" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.39882353" />
+      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.39882353" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -564,7 +572,7 @@
           <caret line="31" selection-start-line="31" selection-end-line="31" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
-            <marker date="1533222484000" expanded="true" signature="435:1197" ph="..." />
+            <marker date="1533632113161" expanded="true" signature="435:1197" ph="..." />
           </folding>
         </state>
       </provider>
@@ -588,15 +596,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1357">
-          <caret line="219" column="23" selection-start-line="219" selection-start-column="8" selection-end-line="219" selection-end-column="23" />
+        <state relative-caret-position="1462">
+          <caret line="226" column="23" selection-start-line="226" selection-start-column="23" selection-end-line="226" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="38" selection-start-line="38" selection-end-line="38" />
+        <state relative-caret-position="-112">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>
@@ -609,8 +617,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/bo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="97" column="26" selection-start-line="97" selection-start-column="26" selection-end-line="97" selection-end-column="26" />
+        <state relative-caret-position="81">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
           </folding>

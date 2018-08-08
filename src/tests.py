@@ -9,7 +9,7 @@ import pathos.multiprocessing as mp
 # import torch.multiprocessing as mp
 from hpolib.benchmarks.synthetic_functions import Branin
 
-from .bo import random_hypercube_samples, vectorize
+from src.utils import random_hypercube_samples, vectorize
 
 
 def immidiate_regret(y, y_opt):
@@ -73,7 +73,7 @@ def test_gp(f, bounds, n_iter, do_plot=False):
     return bo
 
 
-def dngo_test_factory(dim_basis=10, dim_h1=10, dim_h2=10, num_mcmc=0, num_nn=1, batch_size=1000):
+def dngo_test_factory(dim_basis=10, dim_h1=10, dim_h2=10, num_mcmc=0, num_nn=1, batch_size=1000, epochs=1000, lr=0.01, weight_decay=0):
     def test_dngo(f, bounds, n_iter, do_plot=False):
         from .bo import BO
         from .acquisition_functions import EI, UCB
@@ -82,10 +82,11 @@ def dngo_test_factory(dim_basis=10, dim_h1=10, dim_h2=10, num_mcmc=0, num_nn=1, 
         from .neural_network import TorchRegressionModel
 
         input_dim = bounds.shape[0]
-        nn = TorchRegressionModel(input_dim=input_dim, dim_basis=dim_basis, dim_h1=dim_h1, dim_h2=dim_h2, epochs=1000, batch_size=batch_size)
-        reg = BayesianLinearRegression(num_mcmc=num_mcmc)
-        # kernel = GPy.kern.Linear(input_dim)
-        # reg = GPyRegression(kernel=kernel, num_mcmc=0)
+        nn = TorchRegressionModel(input_dim=input_dim, dim_basis=dim_basis, dim_h1=dim_h1, dim_h2=dim_h2, epochs=epochs, batch_size=batch_size, lr=lr, weight_decay=weight_decay)
+        # reg = BayesianLinearRegression(num_mcmc=num_mcmc)
+        kernel = GPy.kern.Linear(dim_basis)
+        kernel.variances.set_prior(GPy.priors.LogGaussian(0, 1))
+        reg = GPyRegression(kernel=kernel, num_mcmc=num_mcmc, fix_noise=True)
 
         model = BOModel(nn, regressor=reg, num_nn=num_nn)
         # acq = EI(model, par=0.01)
@@ -196,6 +197,8 @@ def test_method(bo_method, n_iter=200, Benchmark=None, do_plot=False):
 
     sns.set_style("darkgrid")
     plot_ir([ir])
+
+    return bo
 
 def test_multiple(bo_methods, n_iter=200, Benchmark=None):
     """

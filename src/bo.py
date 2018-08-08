@@ -1,48 +1,21 @@
-from functools import wraps
-
+import warnings
+import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
+from src.utils import random_hypercube_samples
 from .priors import *
 from .acquisition_functions import UCB
-
-
-def vectorize(f):
-    @wraps(f)
-    def wrapper(X):
-        return np.apply_along_axis(f, -1, X)[..., None]
-    return wrapper
-
-def constrain_points(x, bounds):
-    dim = x.shape[0]
-    minx = np.repeat(bounds[:, 0][None, :], dim, axis=0)
-    maxx = np.repeat(bounds[:, 1][None, :], dim, axis=0)
-    return np.clip(x, a_min=minx, a_max=maxx)
-
-
-def random_hypercube_samples(n_samples, bounds):
-    """Random sample from d-dimensional hypercube (d = bounds.shape[0]).
-
-    Returns: (n_samples, dim)
-    """
-
-    dims = bounds.shape[0]
-    a = np.random.uniform(0, 1, (dims, n_samples))
-    bounds_repeated = np.repeat(bounds[:, :, None], n_samples, axis=2)
-    samples = a * np.abs(bounds_repeated[:,1] - bounds_repeated[:,0]) + bounds_repeated[:,0]
-    samples = np.swapaxes(samples, 0, 1)
-    
-    # This handles the case where the sample is slightly above or below the bounds
-    # due to floating point precision.
-    return constrain_points(samples, bounds)
+from .tests import acc_ir, plot_ir
 
 
 class BO(object):
-    def __init__(self, obj_func, model, acquisition_function=None, n_iter = 10, bounds=np.array([[0,1]])):
+    def __init__(self, obj_func, model, acquisition_function=None, n_iter = 10, bounds=np.array([[0,1]]), f_opt=None):
         self.n_iter = n_iter
         self.bounds = bounds
         self.obj_func = obj_func
         self.model = model
+        self.f_opt = f_opt
 
         if acquisition_function is None:
             self.acquisition_function = UCB(self.model)
@@ -140,11 +113,13 @@ class BO(object):
             ax.plot_surface(x0v, x1v, y)
             return fig
 
-    def plot_prediction(self, x_new=None):
+    def plot_prediction(self, x_new=None, bounds=None, save_dist=None):
+        if bounds is None:  
+            bounds = self.bounds
         dims = self.bounds.shape[0]
         if dims == 2:
-            x0 = np.linspace(self.bounds[0,0], self.bounds[0,1], 100)
-            x1 = np.linspace(self.bounds[1,0], self.bounds[1,1], 100)
+            x0 = np.linspace(bounds[0,0], bounds[0,1], 100)
+            x1 = np.linspace(bounds[1,0], bounds[1,1], 100)
             x0v, x1v = np.meshgrid(x0, x1)
             xinput = np.swapaxes(np.array([x0v, x1v]), 0, -1) # set dim axis to last
             xinput = np.swapaxes(xinput, 0, 1)                # swap x0 and x1 axis
@@ -152,38 +127,63 @@ class BO(object):
             flattenxinput = xinput.reshape(-1, dims)
             acq = self.model.acq(flattenxinput, self.acquisition_function.calc)
             acq = np.reshape(acq, origin_shape)
+
+            # (ensemble, hyperparams, summarystats, samples)
+            summ = self.model.predict(flattenxinput)
+            if len(summ.shape) == 4:
+                mean = summ[:, :, 0, :]
+                mean = np.average(mean, axis=(0, 1))
+            else:
+                mean = summ[0]
+            mean = np.reshape(mean, origin_shape)
             
             y = self.obj_func(xinput)[..., 0]
             
+            X = self.model.X
+            idx = (bounds[0,0] < X[:,0]) & (X[:,0] < bounds[0,1]) & (bounds[1,0] < X[:,1]) & (X[:,1] < bounds[1,1])
+            X0 = X[idx,0]
+            X1 = X[idx,1]
+
             # Plot acq
-            plt.subplot(1, 2, 1)
-            plt.contourf(x0v,x1v, acq)
-            plt.scatter(self.model.X[:,0], self.model.X[:,1])
+            plt.subplot(1, 3, 1)
+            plt.contourf(x0v,x1v, acq, 24)
+            plt.scatter(X0, X1)
 
             if x_new is not None:
                 plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
 
             # Plot f
-            plt.subplot(1, 2, 2)
-            plt.contourf(x0v,x1v, y)
-            plt.scatter(self.model.X[:,0], self.model.X[:,1])
+            plt.subplot(1, 3, 2)
+            plt.contourf(x0v,x1v, y, 24)
+            plt.scatter(X0, X1)
             
             if x_new is not None:
                 plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
+
+            # Plot mean
+            plt.subplot(1, 3, 3)
+            plt.contourf(x0v,x1v, mean, 24)
+            plt.scatter(X0, X1)
             
-            plt.show()
+            if x_new is not None:
+                plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
 
         elif dims == 1:
-            X_line = np.linspace(self.bounds[:, 0], self.bounds[:, 1], 100)[:, None]
+            X_line = np.linspace(bounds[:, 0], bounds[:, 1], 100)[:, None]
             Y_line = self.obj_func(X_line)
 
             plt.subplot(1, 2, 1)
             self.model.plot_prediction(X_line, Y_line, x_new=x_new)
             plt.subplot(1, 2, 2)
             self.model.plot_acq(X_line, self.acquisition_function.calc)
+
+        if save_dist is not None:
+            plt.savefig(save_dist)
+            plt.close()
+        else:
             plt.show()
 
-    def run(self, n_kickstart=2, do_plot=True):
+    def run(self, n_kickstart=2, do_plot=True, periodic_interval=20, periodic_callback=None):
         # Data
         X = random_hypercube_samples(n_kickstart, self.bounds)
         Y = self.obj_func(X)
@@ -197,8 +197,21 @@ class BO(object):
             X_new = np.array([x_new])
             Y_new = self.obj_func(X_new)
 
+            if periodic_callback is not None \
+                and i is not 0 \
+                and i % periodic_interval == 0:
+                    periodic_callback(self, i, x_new)
+
             if do_plot:
                 self.plot_prediction(x_new=x_new)
+
+                if i is not 0 and i % 20 == 0:
+                    if self.f_opt is not None:
+                        ir = acc_ir(self.model.Y, self.f_opt)
+                        plot_ir([ir])
+                        plt.show()
+                    else: 
+                        warnings.warn("`f_opt` is not provided, so plotting regret is impossible.")
 
             self.model.add_observations(X_new, Y_new)
 
