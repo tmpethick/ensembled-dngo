@@ -1,0 +1,2 @@
+run.py --model gp --num_mcmc 4 -f sinone
+python run.py --model gp --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --num_mcmc 4 --obj_func sinone --acq UCB --n_iter 100

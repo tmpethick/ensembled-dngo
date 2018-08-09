@@ -43,21 +43,23 @@ Problem 4: Uncertainty too big (explores too much)
 Tests to run:
 - Prior (logGaussian(0, 1) for alpha), fixed zero noise)
 - Domains: discrete domain, Non-stationarity
-- run as script
-  - log progress
-  - save points
-  - params
-  - plots (, immediate regret)
 
-Assumption: ensemble will only be useful for more complex problems => test on DNGO on smaller.
-- CamelBack: 50-50-50-wd4-lr0.1
-- CamelBack: gp
+Benchmarks:
 
-Questions:
+             DNGO | GP      | Note
+Hartmann6 | 10^-2 | 10^-1.5 | DNGO outperform GP
+sinOne    | 10^-6 | 10^-8   | 
+Hartmann3 | 10^-4 | 10^-6   | 
+Branin    | 10^-3 | 10^-5   | 
+
+Theory Questions:
 - How does data outweight prior with more data
+- GP assumption
+
 
 TODO:
-
+- Fix folder name
+- Fix gpy mcmc
 - Improve DNGO to compare with GP
 - Remove batch completely? Seems to make it instable.
 

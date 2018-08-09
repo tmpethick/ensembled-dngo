@@ -1,0 +1,2 @@
+uuid,acq,batch_size,date,dim_basis,dim_h1,dim_h2,epochs,immediate_regret,incumbent,lr,model,n_iter,name,num_mcmc,num_nn,num_steps,obj_func,weight_decay
+bea975f2,UCB,1000,2018-08-09 12:13:47.363750,50,50,50,1000,[ 0.76676667],[ 2.55560134],0.01,dngo,200,bea975f2--f-hartmann6-k-200-nn-5,0,5,20,hartmann6,0

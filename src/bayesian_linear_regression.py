@@ -130,6 +130,8 @@ class GPyRegression(object):
         self.noise_prior = noise_prior
         self.fix_noise = fix_noise
 
+        self.has_mcmc_warmup = False
+
     def fit(self, X, y):
         if self.gp is None:
             self.gp = GPy.models.GPRegression(X, y, self.kernel)
@@ -145,10 +147,17 @@ class GPyRegression(object):
         # Optimize
         if self.do_optimize:
             if self.num_mcmc > 0:
-                # Most likely hyperparams given data
-                hmc = GPy.inference.mcmc.HMC(self.gp)
-                hmc.sample(num_samples=1000)  # Burn-in
-                self._current_thetas = hmc.sample(num_samples=self.num_mcmc, hmc_iters=50)
+                if not self.has_mcmc_warmup:
+                    # Most likely hyperparams given data
+                    self.hmc = GPy.inference.mcmc.HMC(self.gp, stepsize=1e-2)
+                    self.hmc.sample(num_samples=2000)  # Burn-in
+                    self.has_mcmc_warmup = True
+
+                self._current_thetas = self.hmc.sample(num_samples=self.num_mcmc, hmc_iters=50)
+
+                # Hack to add back Gaussian noise when fixed..
+                if self.fix_noise:
+                    self._current_thetas = np.concatenate([self._current_thetas, np.zeros([self._current_thetas.shape[0], 1])], axis=1)
             else:
                 self.gp.randomize()
                 self.gp.optimize()
