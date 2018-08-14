@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 import numpy as np
-import tensorflow as tf
 import matplotlib.pyplot as plt
 
 from .bayesian_linear_regression import BayesianLinearRegression, GPyRegression

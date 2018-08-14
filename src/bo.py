@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
-from src.utils import random_hypercube_samples
+from src.utils import random_hypercube_samples, constrain_points
 from .priors import *
 from .acquisition_functions import UCB
 from .tests import acc_ir, plot_ir
@@ -22,7 +22,7 @@ class BO(object):
         else:
             self.acquisition_function = acquisition_function
 
-    def max_acq(self, n_starts=100):        
+    def max_acq(self, n_starts=200):        
         min_y = float("inf")
         min_x = None
 
@@ -70,7 +70,8 @@ class BO(object):
         acq = self.model.acq(flattenxinput, self.acquisition_function.calc)
         acq = np.reshape(acq, origin_shape)
 
-        y = self.obj_func(xinput)[..., 0]
+        y = self.obj_func(flattenxinput)[..., 0]
+        y = np.reshape(y, origin_shape)
 
         if use_plotly:
             import plotly.tools as tls
@@ -137,10 +138,11 @@ class BO(object):
                 mean = summ[0]
             mean = np.reshape(mean, origin_shape)
             
-            y = self.obj_func(xinput)[..., 0]
-            
+            y = self.obj_func(flattenxinput)[..., 0]
+            y = np.reshape(y, origin_shape)
+
             X = self.model.X
-            idx = (bounds[0,0] < X[:,0]) & (X[:,0] < bounds[0,1]) & (bounds[1,0] < X[:,1]) & (X[:,1] < bounds[1,1])
+            idx = (bounds[0,0] <= X[:,0]) & (X[:,0] <= bounds[0,1]) & (bounds[1,0] <= X[:,1]) & (X[:,1] <= bounds[1,1])
             X0 = X[idx,0]
             X1 = X[idx,1]
 
@@ -176,6 +178,10 @@ class BO(object):
             self.model.plot_prediction(X_line, Y_line, x_new=x_new)
             plt.subplot(1, 2, 2)
             self.model.plot_acq(X_line, self.acquisition_function.calc)
+        
+        else:
+            # Only plot or save if a figure has been constructed.
+            return None
 
         if save_dist is not None:
             plt.savefig(save_dist)
@@ -195,6 +201,7 @@ class BO(object):
             # new datapoint from acq
             x_new = self.max_acq()
             X_new = np.array([x_new])
+            X_new = constrain_points(X_new, self.bounds)
             Y_new = self.obj_func(X_new)
 
             if periodic_callback is not None \

@@ -1,2 +1,0 @@
-run.py -f hartmann6 -k 200 --num_nn 5
-python run.py --model dngo --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 5 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --num_mcmc 0 --obj_func hartmann6 --acq UCB --n_iter 200 --uuid bea975f2 --date 2018-08-09 12:13:47.363750 --name bea975f2--f-hartmann6-k-200-nn-5

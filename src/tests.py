@@ -230,3 +230,30 @@ def test_multiple(bo_methods, n_iter=200, Benchmark=None):
     plt.show()
 
     return bo_models, bo_names, ir
+
+
+def embed(f, A, f_dim=2):
+    """
+    Arguments:
+        f {function} -- function to embed
+        A {np.array} -- The linear scaling for each additional dimension
+    
+    Keyword Arguments:
+        f_dim {int} -- original (default: {2})
+    
+    Returns:
+        {function} -- embedded function with dim `f_dim + A.shape[0]`
+    """
+
+
+    @wraps(f)
+    def wrapper(x):
+        """
+        Arguments:
+            x {np.array} -- (n,d) where n is #samples and d is #dimensions.
+        
+        Returns:
+            [type] -- [description]
+        """
+        return f(x[..., :f_dim]) + A * x[..., f_dim:]
+    return wrapper

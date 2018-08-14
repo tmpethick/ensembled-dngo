@@ -4,6 +4,7 @@ Good resource: https://github.com/gpschool/gprs15b
 
 ## The Article Archives
 
+- Recent tutorial on BO (July 2018): https://arxiv.org/pdf/1807.02811.pdf
 - Non-stationary: [3], [22], [54], [70], [118], [121], [126], [132], [141]
 - Non-differentiable: https://arxiv.org/pdf/1402.5876.pdf
 - DBN learn covariance (unsupervised training): https://papers.nips.cc/paper/3211-using-deep-belief-nets-to-learn-covariance-kernels-for-gaussian-processes.pdf
@@ -23,6 +24,7 @@ Good resource: https://github.com/gpschool/gprs15b
 - Marginalize mixture: https://ieeexplore-ieee-org.proxy.findit.dtu.dk/stamp/stamp.jsp?arnumber=5499041
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
 
+
 How it was done:
 - Finding good weight decay:
   - use gpy points
@@ -40,9 +42,12 @@ Problem 4: Uncertainty too big (explores too much)
 - mcmc * ensemble: should we some how average the ensemble before mcmc to get mcmc + ensemble?
 - test performance on massive sample?
 
-Tests to run:
-- Prior (logGaussian(0, 1) for alpha), fixed zero noise)
-- Domains: discrete domain, Non-stationarity
+TODO:
+- Removing data: doesn't this lead to miscalibrated uncertainty estimates? => prediction wrong about something of which it should be certain. (inspired by (2))
+- Test Dropout? (Inspired by (1) and (2))
+- Need to train for longer to overfit/be different. Is this good/desireable?
+- Better for e.g. noisy data?
+- Why is the speed dropping dramatically?
 
 Benchmarks:
 
@@ -50,35 +55,7 @@ Benchmarks:
 Hartmann6 | 10^-2 | 10^-1.5 | DNGO outperform GP
 sinOne    | 10^-6 | 10^-8   | 
 Hartmann3 | 10^-4 | 10^-6   | 
-Branin    | 10^-3 | 10^-5   | 
-
-Theory Questions:
-- How does data outweight prior with more data
-- GP assumption
-
-
-TODO:
-- Fix folder name
-- Fix gpy mcmc
-- Improve DNGO to compare with GP
-- Remove batch completely? Seems to make it instable.
-
-- Removing data: doesn't this lead to miscalibrated uncertainty estimates? => prediction wrong about something of which it should be certain. (inspired by (2))
-- Test Dropout? (Inspired by (1) and (2))
-- Need to train for longer to overfit/be different. Is this good/desireable?
-- Better for e.g. noisy data?
-- Why is the speed dropping dramatically?
-
-- Find case in which it does not work (modified branin with drop in unexplored area)
-- Ensemble using max, average, median
-- Felix benchmark functions
-
-
-- Loop training networks (basis functions) (consider paralizability)
-- GP on each
-- BOModel specifies in `acq` how to aggregate 
-  (calc for all, then call `ensemble_aggregator`)
-- 
+Branin    | 10^-3 | 10^-7   | 
 
 Hyperparameters:
 - MAP / Marginalize hyperparameters
@@ -87,10 +64,46 @@ Hyperparameters:
   - How it works for big n when bath size become relatively small.
 - How big an ensemble?
 
-Testing:
-- Test wider input domain (np.sinc(x * 10 - 5).sum(axis=1)[:, None] * 100000 on [0,10] interval) (i.e. spike)
-- noise
-- Play with relu and l2
+Okay, a small recap of my embedded experiments. I tried it on an embedded sinc and GP clearly have problems (see attachments). However, with Automatic Relevance Detection it obviously quickly discard the irrelevant dimension.
+NN is almost identical to GP with ARD after 20 iterations (see attachment).
+
+My concern is that even though this experiment shows the usefulness of NN *it does not provide a failure case for NN that would justify an ensemble*.
+
+But as the attachment shows it did seem like the NN could get stuck if there were multiple local optima. It was indeed the case for embedded sinOne. An ensemble might help it escape more quickly. However, don't we at most save a factor k steps where k is the number of NN in the ensemble? Assuming the BO is stuck (thus resampling approximately the incumbent point) the neural networks over the next k steps are trained on almost the same data as an ensemble of k networks in one step.
+Each step takes linear time to train so k*n steps takes O((k*n)^2) time. Using ensemble of k this becomes O(k * n^2) so we save a factor k. Is this really big enough to bother?
+
+I'm considering trying other methods to improve the uncertainty estimates. One alternative is training the nn and gp jointly like Wilson (Deep Kernel Learning). I haven't seen it done for BO, but this work might overlap too much with their research grant/work?
+
+Best
+Thomas
+
+PS: I'll do some more thorough experimentation now that Euler is back up (ensemble size, ensemble aggregator, embedding size) depending on your response.. 
+
+- NN could maybe get stuck in local maximum. Is it more probable than in 1D though?
+- propose:
+  - Rotate embedded f? (f(x + x')) (GP is bad at rotation)
+  - still deals with GP weaknesses
+
+- Problems:
+  - DNGO exploring corners
+
+
+TODO:
+- Setup EULER (2 days) √
+- Run all HPOLib √
+- Test
+  - Many local max
+  - Hidden max
+  - Learn embedding (=> possibly too little exploration?)
+  - MNIST pytorch implementation (2 days)
+    - Round after every BFGS
+  - (plot 1D and 2D embeddings)
+  - (Make BFGS depends on dimension)
+
+- Include in FEBO (3 days)
+- RL for hyperparameter opt how?
+
+- Write (5 days)
 
 ## Linear in O(n)
 
@@ -151,20 +164,29 @@ python spearmint_plots.py .
 
 ## Env
 
+
 Note: incomplete
 
 ```
-conda create -n <name> python=3.6 scipy jupyterlab matplotlib
-conda install -c conda-forge ipympl
-conda install nodejs
-jupyter labextension install @jupyter-widgets/jupyterlab-manager
-
+conda create -n eth python=3.6
+source $HOME/miniconda/bin/activate
+source activate eth
+conda install -y pytorch-cpu torchvision-cpu -c pytorch
+conda install -y -c conda-forge blas seaborn scipy matplotlib pandas gpy pathos emcee
 git clone https://github.com/automl/HPOlib2.git
 cd HPOlib2
 for i in `cat requirements.txt`; do pip install $i; done
-for i in `cat optional_requirements.txt`; do pip install $i; done
+for i in `cat optional-requirements.txt`; do pip install $i; done
 python setup.py install
 cd ..
+```
+
+Notebook requirements:
+
+```
+conda install -c conda-forge ipympl
+conda install jupyterlab nodejs
+jupyter labextension install @jupyter-widgets/jupyterlab-manager
 ```
 
 Plotly requirement in jupyterlab:
@@ -177,4 +199,50 @@ jupyter labextension install @jupyterlab/plotly-extension
 
 ```
 source activate <name>
+```
+
+
+## Euler
+
+Euler setup see: https://www.tomstesco.com/euler-hpc-cluster/
+
+e.g.
+
+```
+make ARGS="--model gp --n_iter 2" run
+```
+
+To pull files and merge csv database:
+
+```
+make pull
+```
+
+## Currently run experiments
+
+```
+make ARGS="--model gp --n_iter 200" run
+make ARGS="--model gp --n_iter 200 -f branin" run
+make ARGS="--model gp --n_iter 200 -f hartmann3" run
+make ARGS="--model gp --n_iter 200 -f hartmann6" run
+make ARGS="--model gp --n_iter 200 -f camelback" run
+make ARGS="--model gp --n_iter 200 -f forrester" run
+make ARGS="--model gp --n_iter 200 -f bohachevsky" run
+make ARGS="--model gp --n_iter 200 -f goldsteinprice" run
+make ARGS="--model gp --n_iter 200 -f levy" run
+make ARGS="--model gp --n_iter 200 -f rosenbrock" run
+make ARGS="--model gp --n_iter 200 -f sinone" run
+make ARGS="--model gp --n_iter 200 -f sintwo" run
+
+make ARGS="--model dngo --n_iter 200 -f branin" run
+make ARGS="--model dngo --n_iter 200 -f hartmann3" run
+make ARGS="--model dngo --n_iter 200 -f hartmann6" run
+make ARGS="--model dngo --n_iter 200 -f camelback" run
+make ARGS="--model dngo --n_iter 200 -f forrester" run
+make ARGS="--model dngo --n_iter 200 -f bohachevsky" run
+make ARGS="--model dngo --n_iter 200 -f goldsteinprice" run
+make ARGS="--model dngo --n_iter 200 -f levy" run
+make ARGS="--model dngo --n_iter 200 -f rosenbrock" run
+make ARGS="--model dngo --n_iter 200 -f sinone" run
+make ARGS="--model dngo --n_iter 200 -f sintwo" run
 ```

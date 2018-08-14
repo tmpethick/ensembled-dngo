@@ -1,2 +1,0 @@
-run.py --model gp --n_iter 200
-python run.py --model gp --dim_basis 10 --dim_h1 10 --dim_h2 10 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --num_mcmc 0 --obj_func branin --acq UCB --n_iter 200
