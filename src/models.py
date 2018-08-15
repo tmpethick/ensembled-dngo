@@ -12,10 +12,11 @@ class BOBaseModel(object):
         i = np.argmax(self.Y)
         return self.X[i], self.Y[i]
 
-    def init(self, X, Y, **kwargs):
+    def init(self, X, Y, train=True, **kwargs):
         self.X = X
         self.Y = Y
-        self.fit(self.X, self.Y, **kwargs)
+        if train:
+            self.fit(self.X, self.Y, **kwargs)
 
     def add_observations(self, X_new, Y_new, **kwargs):
         # Update data

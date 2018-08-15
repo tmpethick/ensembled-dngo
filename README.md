@@ -87,23 +87,47 @@ PS: I'll do some more thorough experimentation now that Euler is back up (ensemb
 - Problems:
   - DNGO exploring corners
 
+Now that I have autonomized my euler setup, I did a more systematic testing of 4 methods: GP, NN, 5 NN with max aggregation, 5 NN with median aggregation.
+
+If we only compare NN methods, ensemble is better for branin, sintwo, sinone and forrester with median being the best in all cases (except for forrester).
+For sinone and forrester the NN model was even stuck. 
+The methods are similar for camelback, goldsteinprice, bohachevsky, hartmann6, levy, hartmann3, but ensemble methods converges quicker for levy and hartmann3.
+
+Considering the (less encouraging) results I got on the previous run, I think the random initialisation affects the outcome a lot. I will run the experiments several time now to get a variance on the regret..
+
+
 
 TODO:
-- Setup EULER (2 days) √
+- Setup EULER √
 - Run all HPOLib √
-- Test
+- Run on embedded
+- Hyperparameter optimization of Logistic regression for MNIST (make it compatible with FEBO) (2 days)
+  - Round after every BFGS
+- Explore results (groupby obj_func, load observations and plot regret)
+- Include in FEBO (3 days)
+- Write (5 days)
+
+Extra:
+- plot 1D and 2D embeddings
+- (Make BFGS depend on dimension)
+- Construct examples
   - Many local max
   - Hidden max
-  - Learn embedding (=> possibly too little exploration?)
-  - MNIST pytorch implementation (2 days)
-    - Round after every BFGS
-  - (plot 1D and 2D embeddings)
-  - (Make BFGS depends on dimension)
-
-- Include in FEBO (3 days)
 - RL for hyperparameter opt how?
 
-- Write (5 days)
+## Results
+
+bohachevsky     same
+branin          median better, max slightly better
+levy            dngo converges quicker (other no difference)
+sintwo          median better, max worse
+sinone          dngo stuck, median stuck up until end, max better than gp
+camelback       same
+rosenbrock      dngo best by small margin, max worse, median second best
+forrester       dngo stuck (random init fault?), max and median equally good and better than gp
+goldsteinprice  same
+hartmann3       max and median converges faster (max best), not complete
+hartmann6       same, not complete
 
 ## Linear in O(n)
 
@@ -245,4 +269,28 @@ make ARGS="--model dngo --n_iter 200 -f levy" run
 make ARGS="--model dngo --n_iter 200 -f rosenbrock" run
 make ARGS="--model dngo --n_iter 200 -f sinone" run
 make ARGS="--model dngo --n_iter 200 -f sintwo" run
+
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f branin" run
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f hartmann3" run
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f hartmann6" run
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f camelback" run
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f forrester" run
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f bohachevsky" run
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f goldsteinprice" run
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f levy" run
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f rosenbrock" run
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f sinone" run
+make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f sintwo" run
+
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f branin" run
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f hartmann3" run
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f hartmann6" run
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f camelback" run
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f forrester" run
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f bohachevsky" run
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f goldsteinprice" run
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f levy" run
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f rosenbrock" run
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f sinone" run
+make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f sintwo" run
 ```
