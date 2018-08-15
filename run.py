@@ -18,6 +18,7 @@ from src.acquisition_functions import EI, UCB
 from src.bayesian_linear_regression import GPyRegression
 from src.models import BOModel, GPyBOModel
 from src.neural_network import TorchRegressionModel
+from src.logistic_regression_benchmark import LogisticRegression
 import config as config
 
 parser = argparse.ArgumentParser()
@@ -58,6 +59,7 @@ obj_functions = {
     'sintwo': hpolib_funcs.SinTwo,
 }
 obj_functions = {k: prepare_benchmark(Func()) for (k, Func) in obj_functions.items()}
+obj_functions['logistic_regression_mnist'] = prepare_benchmark(LogisticRegression(num_epochs=10))
 parser.add_argument("-f", "--obj_func", type=str, choices=obj_functions.keys(), default="branin")
 
 acquisition_functions = {'EI': EI,
@@ -161,20 +163,23 @@ if __name__ == '__main__':
     with open(model_conf['command_path'], 'w') as file:
         file.writelines([command, "\n", command_full])
 
+    has_quick_eval = args.obj_func is not 'logistic_regression_mnist'
+
     def backup(bo, i, x_new):
-        # Plot step
-        path = os.path.join(model_conf['plot_folder'], "i-{}.png".format(i))
-        bo.plot_prediction(x_new=x_new, save_dist=path)
+        if has_quick_eval:
+            # Plot step
+            path = os.path.join(model_conf['plot_folder'], "i-{}.png".format(i))
+            bo.plot_prediction(x_new=x_new, save_dist=path)
+
+            # Plot regret
+            ir = acc_ir(bo.model.Y, bo.f_opt)
+            plot_ir([ir])
+            plt.savefig(model_conf['regret_plot_path'])
+            plt.close()
 
         # Update observation record
         np.save(model_conf['obs_X_path'], bo.model.X)
         np.save(model_conf['obs_Y_path'], bo.model.Y)
-
-        # Plot regret
-        ir = acc_ir(bo.model.Y, bo.f_opt)
-        plot_ir([ir])
-        plt.savefig(model_conf['regret_plot_path'])
-        plt.close()
 
         # Update row data
         row['immediate_regret'] = ir[-1]
@@ -190,6 +195,6 @@ if __name__ == '__main__':
             df = df.set_index('uuid')
         df.to_csv(conf['database'])
 
-    bo.run(do_plot=False, periodic_interval=20, periodic_callback=backup)
+    bo.run(do_plot=False, periodic_interval=10, periodic_callback=backup)
 
     backup(bo, args.n_iter, None)

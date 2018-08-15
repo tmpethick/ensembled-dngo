@@ -23,6 +23,7 @@ Good resource: https://github.com/gpschool/gprs15b
 - Batch: http://zi-wang.com/pub/wang-aistats18.pdf
 - Marginalize mixture: https://ieeexplore-ieee-org.proxy.findit.dtu.dk/stamp/stamp.jsp?arnumber=5499041
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
+-lognorm and horseshoe (Snoek): https://arxiv.org/pdf/1406.3896.pdf
 
 
 How it was done:
@@ -91,14 +92,14 @@ TODO:
 - Setup EULER √
 - Run all HPOLib √ (2018-08-14 15:35:09.554127)
 - uuid selector √
-- Configurable Wall time
-- Run multiple
-- Aggregate
-- setup Bohamiann
-- Run on embedded
+- Configurable Wall time √
+- Run multiple √ (all 3, mcmc 2)
 - Hyperparameter optimization of Logistic regression for MNIST (make it compatible with FEBO) (2 days)
   - Round after every BFGS
-- Explore results (groupby obj_func, load observations and plot regret)
+- Aggregate mean and variance
+- setup Bohamiann
+- Run on embedded
+- Explore results (groupby obj_func, load observations and plot regret) √
 - Include in FEBO (3 days)
 - Write (5 days)
 
@@ -299,4 +300,10 @@ make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f levy" run
 make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f rosenbrock" run
 make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f sinone" run
 make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f sintwo" run
+
+make W="48:00" ARGS="--model gp --n_iter 200 -f logistic_regression_mnist" run
+make W="48:00" ARGS="--model dngo --n_iter 200 -f logistic_regression_mnist" run
+make W="48:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f logistic_regression_mnist" run
+make W="48:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f logistic_regression_mnist" run
+make W="48:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f logistic_regression_mnist" run
 ```
