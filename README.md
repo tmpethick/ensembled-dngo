@@ -87,19 +87,14 @@ PS: I'll do some more thorough experimentation now that Euler is back up (ensemb
 - Problems:
   - DNGO exploring corners
 
-Now that I have autonomized my euler setup, I did a more systematic testing of 4 methods: GP, NN, 5 NN with max aggregation, 5 NN with median aggregation.
-
-If we only compare NN methods, ensemble is better for branin, sintwo, sinone and forrester with median being the best in all cases (except for forrester).
-For sinone and forrester the NN model was even stuck. 
-The methods are similar for camelback, goldsteinprice, bohachevsky, hartmann6, levy, hartmann3, but ensemble methods converges quicker for levy and hartmann3.
-
-Considering the (less encouraging) results I got on the previous run, I think the random initialisation affects the outcome a lot. I will run the experiments several time now to get a variance on the regret..
-
-
-
 TODO:
 - Setup EULER √
-- Run all HPOLib √
+- Run all HPOLib √ (2018-08-14 15:35:09.554127)
+- uuid selector √
+- Configurable Wall time
+- Run multiple
+- Aggregate
+- setup Bohamiann
 - Run on embedded
 - Hyperparameter optimization of Logistic regression for MNIST (make it compatible with FEBO) (2 days)
   - Round after every BFGS
