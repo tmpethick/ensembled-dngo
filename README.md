@@ -240,7 +240,6 @@ make pull
 ## Currently run experiments
 
 ```
-make ARGS="--model gp --n_iter 200" run
 make ARGS="--model gp --n_iter 200 -f branin" run
 make ARGS="--model gp --n_iter 200 -f hartmann3" run
 make ARGS="--model gp --n_iter 200 -f hartmann6" run
@@ -265,27 +264,39 @@ make ARGS="--model dngo --n_iter 200 -f rosenbrock" run
 make ARGS="--model dngo --n_iter 200 -f sinone" run
 make ARGS="--model dngo --n_iter 200 -f sintwo" run
 
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f branin" run
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f hartmann3" run
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f hartmann6" run
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f camelback" run
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f forrester" run
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f bohachevsky" run
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f goldsteinprice" run
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f levy" run
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f rosenbrock" run
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f sinone" run
-make ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f sintwo" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f branin" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f hartmann3" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f hartmann6" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f camelback" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f forrester" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f bohachevsky" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f goldsteinprice" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f levy" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f rosenbrock" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f sinone" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f sintwo" run
 
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f branin" run
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f hartmann3" run
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f hartmann6" run
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f camelback" run
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f forrester" run
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f bohachevsky" run
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f goldsteinprice" run
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f levy" run
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f rosenbrock" run
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f sinone" run
-make ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f sintwo" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f branin" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f hartmann3" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f hartmann6" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f camelback" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f forrester" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f bohachevsky" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f goldsteinprice" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f levy" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f rosenbrock" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f sinone" run
+make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f sintwo" run
+
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f branin" run
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f hartmann3" run
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f hartmann6" run
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f camelback" run
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f forrester" run
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f bohachevsky" run
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f goldsteinprice" run
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f levy" run
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f rosenbrock" run
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f sinone" run
+make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f sintwo" run
 ```
