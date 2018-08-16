@@ -4,6 +4,10 @@ W=4:00
 test:
 	PYTHONPATH=. py.test --verbose --color=yes $(TEST_PATH)
 
+movemnist:
+	rsync -av ./raw pethickt@euler.ethz.ch:~/bonn
+	rsync -av ./processed pethickt@euler.ethz.ch:~/bonn
+
 run:
 	rsync -avu ./src pethickt@euler.ethz.ch:~/bonn
 	rsync -av ./run.py pethickt@euler.ethz.ch:~/bonn

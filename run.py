@@ -190,11 +190,11 @@ if __name__ == '__main__':
             df = pandas.read_csv(conf['database'])
             df = df.set_index('uuid')
             df.loc[uid] = pandas.Series(row)
+            df = df.reset_index()
         except FileNotFoundError:
             df = pandas.DataFrame([row])
-            df = df.set_index('uuid')
         df.to_csv(conf['database'], index=False)
 
-    bo.run(do_plot=False, periodic_interval=10, periodic_callback=backup)
+    bo.run(do_plot=False, periodic_interval=5, periodic_callback=backup)
 
     backup(bo, args.n_iter, None)
