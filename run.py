@@ -195,6 +195,6 @@ if __name__ == '__main__':
             df = pandas.DataFrame([row])
         df.to_csv(conf['database'], index=False)
 
-    bo.run(do_plot=False, periodic_interval=5, periodic_callback=backup)
+    bo.run(do_plot=False, periodic_interval=10, periodic_callback=backup)
 
     backup(bo, args.n_iter, None)
