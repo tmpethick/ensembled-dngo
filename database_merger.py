@@ -12,4 +12,4 @@ try:
 except FileNotFoundError:
   df = pd.read_csv(conf['remote_temp_database'])
 
-df.to_csv(conf['database'])
+df.to_csv(conf['database'], index=False)

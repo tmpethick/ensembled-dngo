@@ -193,7 +193,7 @@ if __name__ == '__main__':
         except FileNotFoundError:
             df = pandas.DataFrame([row])
             df = df.set_index('uuid')
-        df.to_csv(conf['database'])
+        df.to_csv(conf['database'], index=False)
 
     bo.run(do_plot=False, periodic_interval=10, periodic_callback=backup)
 

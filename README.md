@@ -99,8 +99,8 @@ TODO:
   - Basic run √ (with 10 epochs)
   - make it compatible with FEBO
   - Round after every BFGS
-- Confidence interval on regret
-- Aggregate mean and variance
+- Confidence interval on regret √
+- Aggregate mean and variance √
 - setup Bohamiann
 - Run on embedded
 - Include in FEBO (3 days)
