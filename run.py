@@ -19,6 +19,7 @@ from src.bayesian_linear_regression import GPyRegression
 from src.models import BOModel, GPyBOModel
 from src.neural_network import TorchRegressionModel
 from src.logistic_regression_benchmark import LogisticRegression
+from src.rosenbrock_benchmark import Rosenbrock
 import config as config
 
 parser = argparse.ArgumentParser()
@@ -62,6 +63,7 @@ obj_functions = {
 
 obj_functions = {k: prepare_benchmark(Func()) for (k, Func) in obj_functions.items()}
 obj_functions['logistic_regression_mnist'] = prepare_benchmark(LogisticRegression(num_epochs=10))
+obj_functions['rosenbrock10D'] = prepare_benchmark(Rosenbrock(d=10))
 parser.add_argument("-f", "--obj_func", type=str, choices=obj_functions.keys(), default="branin")
 
 parser.add_argument("-em", "--embedding", nargs='+', type=float, default=None)
@@ -216,7 +218,7 @@ if __name__ == '__main__':
         row['incumbent'] = bo.model.get_incumbent()[1]
         row['num_steps'] = i
 
-        try:    
+        try:
             df = pandas.read_csv(conf['database'])
             df = df.set_index('uuid')
             df.loc[uid] = pandas.Series(row)

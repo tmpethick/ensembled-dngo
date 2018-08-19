@@ -251,93 +251,101 @@ make pull
 ## Currently run experiments
 
 ```
-make ARGS="--model gp --n_iter 200 -f branin" run
-make ARGS="--model gp --n_iter 200 -f hartmann3" run
-make ARGS="--model gp --n_iter 200 -f hartmann6" run
-make ARGS="--model gp --n_iter 200 -f camelback" run
-make ARGS="--model gp --n_iter 200 -f forrester" run
-make ARGS="--model gp --n_iter 200 -f bohachevsky" run
-make ARGS="--model gp --n_iter 200 -f goldsteinprice" run
-make ARGS="--model gp --n_iter 200 -f levy" run
-make ARGS="--model gp --n_iter 200 -f rosenbrock" run
-make ARGS="--model gp --n_iter 200 -f sinone" run
-make ARGS="--model gp --n_iter 200 -f sintwo" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f branin" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f hartmann3" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f hartmann6" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f camelback" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f forrester" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f bohachevsky" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f goldsteinprice" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f levy" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f rosenbrock" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f sinone" run
+make ARGS="--seed 1 --model gp --n_iter 200 -f sintwo" run
 
-make ARGS="--model dngo --n_iter 200 -f branin" run
-make ARGS="--model dngo --n_iter 200 -f hartmann3" run
-make ARGS="--model dngo --n_iter 200 -f hartmann6" run
-make ARGS="--model dngo --n_iter 200 -f camelback" run
-make ARGS="--model dngo --n_iter 200 -f forrester" run
-make ARGS="--model dngo --n_iter 200 -f bohachevsky" run
-make ARGS="--model dngo --n_iter 200 -f goldsteinprice" run
-make ARGS="--model dngo --n_iter 200 -f levy" run
-make ARGS="--model dngo --n_iter 200 -f rosenbrock" run
-make ARGS="--model dngo --n_iter 200 -f sinone" run
-make ARGS="--model dngo --n_iter 200 -f sintwo" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f branin" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f hartmann3" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f hartmann6" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f camelback" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f forrester" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f bohachevsky" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f goldsteinprice" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f levy" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f rosenbrock" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f sinone" run
+make ARGS="--seed 1 --model dngo --n_iter 200 -f sintwo" run
 
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f branin" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f hartmann3" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f hartmann6" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f camelback" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f forrester" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f bohachevsky" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f goldsteinprice" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f levy" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f rosenbrock" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f sinone" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f sintwo" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f branin" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f hartmann3" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f hartmann6" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f camelback" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f forrester" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f bohachevsky" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f goldsteinprice" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f levy" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f rosenbrock" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f sinone" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f sintwo" run
 
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f branin" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f hartmann3" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f hartmann6" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f camelback" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f forrester" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f bohachevsky" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f goldsteinprice" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f levy" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f rosenbrock" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f sinone" run
-make W="20:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f sintwo" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f branin" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f hartmann3" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f hartmann6" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f camelback" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f forrester" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f bohachevsky" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f goldsteinprice" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f levy" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f rosenbrock" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f sinone" run
+make W="20:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f sintwo" run
 
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f branin" run
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f hartmann3" run
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f hartmann6" run
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f camelback" run
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f forrester" run
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f bohachevsky" run
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f goldsteinprice" run
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f levy" run
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f rosenbrock" run
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f sinone" run
-make W="20:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f sintwo" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f branin" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f hartmann3" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f hartmann6" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f camelback" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f forrester" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f bohachevsky" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f goldsteinprice" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f levy" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f rosenbrock" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f sinone" run
+make W="20:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f sintwo" run
 
-make W="24:00" ARGS="--model gp --n_iter 200 -f logistic_regression_mnist" run
-make W="24:00" ARGS="--model dngo --n_iter 200 -f logistic_regression_mnist" run
-make W="24:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f logistic_regression_mnist" run
-make W="24:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f logistic_regression_mnist" run
-make W="24:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f logistic_regression_mnist" run
+# MNIST
+make W="24:00" ARGS="--seed 1 --model gp --n_iter 200 -f logistic_regression_mnist" run
+make W="24:00" ARGS="--seed 1 --model dngo --n_iter 200 -f logistic_regression_mnist" run
+make W="24:00" ARGS="--seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f logistic_regression_mnist" run
+make W="24:00" ARGS="--seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f logistic_regression_mnist" run
+make W="24:00" ARGS="--seed 1 --model dngo -mcmc 20 --n_iter 200 -f logistic_regression_mnist" run
 
 # Epochs
-make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 100 -f levy" run
-make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 1000 -f levy" run
-make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 10000 -f levy" run
-make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 100 -f sintwo" run
-make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 1000 -f sintwo" run
-make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 10000 -f sintwo" run
-make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 100 -f hartmann3" run
-make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 1000 -f hartmann3" run
-make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 10000 -f hartmann3" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f levy" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f levy" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f levy" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f sintwo" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f sintwo" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f sintwo" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f hartmann3" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f hartmann3" run
 
 # Weight decay
-make ARGS="--model dngo --n_init 20 --n_iter 200 --weight_decay 0.01 -f goldsteinprice" run
-make ARGS="--model dngo --n_init 20 --n_iter 200 --weight_decay 0.001 -f goldsteinprice" run
-make ARGS="--model dngo --n_init 20 --n_iter 200 --weight_decay 0.0001 -f goldsteinprice" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.01 -f goldsteinprice" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.001 -f goldsteinprice" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0001 -f goldsteinprice" run
 
 # Embedding
-make W="24:00" ARGS="--model dngo --n_init 20 --n_iter 200 --embedding 0 -f sinone" run
-make W="24:00" ARGS="--model dngo --n_init 20 --n_iter 200 --embedding 0 -f branin" run
-make W="24:00" ARGS="--model dngo --n_init 20 --n_iter 200 --embedding 30 -f branin" run
-make W="24:00" ARGS="--model dngo --n_init 20 --n_iter 200 --embedding 30 100 -f branin" run
+make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f branin" run
+make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 -f branin" run
+make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 100 -f branin" run
+
+# rosenbrock10D
+make W="24:00" ARGS="--seed 1 --model gp --n_init 20 --n_iter 200 -f rosenbrock10D" run
+make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 -f rosenbrock10D" run
+make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 -nn 5 -agg median --n_iter 200 -f rosenbrock10D" run
+make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 -nn 5 -agg max --n_iter 200 -f rosenbrock10D" run
+make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 -mcmc 20 --n_iter 200 -f rosenbrock10D" run
 ```
 
 ## Black box global optimization context (objective functions...)
