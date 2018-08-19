@@ -10,13 +10,14 @@ from .tests import acc_ir, plot_ir
 
 
 class BO(object):
-    def __init__(self, obj_func, model, acquisition_function=None, n_init=20, n_iter = 10, bounds=np.array([[0,1]]), f_opt=None, rng=None):
+    def __init__(self, obj_func, model, acquisition_function=None, n_init=20, n_iter = 10, bounds=np.array([[0,1]]), f_opt=None, rng=None, embedded_dims=None):
         self.n_iter = n_iter
         self.n_init = n_init
         self.bounds = bounds
         self.obj_func = obj_func
         self.model = model
         self.f_opt = f_opt
+        self.embedded_dims = embedded_dims
 
         # Only used in random sample so far.
         if rng is not None:
@@ -121,16 +122,28 @@ class BO(object):
             ax.plot_surface(x0v, x1v, y)
             return fig
 
-    def plot_prediction(self, x_new=None, bounds=None, save_dist=None, plot_predictions=True):
+    def plot_prediction(self, x_new=None, bounds=None, save_dist=None, plot_predictions=True, plot_embedded_subspace=False):
         if bounds is None:  
             bounds = self.bounds
         dims = self.bounds.shape[0]
-        if dims == 2:
+
+        if plot_embedded_subspace and self.embedded_dims is not None:
+            embedded_dims = dims - self.embedded_dims
+        else:
+            embedded_dims = dims
+        
+        if embedded_dims == 2:
             x0 = np.linspace(bounds[0,0], bounds[0,1], 100)
             x1 = np.linspace(bounds[1,0], bounds[1,1], 100)
             x0v, x1v = np.meshgrid(x0, x1)
             xinput = np.swapaxes(np.array([x0v, x1v]), 0, -1) # set dim axis to last
             xinput = np.swapaxes(xinput, 0, 1)                # swap x0 and x1 axis
+
+            # expand the 2D xinput to embedded space.
+            # TODO: make 1 configurable
+            if plot_embedded_subspace and self.embedded_dims is not None:
+                xinput = np.append(xinput, np.ones(xinput.shape[:-1] + (self.embedded_dims,)), axis=-1)
+            
             origin_shape = xinput.shape[:-1]
             flattenxinput = xinput.reshape(-1, dims)
                         
@@ -185,11 +198,16 @@ class BO(object):
                     plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
 
         elif dims == 1:
-            X_line = np.linspace(bounds[:, 0], bounds[:, 1], 100)[:, None]
-            Y_line = self.obj_func(X_line)
+            X_line = np.linspace(bounds[0:1, 0], bounds[0:1, 1], 100)[:, None]
+            if plot_embedded_subspace and self.embedded_dims is not None:
+                X_line_embedded = np.append(X_line, np.ones(X_line.shape[:-1] + (self.embedded_dims,)), axis=-1)
+            else:
+                X_line_embedded = X_line
+
+            Y_line = self.obj_func(X_line_embedded)
 
             plt.subplot(1, 2, 1)
-            self.model.plot_prediction(X_line, Y_line, x_new=x_new,plot_predictions=plot_predictions)
+            self.model.plot_prediction(X_line, Y_line, X_embedding=X_line_embedded, x_new=x_new, plot_predictions=plot_predictions)
 
             if plot_predictions:
                 plt.subplot(1, 2, 2)

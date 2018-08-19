@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import hpolib.benchmarks.synthetic_functions as hpolib_funcs
 plt.switch_backend('agg')
 
-from src.tests import prepare_benchmark, plot_ir, acc_ir
+from src.tests import prepare_benchmark, plot_ir, acc_ir, embed
 from src.bo import BO
 from src.acquisition_functions import EI, UCB
 from src.bayesian_linear_regression import GPyRegression
@@ -59,9 +59,12 @@ obj_functions = {
     'sinone': hpolib_funcs.SinOne,
     'sintwo': hpolib_funcs.SinTwo,
 }
+
 obj_functions = {k: prepare_benchmark(Func()) for (k, Func) in obj_functions.items()}
 obj_functions['logistic_regression_mnist'] = prepare_benchmark(LogisticRegression(num_epochs=10))
 parser.add_argument("-f", "--obj_func", type=str, choices=obj_functions.keys(), default="branin")
+
+parser.add_argument("-em", "--embedding", nargs='+', type=float, default=None)
 
 acquisition_functions = {'EI': EI,
                          'UCB': UCB,}
@@ -86,12 +89,22 @@ def create_model(args):
 
     input_dim = bounds.shape[0]
 
+    # Embedding
+    if type(args.embedding) is list:
+        embedded_dims = len(args.embedding)
+        A = np.array(args.embedding)
+        bounds = np.concatenate([bounds, [[0,1]] * embedded_dims])
+        f = embed(f, A, f_dim=input_dim)
+        input_dim = bounds.shape[0]
+    else:
+        embedded_dims = None
+
     if args.model == "dngo":
         nn = TorchRegressionModel(
             input_dim=input_dim, 
             dim_basis=args.dim_basis, 
             dim_h1=args.dim_h1, 
-            dim_h2=args.dim_h2, 
+            dim_h2=args.dim_h2,
             epochs=args.epochs, 
             batch_size=args.batch_size, 
             lr=args.lr, 
@@ -114,6 +127,7 @@ def create_model(args):
         n_init=args.n_init, 
         n_iter=args.n_iter, 
         bounds=bounds, 
+        embedded_dims=embedded_dims,
         f_opt=f_opt, 
         rng=rng)
     return bo
@@ -182,6 +196,10 @@ if __name__ == '__main__':
             # Plot step
             path = os.path.join(model_conf['plot_folder'], "i-{}.png".format(i))
             bo.plot_prediction(x_new=x_new, save_dist=path)
+            
+            if args.embedding is not None:
+                path = os.path.join(model_conf['plot_folder'], "i-embedding-{}.png".format(i))
+                bo.plot_prediction(x_new=x_new, save_dist=path, plot_embedded_subspace=True)
 
             # Plot regret
             ir = acc_ir(bo.model.Y, bo.f_opt)

@@ -15,7 +15,7 @@ Good resource: https://github.com/gpschool/gprs15b
 - Deep Kernel Learning (Add RBF/Spectral mixture covariance instead of linear): https://arxiv.org/pdf/1511.02222.pdf
 - Ensemble deep kernel learning: https://www-sciencedirect-com.proxy.findit.dtu.dk/science/article/pii/S0169743917307578
 - Ensemble kernel learning with NN (not GP!): https://arxiv.org/pdf/1711.05374.pdf
-- Mentions embedding in low dimensional supspaces: https://arxiv.org/pdf/1802.07028.pdf
+- Mentions embedding in low dimensional subspaces: https://arxiv.org/pdf/1802.07028.pdf
 - REMBO (embedding): https://arxiv.org/pdf/1301.1942.pdf
 
 - Dropout equivalence to GPs: https://arxiv.org/pdf/1506.02142.pdf (1)
@@ -60,7 +60,7 @@ TODO:
 - Run on embedded
 - Include in FEBO (3 days)
 - Write (5 days)
-- plot 1D and 2D embeddings
+- plot 1D and 2D embeddings √
 - (Make BFGS depend on dimension)
 
 "We recall a key characteristic of the acquisition
@@ -76,7 +76,10 @@ Remember to give all models the same computational budget.
 - Hyperparameter optimization on camelback and goldsteinprice (since both has high different from GP - room for improvement. And goldsteinprice especially could do better overall)
   - variance increases as epochs increases. 100, 1000, 10000. (Testing on different dimensions where exploitation is important: levy, sintwo, hartmann3 in which low variance is visible through low exploration (i.e. high exploitation).)
   - Test weight regularization on goldsteinprice. (0.01, 0.001, 0.0001). Very little suggested by DNGO.
-  - Embedding sinone 1D, embedded branin 3D, embedded branin with linear weight (also see embedded rosenbrock10).
+  - Embedding sinone 1D, embedded branin 3D, embedded branin with linear weight 
+    (also see embedded rosenbrock10). 
+    (find method for comparing how scattered the points are in the *effective* subspace)
+    (use max_f / x dim to calc slope of linear embedding. Should have approx same gradient/influence)
   - High dim Rosenbrock10/Ackley10
   - [WAIT] median, median vs maximum
   - [WAIT] Consider that mcmc is maybe necessary..
@@ -313,5 +316,30 @@ make W="24:00" ARGS="--model dngo --n_iter 200 -f logistic_regression_mnist" run
 make W="24:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f logistic_regression_mnist" run
 make W="24:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f logistic_regression_mnist" run
 make W="24:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f logistic_regression_mnist" run
+
+# Epochs
+make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 100 -f levy" run
+make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 1000 -f levy" run
+make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 10000 -f levy" run
+make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 100 -f sintwo" run
+make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 1000 -f sintwo" run
+make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 10000 -f sintwo" run
+make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 100 -f hartmann3" run
+make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--model dngo --n_init 20 --n_iter 200 --epochs 10000 -f hartmann3" run
+
+# Weight decay
+make ARGS="--model dngo --n_init 20 --n_iter 200 --weight_decay 0.01 -f goldsteinprice" run
+make ARGS="--model dngo --n_init 20 --n_iter 200 --weight_decay 0.001 -f goldsteinprice" run
+make ARGS="--model dngo --n_init 20 --n_iter 200 --weight_decay 0.0001 -f goldsteinprice" run
+
+# Embedding
+make W="24:00" ARGS="--model dngo --n_init 20 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--model dngo --n_init 20 --n_iter 200 --embedding 0 -f branin" run
+make W="24:00" ARGS="--model dngo --n_init 20 --n_iter 200 --embedding 30 -f branin" run
+make W="24:00" ARGS="--model dngo --n_init 20 --n_iter 200 --embedding 30 100 -f branin" run
 ```
 
+## Black box global optimization context (objective functions...)
+
+https://bbcomp.ini.rub.de/

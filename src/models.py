@@ -157,8 +157,10 @@ class BOModel(BOBaseModel):
         D = self.predict_basis(X)
         return self.predict_from_basis(D)
 
-    def plot_prediction(self, X_line, Y_line, x_new=None, plot_predictions=True):
-        D_line = self.predict_basis(X_line)
+    def plot_prediction(self, X_line, Y_line, X_embedding=None, x_new=None, plot_predictions=True):
+        if X_embedding is None:
+            X_embedding = X_line
+        D_line = self.predict_basis(X_embedding)
 
         if plot_predictions:
             predictions = self.predict_from_basis(D_line) # shape: (ensemble, gphyperparams, summ, samples)
@@ -169,9 +171,10 @@ class BOModel(BOBaseModel):
                 plt.plot(X_line, mean)
 
         if x_new is not None:
-            plt.axvline(x=x_new, ls='--', c='k', lw=1, label='Next sampling location')
+            plt.axvline(x=x_new[0], ls='--', c='k', lw=1, label='Next sampling location')
 
-        plt.scatter(self.X, self.Y)
+        # Always only plot one dimension (helpful in the case of embedding)
+        plt.scatter(self.X[:,0], self.Y)
         plt.plot(X_line, Y_line, dashes=[2, 2], color='black')
 
 
