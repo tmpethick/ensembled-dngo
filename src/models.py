@@ -157,16 +157,16 @@ class BOModel(BOBaseModel):
         D = self.predict_basis(X)
         return self.predict_from_basis(D)
 
-    def plot_prediction(self, X_line, Y_line, x_new=None):
+    def plot_prediction(self, X_line, Y_line, x_new=None, plot_predictions=True):
         D_line = self.predict_basis(X_line)
 
-
-        predictions = self.predict_from_basis(D_line) # shape: (ensemble, gphyperparams, summ, samples)
-        for summ in predictions.reshape(-1, predictions.shape[2], predictions.shape[3]): # (models, summ, samples)
-            mean = summ[0, :]
-            var = summ[1, :]
-            plt.fill_between(X_line.reshape(-1), (mean + np.sqrt(var)).reshape(-1), (mean - np.sqrt(var)).reshape(-1), alpha=.2)
-            plt.plot(X_line, mean)
+        if plot_predictions:
+            predictions = self.predict_from_basis(D_line) # shape: (ensemble, gphyperparams, summ, samples)
+            for summ in predictions.reshape(-1, predictions.shape[2], predictions.shape[3]): # (models, summ, samples)
+                mean = summ[0, :]
+                var = summ[1, :]
+                plt.fill_between(X_line.reshape(-1), (mean + np.sqrt(var)).reshape(-1), (mean - np.sqrt(var)).reshape(-1), alpha=.2)
+                plt.plot(X_line, mean)
 
         if x_new is not None:
             plt.axvline(x=x_new, ls='--', c='k', lw=1, label='Next sampling location')
@@ -224,13 +224,14 @@ class GPyBOModel(BOBaseModel):
 
         return np.stack([mean, var])
 
-    def plot_prediction(self, X_line, Y_line, x_new=None):
-        for theta in self.gp._current_thetas:
-            summ = self.predict(X_line, theta=theta)
-            mean = summ[0]
-            var = summ[1]
-            plt.fill_between(X_line.reshape(-1), (mean + np.sqrt(var)).reshape(-1), (mean - np.sqrt(var)).reshape(-1), alpha=.2)
-            plt.plot(X_line, mean)
+    def plot_prediction(self, X_line, Y_line, x_new=None, plot_predictions=True):
+        if plot_predictions:
+            for theta in self.gp._current_thetas:
+                summ = self.predict(X_line, theta=theta)
+                mean = summ[0]
+                var = summ[1]
+                plt.fill_between(X_line.reshape(-1), (mean + np.sqrt(var)).reshape(-1), (mean - np.sqrt(var)).reshape(-1), alpha=.2)
+                plt.plot(X_line, mean)
 
         if x_new is not None:
             plt.axvline(x=x_new, ls='--', c='k', lw=1, label='Next sampling location')

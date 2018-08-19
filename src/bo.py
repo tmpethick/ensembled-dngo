@@ -10,12 +10,19 @@ from .tests import acc_ir, plot_ir
 
 
 class BO(object):
-    def __init__(self, obj_func, model, acquisition_function=None, n_iter = 10, bounds=np.array([[0,1]]), f_opt=None):
+    def __init__(self, obj_func, model, acquisition_function=None, n_init=20, n_iter = 10, bounds=np.array([[0,1]]), f_opt=None, rng=None):
         self.n_iter = n_iter
+        self.n_init = n_init
         self.bounds = bounds
         self.obj_func = obj_func
         self.model = model
         self.f_opt = f_opt
+
+        # Only used in random sample so far.
+        if rng is not None:
+            self.rng = rng
+        else:
+            self.rng = np.random.RandomState()
 
         if acquisition_function is None:
             self.acquisition_function = UCB(self.model)
@@ -33,7 +40,7 @@ class BO(object):
             return -self.model.acq(x, self.acquisition_function.calc)[0]
 
         # TODO: turn into numpy operations to parallelize
-        for x0 in random_hypercube_samples(n_starts, self.bounds):
+        for x0 in random_hypercube_samples(n_starts, self.bounds, rng=self.rng):
             res = minimize(min_obj, x0=x0, bounds=self.bounds, method='L-BFGS-B') 
             if res.fun < min_y:
                 min_y = res.fun
@@ -114,7 +121,7 @@ class BO(object):
             ax.plot_surface(x0v, x1v, y)
             return fig
 
-    def plot_prediction(self, x_new=None, bounds=None, save_dist=None):
+    def plot_prediction(self, x_new=None, bounds=None, save_dist=None, plot_predictions=True):
         if bounds is None:  
             bounds = self.bounds
         dims = self.bounds.shape[0]
@@ -126,58 +133,67 @@ class BO(object):
             xinput = np.swapaxes(xinput, 0, 1)                # swap x0 and x1 axis
             origin_shape = xinput.shape[:-1]
             flattenxinput = xinput.reshape(-1, dims)
-            acq = self.model.acq(flattenxinput, self.acquisition_function.calc)
-            acq = np.reshape(acq, origin_shape)
-
-            # (ensemble, hyperparams, summarystats, samples)
-            summ = self.model.predict(flattenxinput)
-            if len(summ.shape) == 4:
-                mean = summ[:, :, 0, :]
-                mean = np.average(mean, axis=(0, 1))
-            else:
-                mean = summ[0]
-            mean = np.reshape(mean, origin_shape)
-            
-            y = self.obj_func(flattenxinput)[..., 0]
-            y = np.reshape(y, origin_shape)
-
+                        
             X = self.model.X
             idx = (bounds[0,0] <= X[:,0]) & (X[:,0] <= bounds[0,1]) & (bounds[1,0] <= X[:,1]) & (X[:,1] <= bounds[1,1])
             X0 = X[idx,0]
             X1 = X[idx,1]
 
-            # Plot acq
-            plt.subplot(1, 3, 1)
-            plt.contourf(x0v,x1v, acq, 24)
-            plt.scatter(X0, X1)
+            if plot_predictions:
+                acq = self.model.acq(flattenxinput, self.acquisition_function.calc)
+                acq = np.reshape(acq, origin_shape)
 
-            if x_new is not None:
-                plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
+                # Plot acq
+                plt.subplot(1, 3, 1)
+                plt.contourf(x0v,x1v, acq, 24)
+                plt.scatter(X0, X1)
+
+                if x_new is not None:
+                    plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
+
+            y = self.obj_func(flattenxinput)[..., 0]
+            y = np.reshape(y, origin_shape)
 
             # Plot f
-            plt.subplot(1, 3, 2)
+            if plot_predictions:
+                plt.subplot(1, 3, 2)
+
             plt.contourf(x0v,x1v, y, 24)
             plt.scatter(X0, X1)
             
             if x_new is not None:
                 plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
 
-            # Plot mean
-            plt.subplot(1, 3, 3)
-            plt.contourf(x0v,x1v, mean, 24)
-            plt.scatter(X0, X1)
-            
-            if x_new is not None:
-                plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
+            if plot_predictions:
+                # (ensemble, hyperparams, summarystats, samples)
+                summ = self.model.predict(flattenxinput)
+                if len(summ.shape) == 4:
+                    mean = summ[:, :, 0, :]
+                    mean = np.average(mean, axis=(0, 1))
+                else:
+                    mean = summ[0]
+                mean = np.reshape(mean, origin_shape)
+
+                # Plot mean
+                if plot_predictions:
+                    plt.subplot(1, 3, 3)
+                
+                plt.contourf(x0v,x1v, mean, 24)
+                plt.scatter(X0, X1)
+                
+                if x_new is not None:
+                    plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
 
         elif dims == 1:
             X_line = np.linspace(bounds[:, 0], bounds[:, 1], 100)[:, None]
             Y_line = self.obj_func(X_line)
 
             plt.subplot(1, 2, 1)
-            self.model.plot_prediction(X_line, Y_line, x_new=x_new)
-            plt.subplot(1, 2, 2)
-            self.model.plot_acq(X_line, self.acquisition_function.calc)
+            self.model.plot_prediction(X_line, Y_line, x_new=x_new,plot_predictions=plot_predictions)
+
+            if plot_predictions:
+                plt.subplot(1, 2, 2)
+                self.model.plot_acq(X_line, self.acquisition_function.calc)
         
         else:
             # Only plot or save if a figure has been constructed.
@@ -189,9 +205,9 @@ class BO(object):
         else:
             plt.show()
 
-    def run(self, n_kickstart=2, do_plot=True, periodic_interval=20, periodic_callback=None):
+    def run(self, do_plot=True, periodic_interval=20, periodic_callback=None):
         # Data
-        X = random_hypercube_samples(n_kickstart, self.bounds)
+        X = random_hypercube_samples(self.n_init, self.bounds, rng=self.rng)
         Y = self.obj_func(X)
         self.model.init(X,Y)
 

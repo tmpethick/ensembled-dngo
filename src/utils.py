@@ -3,14 +3,16 @@ from functools import wraps
 import numpy as np
 
 
-def random_hypercube_samples(n_samples, bounds):
+def random_hypercube_samples(n_samples, bounds, rng=None):
     """Random sample from d-dimensional hypercube (d = bounds.shape[0]).
 
     Returns: (n_samples, dim)
     """
 
+    rng = rng if rng is not None else np.random.RandomState()
+
     dims = bounds.shape[0]
-    a = np.random.uniform(0, 1, (dims, n_samples))
+    a = rng.uniform(0, 1, (dims, n_samples))
     bounds_repeated = np.repeat(bounds[:, :, None], n_samples, axis=2)
     samples = a * np.abs(bounds_repeated[:,1] - bounds_repeated[:,0]) + bounds_repeated[:,0]
     samples = np.swapaxes(samples, 0, 1)

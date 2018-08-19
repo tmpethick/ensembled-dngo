@@ -23,7 +23,8 @@ import config as config
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-m", "--model",       type=str,   choices=["dngo", "gp"], default="dngo")
+parser.add_argument("-s", "--seed",  type=int, default=None)
+parser.add_argument("-m", "--model", type=str, default="dngo", choices=["dngo", "gp"])
 
 # nn
 parser.add_argument("-b", "--dim_basis",     type=int,   default=50)
@@ -66,12 +67,17 @@ acquisition_functions = {'EI': EI,
                          'UCB': UCB,}
 parser.add_argument("-a", "--acq", type=str, choices=acquisition_functions.keys(), default="UCB")
 
-parser.add_argument("-k", "--n_iter", type=int, default=100)
+parser.add_argument("-k",    "--n_iter", type=int, default=100)
+parser.add_argument("-init", "--n_init", type=int, default=2)
 
 
 # Constructing model
 
 def create_model(args):
+    args_dict = vars(args)
+    seed = args_dict.get('seed', None)
+    rng = np.random.RandomState(seed)
+    
     # Support function parsed directly
     if type(args.obj_func) == tuple:
         f, bounds, f_opt = args.obj_func
@@ -103,7 +109,13 @@ def create_model(args):
         raise Exception("`dngo` and `gp` should be the only two options")
 
     acq = acquisition_functions[args.acq](model)
-    bo = BO(f, model, acquisition_function=acq, n_iter=args.n_iter, bounds=bounds, f_opt=f_opt)
+    bo = BO(f, model, 
+        acquisition_function=acq, 
+        n_init=args.n_init, 
+        n_iter=args.n_iter, 
+        bounds=bounds, 
+        f_opt=f_opt, 
+        rng=rng)
     return bo
 
 if __name__ == '__main__':

@@ -15,6 +15,8 @@ Good resource: https://github.com/gpschool/gprs15b
 - Deep Kernel Learning (Add RBF/Spectral mixture covariance instead of linear): https://arxiv.org/pdf/1511.02222.pdf
 - Ensemble deep kernel learning: https://www-sciencedirect-com.proxy.findit.dtu.dk/science/article/pii/S0169743917307578
 - Ensemble kernel learning with NN (not GP!): https://arxiv.org/pdf/1711.05374.pdf
+- Mentions embedding in low dimensional supspaces: https://arxiv.org/pdf/1802.07028.pdf
+- REMBO (embedding): https://arxiv.org/pdf/1301.1942.pdf
 
 - Dropout equivalence to GPs: https://arxiv.org/pdf/1506.02142.pdf (1)
 - Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles: https://arxiv.org/pdf/1612.01474v1.pdf (2)
@@ -23,40 +25,16 @@ Good resource: https://github.com/gpschool/gprs15b
 - Batch: http://zi-wang.com/pub/wang-aistats18.pdf
 - Marginalize mixture: https://ieeexplore-ieee-org.proxy.findit.dtu.dk/stamp/stamp.jsp?arnumber=5499041
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
--lognorm and horseshoe (Snoek): https://arxiv.org/pdf/1406.3896.pdf
+- lognorm and horseshoe (Snoek): https://arxiv.org/pdf/1406.3896.pdf
 
-
-How it was done:
-- Finding good weight decay:
-  - use gpy points
-  - run one step of DNGO BO
-  - Plot the mean and acq restricted to the exploited area
 
 Problems:
 
 Problem 1: don't use uncertainty estimate.. (mean is almost identical to acq)
 Problem 2: Unprecise about local behaviour. When exploiting it's still done in a relatively random fashion locally.
 Problem 3: Not exploring enough.. (only locally)
-Problem 4: Uncertainty too big (explores too much)
+Problem 4: Uncertainty too big (explores too much) (random flucturations in nn fitting)
 
-- Should be more certain in areas with many points.
-- mcmc * ensemble: should we some how average the ensemble before mcmc to get mcmc + ensemble?
-- test performance on massive sample?
-
-TODO:
-- Removing data: doesn't this lead to miscalibrated uncertainty estimates? => prediction wrong about something of which it should be certain. (inspired by (2))
-- Test Dropout? (Inspired by (1) and (2))
-- Need to train for longer to overfit/be different. Is this good/desireable?
-- Better for e.g. noisy data?
-- Why is the speed dropping dramatically?
-
-Benchmarks:
-
-             DNGO | GP      | Note
-Hartmann6 | 10^-2 | 10^-1.5 | DNGO outperform GP
-sinOne    | 10^-6 | 10^-8   | 
-Hartmann3 | 10^-4 | 10^-6   | 
-Branin    | 10^-3 | 10^-7   | 
 
 Hyperparameters:
 - MAP / Marginalize hyperparameters
@@ -64,29 +42,6 @@ Hyperparameters:
   - big is smooth. What for noisy functions?
   - How it works for big n when bath size become relatively small.
 - How big an ensemble?
-
-Okay, a small recap of my embedded experiments. I tried it on an embedded sinc and GP clearly have problems (see attachments). However, with Automatic Relevance Detection it obviously quickly discard the irrelevant dimension.
-NN is almost identical to GP with ARD after 20 iterations (see attachment).
-
-My concern is that even though this experiment shows the usefulness of NN *it does not provide a failure case for NN that would justify an ensemble*.
-
-But as the attachment shows it did seem like the NN could get stuck if there were multiple local optima. It was indeed the case for embedded sinOne. An ensemble might help it escape more quickly. However, don't we at most save a factor k steps where k is the number of NN in the ensemble? Assuming the BO is stuck (thus resampling approximately the incumbent point) the neural networks over the next k steps are trained on almost the same data as an ensemble of k networks in one step.
-Each step takes linear time to train so k*n steps takes O((k*n)^2) time. Using ensemble of k this becomes O(k * n^2) so we save a factor k. Is this really big enough to bother?
-
-I'm considering trying other methods to improve the uncertainty estimates. One alternative is training the nn and gp jointly like Wilson (Deep Kernel Learning). I haven't seen it done for BO, but this work might overlap too much with their research grant/work?
-
-Best
-Thomas
-
-PS: I'll do some more thorough experimentation now that Euler is back up (ensemble size, ensemble aggregator, embedding size) depending on your response.. 
-
-- NN could maybe get stuck in local maximum. Is it more probable than in 1D though?
-- propose:
-  - Rotate embedded f? (f(x + x')) (GP is bad at rotation)
-  - still deals with GP weaknesses
-
-- Problems:
-  - DNGO exploring corners
 
 TODO:
 - Setup EULER √
@@ -105,14 +60,63 @@ TODO:
 - Run on embedded
 - Include in FEBO (3 days)
 - Write (5 days)
-
-Extra:
 - plot 1D and 2D embeddings
 - (Make BFGS depend on dimension)
-- Construct examples
-  - Many local max
-  - Hidden max
-- RL for hyperparameter opt how?
+
+"We recall a key characteristic of the acquisition
+function that they are mostly flat functions with only a few
+peaks." – http://proceedings.mlr.press/v80/lyu18a/lyu18a.pdf
+(problem in high dim where optimization of acq from random init can't escape large flat region)
+
+Remember to give all models the same computational budget.
+
+- Find cases where RBF have problems.. (non-stationarity, jaggy/discrete)
+- metric transformation (euclidean does not work in high dimension)
+
+- Hyperparameter optimization on camelback and goldsteinprice (since both has high different from GP - room for improvement. And goldsteinprice especially could do better overall)
+  - variance increases as epochs increases. 100, 1000, 10000. (Testing on different dimensions where exploitation is important: levy, sintwo, hartmann3 in which low variance is visible through low exploration (i.e. high exploitation).)
+  - Test weight regularization on goldsteinprice. (0.01, 0.001, 0.0001). Very little suggested by DNGO.
+  - Embedding sinone 1D, embedded branin 3D, embedded branin with linear weight (also see embedded rosenbrock10).
+  - High dim Rosenbrock10/Ackley10
+  - [WAIT] median, median vs maximum
+  - [WAIT] Consider that mcmc is maybe necessary..
+
+bohachevsky                    0,-1
+branin                         -2,-6
+camelback                      -3,-6
+forrester                      -6,-8
+goldsteinprice                 1,-2
+hartmann3                      -3,-5
+hartmann6                      -1,-2
+levy                           -6
+logistic_regression_mnist      -1
+rosenbrock                     0,-2
+sinone                         -2,-10
+sintwo                         -2,-5
+
+- why dngo works
+  - Same random initialisation for comparison √
+  - In embedding (where nn shines) (plot 1D and 2D embedding)
+    - Compare with REMBO (what about rotation?)
+  - Random exploration (high peaks sometimes by nn) (see levy 5nn)
+  - Epochs effect 
+  - Weight regularization (l2)
+- ensemble
+  - Median vs maximum
+  - amount of ensembles
+  - Different nn? (epochs, l2)
+  - analysis about number of steps in best case?
+- Noise? (if noise is not fixed then non-differentiable problems will just expand the overall uncertainty.)
+- high dim experiment
+  - Rosenbrock10? Ackley10? (see Picheny et al. for Rosenbrock10)
+    below 10D: random sample 20,  iter 45
+    above 10D: random sample 100, iter 175.
+    http://proceedings.mlr.press/v80/lyu18a/lyu18a.pdf
+  - No more than 10 since otherwise we would run into problems with optimization the acquisition function.
+  - Minibatches (necessary for many datapoint. Explore how they effect in small sample size. adjust learning rate accordingly)
+  - For many datapoints in high dimensions (mnist)
+
+
 
 ## Results
 
@@ -310,3 +314,4 @@ make W="24:00" ARGS="--model dngo -nn 5 -agg median --n_iter 200 -f logistic_reg
 make W="24:00" ARGS="--model dngo -nn 5 -agg max --n_iter 200 -f logistic_regression_mnist" run
 make W="24:00" ARGS="--model dngo -mcmc 20 --n_iter 200 -f logistic_regression_mnist" run
 ```
+
