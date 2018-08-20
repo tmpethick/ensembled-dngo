@@ -62,7 +62,7 @@ obj_functions = {
 }
 
 obj_functions = {k: prepare_benchmark(Func()) for (k, Func) in obj_functions.items()}
-obj_functions['logistic_regression_mnist'] = prepare_benchmark(LogisticRegression(num_epochs=10))
+obj_functions['logistic_regression_mnist'] = prepare_benchmark(LogisticRegression(num_epochs=20))
 obj_functions['rosenbrock10D'] = prepare_benchmark(Rosenbrock(d=10))
 obj_functions['rosenbrock8D'] = prepare_benchmark(Rosenbrock(d=8))
 parser.add_argument("-f", "--obj_func", type=str, choices=obj_functions.keys(), default="branin")
