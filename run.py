@@ -26,6 +26,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("-s", "--seed",  type=int, default=None)
 parser.add_argument("-m", "--model", type=str, default="dngo", choices=["dngo", "gp"])
+parser.add_argument("-g", "--group", type=str, default="standard")
 
 # nn
 parser.add_argument("-b", "--dim_basis",     type=int,   default=50)
@@ -228,7 +229,7 @@ if __name__ == '__main__':
             df = pandas.read_csv(conf['database'])
 
             # Add missing columns (in case a new parameter was introduced)
-            missing_columns = set(row.keys()).symmetric_difference(set(df.columns.values))
+            missing_columns = set(row.keys()) - set(df.columns.values)
             for col in missing_columns:
                 df[col] = pandas.Series(None, index=df.index)
 
