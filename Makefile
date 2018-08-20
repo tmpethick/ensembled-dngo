@@ -20,6 +20,6 @@ pull:
 	rsync -avu --include='*/' --exclude='/*' pethickt@euler.ethz.ch:~/bonn/outputs/ ./outputs
 	rsync -av pethickt@euler.ethz.ch:~/bonn/outputs/entries.csv ./outputs/entries.remote.csv
 	python database_merger.py
-	# rm -f outputs/entries.remote.csv
+	rm -f outputs/entries.remote.csv
 
 .PHONY: test

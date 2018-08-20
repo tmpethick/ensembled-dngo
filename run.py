@@ -92,9 +92,10 @@ def create_model(args):
     input_dim = bounds.shape[0]
 
     # Embedding
-    if type(args_dict.get('embedding')) is list:
-        embedded_dims = len(args.embedding)
-        A = np.array(args.embedding)
+    embedding = args_dict.get('embedding')
+    if type(embedding) is list and len(embedding) > 0:
+        embedded_dims = len(embedding)
+        A = np.array(embedding)
         bounds = np.concatenate([bounds, [[0,1]] * embedded_dims])
         f = embed(f, A, f_dim=input_dim)
         input_dim = bounds.shape[0]
