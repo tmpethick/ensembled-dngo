@@ -70,6 +70,11 @@ peaks." – http://proceedings.mlr.press/v80/lyu18a/lyu18a.pdf
 
 Remember to give all models the same computational budget.
 
+TODO:
+- Fix groups (the pending ones have wrong timestamp)
+- Create group selector in notebook
+- Test adaptive
+
 - Find cases where RBF have problems.. (non-stationarity, jaggy/discrete)
 - metric transformation (euclidean does not work in high dimension)
 
@@ -109,12 +114,12 @@ Observations:
   - Epochs effect 
   - Weight regularization (l2)
 - ensemble
-  - Median vs maximum
+  - Median vs maximum √
   - amount of ensembles
   - Different nn? (epochs, l2)
   - analysis about number of steps in best case?
 - Noise? (if noise is not fixed then non-differentiable problems will just expand the overall uncertainty.)
-- high dim experiment
+- high dim experiment √
   - Rosenbrock10? Ackley10? (see Picheny et al. for Rosenbrock10)
     below 10D: random sample 20,  iter 45
     above 10D: random sample 100, iter 175.
@@ -123,7 +128,10 @@ Observations:
   - Minibatches (necessary for many datapoint. Explore how they effect in small sample size. adjust learning rate accordingly)
   - For many datapoints in high dimensions (mnist)
 
-
+- Test effect of minibatch (find problem with changing gradient. Otherwise I expect them to behave similar since it would fit the same function without the datapoint.) √
+- amount of ensembles (find problem for which ensemble does not work)
+- test that mnist can converge...
+- run many times (GPU required)
 
 ## Results
 
@@ -139,9 +147,6 @@ goldsteinprice  same
 hartmann3       max and median converges faster (max best), not complete
 hartmann6       same, not complete
 
-## Linear in O(n)
-
-"The equations for linear regression can be performed in primal form (e.g. the regular normal equations), where there is one parameter per input variable, or dual form (e.g. kernel ridge regression with a linear kernel) where there is one parameter per training example. This means you can choose which form to use depending on which is more efficient, if N>>d then use the normal equation, which is O(N), if d>>N then use kernel ridge regression with a linear kernel, where d is the number of attributes. Bayesian linear regression is to GP with a linear covariance function what linear regression is to kernel ridge regression with a linear kernel."
 
 ## RoBO
 
@@ -255,72 +260,72 @@ make pull
 ## Currently run experiments
 
 ```
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f branin" run
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f hartmann3" run
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f hartmann6" run
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f camelback" run
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f forrester" run
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f bohachevsky" run
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f goldsteinprice" run
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f levy" run
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f rosenbrock" run
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f sinone" run
-make ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f sintwo" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f branin" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f hartmann3" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f hartmann6" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f camelback" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f forrester" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f bohachevsky" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f goldsteinprice" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f levy" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f rosenbrock" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f sinone" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f sintwo" run
 
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f branin" run
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f hartmann3" run
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f hartmann6" run
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f camelback" run
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f forrester" run
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f bohachevsky" run
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f goldsteinprice" run
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f levy" run
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f rosenbrock" run
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f sinone" run
-make ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f sintwo" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f hartmann3" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f hartmann6" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f camelback" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f forrester" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f bohachevsky" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f goldsteinprice" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f levy" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f rosenbrock" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f sinone" run
+make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f sintwo" run
 
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f branin" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f hartmann3" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f hartmann6" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f camelback" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f forrester" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f bohachevsky" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f goldsteinprice" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f levy" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f rosenbrock" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f sinone" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f sintwo" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f branin" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f hartmann3" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f hartmann6" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f camelback" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f forrester" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f bohachevsky" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f goldsteinprice" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f levy" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f rosenbrock" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f sinone" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f sintwo" run
 
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f branin" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f hartmann3" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f hartmann6" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f camelback" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f forrester" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f bohachevsky" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f goldsteinprice" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f levy" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f rosenbrock" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f sinone" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f sintwo" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f branin" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f hartmann3" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f hartmann6" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f camelback" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f forrester" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f bohachevsky" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f goldsteinprice" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f levy" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f rosenbrock" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f sinone" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f sintwo" run
 
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f branin" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f hartmann3" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f hartmann6" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f camelback" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f forrester" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f bohachevsky" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f goldsteinprice" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f levy" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f rosenbrock" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f sinone" run
-make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f sintwo" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f branin" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f hartmann3" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f hartmann6" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f camelback" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f forrester" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f bohachevsky" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f goldsteinprice" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f levy" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f rosenbrock" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f sinone" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f sintwo" run
 
-# MNIST
-make W="24:00" ARGS="--group funcs --seed 1 --model gp --n_iter 200 -f logistic_regression_mnist" run
-make W="24:00" ARGS="--group funcs --seed 1 --model dngo --n_iter 200 -f logistic_regression_mnist" run
-make W="24:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_iter 200 -f logistic_regression_mnist" run
-make W="24:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_iter 200 -f logistic_regression_mnist" run
-make W="24:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_iter 200 -f logistic_regression_mnist" run
+# MNIST (is it stuck because of log reg network?)
+make W="24:00" ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f logistic_regression_mnist" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f logistic_regression_mnist" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f logistic_regression_mnist" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f logistic_regression_mnist" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f logistic_regression_mnist" run
 
 # Epochs
 make ARGS="--group props --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f levy" run
@@ -355,18 +360,26 @@ make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 20 -nn 5 -agg 
 make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 20 -mcmc 20 --n_iter 200 --embedding 0 -f sinone" run
 
 # rosenbrock10D
-make W="24:00" ARGS="--group props --seed 1 --model gp --n_init 20 --n_iter 200 -f rosenbrock10D" run
-make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 20 --n_iter 200 -f rosenbrock10D" run
-make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 20 -nn 5 -agg median --n_iter 200 -f rosenbrock10D" run
-make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 20 -nn 5 -agg max --n_iter 200 -f rosenbrock10D" run
-make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 20 -mcmc 20 --n_iter 200 -f rosenbrock10D" run
+make W="24:00" ARGS="--group props --seed 1 --model gp --n_init 100 --n_iter 200 -f rosenbrock10D" run
+make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 100 --n_iter 200 -f rosenbrock10D" run
+make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 100 -nn 5 -agg median --n_iter 200 -f rosenbrock10D" run
+make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 100 -nn 5 -agg max --n_iter 200 -f rosenbrock10D" run
+make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 100 -mcmc 20 --n_iter 200 -f rosenbrock10D" run
 
 # rosenbrock8D
-make W="24:00" ARGS="--group props --seed 1 --model gp --n_init 20 --n_iter 200 -f rosenbrock8D" run
-make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 20 --n_iter 200 -f rosenbrock8D" run
-make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 20 -nn 5 -agg median --n_iter 200 -f rosenbrock8D" run
-make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 20 -nn 5 -agg max --n_iter 200 -f rosenbrock8D" run
-make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 20 -mcmc 20 --n_iter 200 -f rosenbrock8D" run
+make W="24:00" ARGS="--group props --seed 1 --model gp --n_init 100 --n_iter 200 -f rosenbrock8D" run
+make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 100 --n_iter 200 -f rosenbrock8D" run
+make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 100 -nn 5 -agg median --n_iter 200 -f rosenbrock8D" run
+make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 100 -nn 5 -agg max --n_iter 200 -f rosenbrock8D" run
+make W="24:00" ARGS="--group props --seed 1 --model dngo --n_init 100 -mcmc 20 --n_iter 200 -f rosenbrock8D" run
+
+# Minibatches
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 10 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 20 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 40 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 80 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 160 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 320 --n_init 20 --n_iter 200 -f sintwo" run
 ```
 
 ## Black box global optimization context (objective functions...)
