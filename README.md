@@ -108,7 +108,7 @@ Observations:
 
 - why dngo works
   - Same random initialisation for comparison √
-  - In embedding (where nn shines) (plot 1D and 2D embedding)
+  - In embedding (where nn shines) (plot 1D and 2D embedding) √
     - Compare with REMBO (what about rotation?)
   - Random exploration (high peaks sometimes by nn) (see levy 5nn)
   - Epochs effect 

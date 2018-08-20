@@ -17,7 +17,7 @@ def immidiate_regret(y, y_opt):
 
 
 def acc_ir(history, y_opt):
-    max_history = -np.maximum.accumulate(history)
+    max_history = np.maximum.accumulate(history)
     regret_history = immidiate_regret(max_history, y_opt)
     return regret_history
 
