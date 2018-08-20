@@ -30,7 +30,7 @@ class BO(object):
         else:
             self.acquisition_function = acquisition_function
 
-    def max_acq(self, n_starts=200):        
+    def max_acq(self, n_starts=200):
         min_y = float("inf")
         min_x = None
 

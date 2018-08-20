@@ -64,6 +64,7 @@ obj_functions = {
 obj_functions = {k: prepare_benchmark(Func()) for (k, Func) in obj_functions.items()}
 obj_functions['logistic_regression_mnist'] = prepare_benchmark(LogisticRegression(num_epochs=10))
 obj_functions['rosenbrock10D'] = prepare_benchmark(Rosenbrock(d=10))
+obj_functions['rosenbrock8D'] = prepare_benchmark(Rosenbrock(d=8))
 parser.add_argument("-f", "--obj_func", type=str, choices=obj_functions.keys(), default="branin")
 
 parser.add_argument("-em", "--embedding", nargs='+', type=float, default=None)
@@ -93,11 +94,15 @@ def create_model(args):
 
     # Embedding
     embedding = args_dict.get('embedding')
+    if type(embedding) is tuple:
+        embedding = list(embedding)
+
     if type(embedding) is list and len(embedding) > 0:
         embedded_dims = len(embedding)
         A = np.array(embedding)
         bounds = np.concatenate([bounds, [[0,1]] * embedded_dims])
         f = embed(f, A, f_dim=input_dim)
+        f_opt = f_opt + np.sum(A)
         input_dim = bounds.shape[0]
     else:
         embedded_dims = None

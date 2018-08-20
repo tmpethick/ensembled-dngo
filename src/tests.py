@@ -44,7 +44,7 @@ def prepare_benchmark(func):
     def wrapper(x):
         return -func(x)
     
-    return vectorize(wrapper), bounds, info['f_opt']
+    return vectorize(wrapper), bounds, -info['f_opt']
 
 
 def test_random_sample(f, bounds, n_iter=100):

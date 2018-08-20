@@ -97,7 +97,9 @@ rosenbrock                     0,-2
 sinone                         -2,-10
 sintwo                         -2,-5
 
-Might be able to find problems in embedded spaces.. Overconfident! Leads to little exploration.
+Observations:
+- Might be able to find problems in embedded spaces.. Overconfident! Leads to little exploration.
+- Small epochs learns faster but has learning threshold. Make it adaptive?
 
 - why dngo works
   - Same random initialisation for comparison √
@@ -335,9 +337,12 @@ make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f hart
 make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.01 -f goldsteinprice" run
 make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.001 -f goldsteinprice" run
 make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0001 -f goldsteinprice" run
+make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0 -f goldsteinprice" run
+make ARGS="--seed 1 --model gp --n_init 20 --n_iter 200 -f goldsteinprice" run
 
 # Embedding
 make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 0 -f sinone" run
 make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f branin" run
 make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 -f branin" run
 make W="24:00" ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 100 -f branin" run

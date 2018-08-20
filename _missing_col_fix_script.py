@@ -25,6 +25,6 @@ df['embedding'] = pd.Series('None', index=df.index)
 df.loc[(df.obj_func == 'sinone') & (df.date > parser.parse("2018-08-19 15:00")), 'embedding'] = '[0]'
 df.loc[(df.obj_func == 'branin') & (df.date > parser.parse("2018-08-19 15:00")), 'embedding'] = '[0]'
 
-df['embedding'] = df.embedding.apply(literal_eval)
+df['embedding'] = df.embedding.fillna('None').apply(literal_eval)
 
 df.to_csv(conf['database'], index=False)
