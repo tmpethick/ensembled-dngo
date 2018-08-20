@@ -337,6 +337,7 @@ make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f hart
 make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.01 -f goldsteinprice" run
 make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.001 -f goldsteinprice" run
 make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0001 -f goldsteinprice" run
+
 make ARGS="--seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0 -f goldsteinprice" run
 make ARGS="--seed 1 --model gp --n_init 20 --n_iter 200 -f goldsteinprice" run
 

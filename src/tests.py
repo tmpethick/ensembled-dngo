@@ -255,5 +255,5 @@ def embed(f, A, f_dim=2):
         Returns:
             [type] -- [description]
         """
-        return f(x[..., :f_dim]) + A * x[..., f_dim:]
+        return f(x[..., :f_dim]) + np.sum(A * x[..., f_dim:])
     return wrapper
