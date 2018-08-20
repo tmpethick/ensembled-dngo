@@ -20,7 +20,7 @@ from src.models import BOModel, GPyBOModel
 from src.neural_network import TorchRegressionModel
 from src.logistic_regression_benchmark import LogisticRegression
 from src.rosenbrock_benchmark import Rosenbrock
-import config as config
+import config
 
 parser = argparse.ArgumentParser()
 
@@ -92,7 +92,7 @@ def create_model(args):
     input_dim = bounds.shape[0]
 
     # Embedding
-    if type(args.embedding) is list:
+    if type(args_dict.get('embedding')) is list:
         embedded_dims = len(args.embedding)
         A = np.array(args.embedding)
         bounds = np.concatenate([bounds, [[0,1]] * embedded_dims])
@@ -126,7 +126,7 @@ def create_model(args):
     acq = acquisition_functions[args.acq](model)
     bo = BO(f, model, 
         acquisition_function=acq, 
-        n_init=args.n_init, 
+        n_init=args_dict.get('n_init', 2), 
         n_iter=args.n_iter, 
         bounds=bounds, 
         embedded_dims=embedded_dims,
@@ -220,6 +220,12 @@ if __name__ == '__main__':
 
         try:
             df = pandas.read_csv(conf['database'])
+
+            # Add missing columns (in case a new parameter was introduced)
+            missing_columns = set(row.keys()).symmetric_difference(set(df.columns.values))
+            for col in missing_columns:
+                df[col] = pandas.Series(None, index=df.index)
+
             df = df.set_index('uuid')
             df.loc[uid] = pandas.Series(row)
             df = df.reset_index()

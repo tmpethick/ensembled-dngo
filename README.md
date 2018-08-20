@@ -97,6 +97,8 @@ rosenbrock                     0,-2
 sinone                         -2,-10
 sintwo                         -2,-5
 
+Might be able to find problems in embedded spaces.. Overconfident! Leads to little exploration.
+
 - why dngo works
   - Same random initialisation for comparison √
   - In embedding (where nn shines) (plot 1D and 2D embedding)
