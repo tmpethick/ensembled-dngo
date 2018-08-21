@@ -1,2 +1,0 @@
-run.py --seed 1 --model gp --n_iter 200 -f sintwo
-python run.py --seed 1 --model gp --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func sintwo --embedding None --acq UCB --n_iter 200 --n_init 2 --uuid d99dbd9c --date 2018-08-20 14:18:24.320582 --name d99dbd9c--s-1-m-gp-k-200-f-sintwo

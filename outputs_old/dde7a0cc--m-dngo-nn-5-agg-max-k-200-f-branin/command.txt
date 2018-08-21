@@ -1,0 +1,2 @@
+run.py --model dngo -nn 5 -agg max --n_iter 200 -f branin
+python run.py --model dngo --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 5 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator max --num_mcmc 0 --obj_func branin --acq UCB --n_iter 200 --uuid dde7a0cc --date 2018-08-16 15:09:09.219147 --name dde7a0cc--m-dngo-nn-5-agg-max-k-200-f-branin

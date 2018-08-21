@@ -1,0 +1,2 @@
+run.py --seed 1 --model dngo --n_iter 200 -f hartmann6
+python run.py --seed 1 --model dngo --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func hartmann6 --embedding None --acq UCB --n_iter 200 --n_init 2 --uuid 2a12b415 --date 2018-08-20 14:18:24.531064 --name 2a12b415--s-1-m-dngo-k-200-f-hartmann6

@@ -1,2 +1,0 @@
-run.py --model dngo --n_iter 200 -f levy
-python run.py --model dngo --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func levy --acq UCB --n_iter 200 --uuid 0ebc9773 --date 2018-08-15 10:45:40.646766 --name 0ebc9773--m-dngo-k-200-f-levy
