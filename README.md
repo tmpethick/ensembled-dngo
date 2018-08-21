@@ -261,6 +261,59 @@ make pull
 ## Currently run experiments
 
 ```
+# Epochs
+make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f levy" run
+make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f levy" run
+make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f levy" run
+make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f sintwo" run
+make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f sintwo" run
+make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f sintwo" run
+make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f hartmann3" run
+make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f hartmann3" run
+
+# Weight decay
+make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.01 -f goldsteinprice" run
+make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.001 -f goldsteinprice" run
+make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0001 -f goldsteinprice" run
+make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0 -f goldsteinprice" run
+make ARGS="--group l2 --seed 1 --model gp --n_init 20 --n_iter 200 -f goldsteinprice" run
+
+# Embedding
+make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f branin" run
+make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 -f branin" run
+make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 100 -f branin" run
+
+# Embedding test exploration
+make W="24:00" ARGS="--group embedding --seed 1 --model gp --n_init 20 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --seed 1 --model gp --n_init 20 -mcmc 20 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 -nn 5 -agg median --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 -nn 5 -agg max --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 -mcmc 20 --n_iter 200 --embedding 0 -f sinone" run
+
+# Minibatches
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 10 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 20 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 40 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 80 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 160 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --seed 1 --model dngo --batch_size 320 --n_init 20 --n_iter 200 -f sintwo" run
+
+# Ensemble size
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 5 -agg max" run
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 10 -agg max" run
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 15 -agg max" run
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 10 -agg median" run
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 15 -agg median" run
+
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f camelback -nn 5 -agg median" run
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f camelback -nn 10 -agg median" run
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f camelback -nn 15 -agg median" run
+
+
+# Functions
 make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f branin" run
 make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f hartmann3" run
 make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f hartmann6" run
@@ -284,6 +337,18 @@ make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f levy"
 make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f rosenbrock" run
 make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f sinone" run
 make ARGS="--group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f sintwo" run
+
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f branin" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f hartmann3" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f hartmann6" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f camelback" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f forrester" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f bohachevsky" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f goldsteinprice" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f levy" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f rosenbrock" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f sinone" run
+make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 10 -agg median --n_init 20 --n_iter 200 -f sintwo" run
 
 make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f branin" run
 make W="20:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_init 20 --n_iter 200 -f hartmann3" run
@@ -328,38 +393,6 @@ make W="24:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg median --n_i
 make W="24:00" ARGS="--group funcs --seed 1 --model dngo -nn 5 -agg max --n_init 20 --n_iter 200 -f logistic_regression_mnist" run
 make W="24:00" ARGS="--group funcs --seed 1 --model dngo -mcmc 20 --n_init 20 --n_iter 200 -f logistic_regression_mnist" run
 
-# Epochs
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f levy" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f levy" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f levy" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f sintwo" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f sintwo" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f sintwo" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f hartmann3" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f hartmann3" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f hartmann3" run
-
-# Weight decay
-make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.01 -f goldsteinprice" run
-make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.001 -f goldsteinprice" run
-make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0001 -f goldsteinprice" run
-make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0 -f goldsteinprice" run
-make ARGS="--group l2 --seed 1 --model gp --n_init 20 --n_iter 200 -f goldsteinprice" run
-
-# Embedding
-make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f sinone" run
-make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 0 -f sinone" run
-make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f branin" run
-make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 -f branin" run
-make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 100 -f branin" run
-
-# Embedding test exploration
-make W="24:00" ARGS="--group embedding --seed 1 --model gp --n_init 20 --n_iter 200 --embedding 0 -f sinone" run
-make W="24:00" ARGS="--group embedding --seed 1 --model gp --n_init 20 -mcmc 20 --n_iter 200 --embedding 0 -f sinone" run
-make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 -nn 5 -agg median --n_iter 200 --embedding 0 -f sinone" run
-make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 -nn 5 -agg max --n_iter 200 --embedding 0 -f sinone" run
-make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 -mcmc 20 --n_iter 200 --embedding 0 -f sinone" run
-
 # rosenbrock10D
 make W="24:00" ARGS="--group highdim --seed 1 --model gp --n_init 100 --n_iter 200 -f rosenbrock10D" run
 make W="24:00" ARGS="--group highdim --seed 1 --model dngo --n_init 100 --n_iter 200 -f rosenbrock10D" run
@@ -373,24 +406,28 @@ make W="24:00" ARGS="--group highdim --seed 1 --model dngo --n_init 100 --n_iter
 make W="24:00" ARGS="--group highdim --seed 1 --model dngo --n_init 100 -nn 5 -agg median --n_iter 200 -f rosenbrock8D" run
 make W="24:00" ARGS="--group highdim --seed 1 --model dngo --n_init 100 -nn 5 -agg max --n_iter 200 -f rosenbrock8D" run
 make W="24:00" ARGS="--group highdim --seed 1 --model dngo --n_init 100 -mcmc 20 --n_iter 200 -f rosenbrock8D" run
-
-# Minibatches
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 10 --n_init 20 --n_iter 200 -f sintwo" run
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 20 --n_init 20 --n_iter 200 -f sintwo" run
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 40 --n_init 20 --n_iter 200 -f sintwo" run
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 80 --n_init 20 --n_iter 200 -f sintwo" run
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 160 --n_init 20 --n_iter 200 -f sintwo" run
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 320 --n_init 20 --n_iter 200 -f sintwo" run
-
-# Ensemble size
-make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 5 -agg max" run
-make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 10 -agg max" run
-make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 15 -agg max" run
-make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 10 -agg median" run
-make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 15 -agg median" run
 ```
 
 
 ## Black box global optimization context (objective functions...)
 
 https://bbcomp.ini.rub.de/
+
+
+## Overview
+
+- Experiment
+  - weight decay
+  - highdim
+  - embedding
+  - epochs
+  - ensemble size
+  - mini batches
+  - ensemble aggregator
+- going to
+  - move it into febo (everything is built from the ground up currently. only dependency is mcmc and cholesky)
+    - few benchmark function (rosenbrock, embedding)
+  - write report (have two weeks before semester starts)
+- Side effect:
+  - hpc automation
+  - Docker container for robo and spearmint

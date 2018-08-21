@@ -228,7 +228,7 @@ class GPyBOModel(BOBaseModel):
 
         return np.stack([mean, var])
 
-    def plot_prediction(self, X_line, Y_line, x_new=None, plot_predictions=True):
+    def plot_prediction(self, X_line, Y_line, X_embedding=None, x_new=None, plot_predictions=True):
         if plot_predictions:
             for theta in self.gp._current_thetas:
                 summ = self.predict(X_line, theta=theta)
