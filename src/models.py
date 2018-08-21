@@ -96,15 +96,16 @@ class BOModel(BOBaseModel):
     def acq(self, X, acq):
         """Note: prediction is done in normalized space.
         """
-
         Ds = self.predict_basis(X)
 
         idxs = np.arange(self.num_nn)
         def predict_all(i):
             return self.gps[i].predict_all(Ds[i])
         predict_all = np.vectorize(predict_all, signature='()->(m,t,n)')
-
         transformed_sample_predictions = predict_all(idxs)
+        # TODO: change into: 
+        # transformed_sample_predictions = self.predict(X, denormalize=False)
+        
         # shape: (ensemble, gphyperparams, summarystats, samples)
 
         # Calc acq
@@ -173,7 +174,7 @@ class BOModel(BOBaseModel):
         if x_new is not None:
             plt.axvline(x=x_new[0], ls='--', c='k', lw=1, label='Next sampling location')
 
-        # Always only plot one dimension (helpful in the case of embedding)
+        # `X[:,0]` ensures always only plot one dimension (helpful in the case of embedding)
         plt.scatter(self.X[:,0], self.Y)
         plt.plot(X_line, Y_line, dashes=[2, 2], color='black')
 

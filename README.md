@@ -128,6 +128,7 @@ Observations:
   - Minibatches (necessary for many datapoint. Explore how they effect in small sample size. adjust learning rate accordingly)
   - For many datapoints in high dimensions (mnist)
 
+- Make it better than random to even make them comparable
 - Test effect of minibatch (find problem with changing gradient. Otherwise I expect them to behave similar since it would fit the same function without the datapoint.) √
 - amount of ensembles (find problem for which ensemble does not work)
 - test that mnist can converge...

@@ -2,8 +2,145 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="73aae37e-770c-49c7-86b9-dfc0d57df91e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model_explorer.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/model_explorer.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/047ef2c0--s-1-m-dngo-k-200-f-logistic_regression_mnist/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/047ef2c0--s-1-m-dngo-k-200-f-logistic_regression_mnist/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/047ef2c0--s-1-m-dngo-k-200-f-logistic_regression_mnist/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/047ef2c0--s-1-m-dngo-k-200-f-logistic_regression_mnist/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/047ef2c0--s-1-m-dngo-k-200-f-logistic_regression_mnist/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/047ef2c0--s-1-m-dngo-k-200-f-logistic_regression_mnist/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/0844e690--s-1-m-dngo-nn-5-agg-max-k-200-f-camelback/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/0844e690--s-1-m-dngo-nn-5-agg-max-k-200-f-camelback/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/0844e690--s-1-m-dngo-nn-5-agg-max-k-200-f-camelback/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/0844e690--s-1-m-dngo-nn-5-agg-max-k-200-f-camelback/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/0844e690--s-1-m-dngo-nn-5-agg-max-k-200-f-camelback/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/0844e690--s-1-m-dngo-nn-5-agg-max-k-200-f-camelback/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/0bcdc07c--s-1-m-dngo-nn-5-agg-median-k-200-f-goldsteinprice/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/0bcdc07c--s-1-m-dngo-nn-5-agg-median-k-200-f-goldsteinprice/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/0bcdc07c--s-1-m-dngo-nn-5-agg-median-k-200-f-goldsteinprice/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/0bcdc07c--s-1-m-dngo-nn-5-agg-median-k-200-f-goldsteinprice/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/0bcdc07c--s-1-m-dngo-nn-5-agg-median-k-200-f-goldsteinprice/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/0bcdc07c--s-1-m-dngo-nn-5-agg-median-k-200-f-goldsteinprice/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1335cbb0--s-1-m-dngo-mcmc-20-k-200-f-branin/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1335cbb0--s-1-m-dngo-mcmc-20-k-200-f-branin/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1335cbb0--s-1-m-dngo-mcmc-20-k-200-f-branin/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1335cbb0--s-1-m-dngo-mcmc-20-k-200-f-branin/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1335cbb0--s-1-m-dngo-mcmc-20-k-200-f-branin/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1335cbb0--s-1-m-dngo-mcmc-20-k-200-f-branin/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/18f8cc75--s-1-m-dngo-mcmc-20-k-200-f-bohachevsky/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/18f8cc75--s-1-m-dngo-mcmc-20-k-200-f-bohachevsky/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/18f8cc75--s-1-m-dngo-mcmc-20-k-200-f-bohachevsky/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/18f8cc75--s-1-m-dngo-mcmc-20-k-200-f-bohachevsky/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/18f8cc75--s-1-m-dngo-mcmc-20-k-200-f-bohachevsky/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/18f8cc75--s-1-m-dngo-mcmc-20-k-200-f-bohachevsky/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1924cb40--s-1-m-dngo-mcmc-20-k-200-f-forrester/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1924cb40--s-1-m-dngo-mcmc-20-k-200-f-forrester/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1924cb40--s-1-m-dngo-mcmc-20-k-200-f-forrester/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1924cb40--s-1-m-dngo-mcmc-20-k-200-f-forrester/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1924cb40--s-1-m-dngo-mcmc-20-k-200-f-forrester/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1924cb40--s-1-m-dngo-mcmc-20-k-200-f-forrester/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1d336f47--g-props-s-1-m-gp-init-20-k-200-em-0-f-sinone/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1d336f47--g-props-s-1-m-gp-init-20-k-200-em-0-f-sinone/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1d336f47--g-props-s-1-m-gp-init-20-k-200-em-0-f-sinone/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1d336f47--g-props-s-1-m-gp-init-20-k-200-em-0-f-sinone/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1d336f47--g-props-s-1-m-gp-init-20-k-200-em-0-f-sinone/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1d336f47--g-props-s-1-m-gp-init-20-k-200-em-0-f-sinone/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1d7750bd--s-1-m-dngo-k-200-f-hartmann3/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1d7750bd--s-1-m-dngo-k-200-f-hartmann3/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1d7750bd--s-1-m-dngo-k-200-f-hartmann3/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1d7750bd--s-1-m-dngo-k-200-f-hartmann3/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/1d7750bd--s-1-m-dngo-k-200-f-hartmann3/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/1d7750bd--s-1-m-dngo-k-200-f-hartmann3/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2a12b415--s-1-m-dngo-k-200-f-hartmann6/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2a12b415--s-1-m-dngo-k-200-f-hartmann6/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2a12b415--s-1-m-dngo-k-200-f-hartmann6/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2a12b415--s-1-m-dngo-k-200-f-hartmann6/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2a12b415--s-1-m-dngo-k-200-f-hartmann6/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2a12b415--s-1-m-dngo-k-200-f-hartmann6/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2d1ad8f5--s-1-m-dngo-nn-5-agg-median-k-200-f-forrester/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2d1ad8f5--s-1-m-dngo-nn-5-agg-median-k-200-f-forrester/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2d1ad8f5--s-1-m-dngo-nn-5-agg-median-k-200-f-forrester/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2d1ad8f5--s-1-m-dngo-nn-5-agg-median-k-200-f-forrester/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2d1ad8f5--s-1-m-dngo-nn-5-agg-median-k-200-f-forrester/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2d1ad8f5--s-1-m-dngo-nn-5-agg-median-k-200-f-forrester/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2de0f5ec--s-1-m-dngo-mcmc-20-k-200-f-rosenbrock/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2de0f5ec--s-1-m-dngo-mcmc-20-k-200-f-rosenbrock/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2de0f5ec--s-1-m-dngo-mcmc-20-k-200-f-rosenbrock/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2de0f5ec--s-1-m-dngo-mcmc-20-k-200-f-rosenbrock/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2de0f5ec--s-1-m-dngo-mcmc-20-k-200-f-rosenbrock/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2de0f5ec--s-1-m-dngo-mcmc-20-k-200-f-rosenbrock/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2eef2733--s-1-m-gp-init-20-k-200-f-rosenbrock8D/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2eef2733--s-1-m-gp-init-20-k-200-f-rosenbrock8D/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2eef2733--s-1-m-gp-init-20-k-200-f-rosenbrock8D/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2eef2733--s-1-m-gp-init-20-k-200-f-rosenbrock8D/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/2eef2733--s-1-m-gp-init-20-k-200-f-rosenbrock8D/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/2eef2733--s-1-m-gp-init-20-k-200-f-rosenbrock8D/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/33d3c785--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann3/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/33d3c785--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann3/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/33d3c785--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann3/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/33d3c785--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann3/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/33d3c785--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann3/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/33d3c785--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann3/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/421f0c7d--s-1-m-dngo-nn-5-agg-max-k-200-f-sintwo/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/421f0c7d--s-1-m-dngo-nn-5-agg-max-k-200-f-sintwo/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/421f0c7d--s-1-m-dngo-nn-5-agg-max-k-200-f-sintwo/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/421f0c7d--s-1-m-dngo-nn-5-agg-max-k-200-f-sintwo/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/421f0c7d--s-1-m-dngo-nn-5-agg-max-k-200-f-sintwo/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/421f0c7d--s-1-m-dngo-nn-5-agg-max-k-200-f-sintwo/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/493cf83d--s-1-m-dngo-init-20-mcmc-20-k-200-f-rosenbrock8D/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/493cf83d--s-1-m-dngo-init-20-mcmc-20-k-200-f-rosenbrock8D/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/493cf83d--s-1-m-dngo-init-20-mcmc-20-k-200-f-rosenbrock8D/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/493cf83d--s-1-m-dngo-init-20-mcmc-20-k-200-f-rosenbrock8D/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/493cf83d--s-1-m-dngo-init-20-mcmc-20-k-200-f-rosenbrock8D/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/493cf83d--s-1-m-dngo-init-20-mcmc-20-k-200-f-rosenbrock8D/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/50db6c94--s-1-m-gp-k-200-f-bohachevsky/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/50db6c94--s-1-m-gp-k-200-f-bohachevsky/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/50db6c94--s-1-m-gp-k-200-f-bohachevsky/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/50db6c94--s-1-m-gp-k-200-f-bohachevsky/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/50db6c94--s-1-m-gp-k-200-f-bohachevsky/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/50db6c94--s-1-m-gp-k-200-f-bohachevsky/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/692df147--s-1-m-gp-k-200-f-branin/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/692df147--s-1-m-gp-k-200-f-branin/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/692df147--s-1-m-gp-k-200-f-branin/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/692df147--s-1-m-gp-k-200-f-branin/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/692df147--s-1-m-gp-k-200-f-branin/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/692df147--s-1-m-gp-k-200-f-branin/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/7054b00a--s-1-m-gp-k-200-f-camelback/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/7054b00a--s-1-m-gp-k-200-f-camelback/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/7054b00a--s-1-m-gp-k-200-f-camelback/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/7054b00a--s-1-m-gp-k-200-f-camelback/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/7054b00a--s-1-m-gp-k-200-f-camelback/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/7054b00a--s-1-m-gp-k-200-f-camelback/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/79549f49--s-1-m-gp-k-200-f-rosenbrock/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/79549f49--s-1-m-gp-k-200-f-rosenbrock/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/79549f49--s-1-m-gp-k-200-f-rosenbrock/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/79549f49--s-1-m-gp-k-200-f-rosenbrock/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/79549f49--s-1-m-gp-k-200-f-rosenbrock/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/79549f49--s-1-m-gp-k-200-f-rosenbrock/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/7de9db34--s-1-m-dngo-init-20-k-200-em-0-0-f-sinone/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/7de9db34--s-1-m-dngo-init-20-k-200-em-0-0-f-sinone/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/7de9db34--s-1-m-dngo-init-20-k-200-em-0-0-f-sinone/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/7de9db34--s-1-m-dngo-init-20-k-200-em-0-0-f-sinone/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/7de9db34--s-1-m-dngo-init-20-k-200-em-0-0-f-sinone/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/7de9db34--s-1-m-dngo-init-20-k-200-em-0-0-f-sinone/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/7dfdf3e1--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann6/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/7dfdf3e1--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann6/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/7dfdf3e1--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann6/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/7dfdf3e1--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann6/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/7dfdf3e1--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann6/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/7dfdf3e1--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann6/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/8045cf64--s-1-m-dngo-mcmc-20-k-200-f-levy/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/8045cf64--s-1-m-dngo-mcmc-20-k-200-f-levy/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/8045cf64--s-1-m-dngo-mcmc-20-k-200-f-levy/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/8045cf64--s-1-m-dngo-mcmc-20-k-200-f-levy/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/8045cf64--s-1-m-dngo-mcmc-20-k-200-f-levy/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/8045cf64--s-1-m-dngo-mcmc-20-k-200-f-levy/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/903ea0d7--s-1-m-dngo-init-20-nn-5-agg-median-k-200-f-rosenbrock8D/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/903ea0d7--s-1-m-dngo-init-20-nn-5-agg-median-k-200-f-rosenbrock8D/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/903ea0d7--s-1-m-dngo-init-20-nn-5-agg-median-k-200-f-rosenbrock8D/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/903ea0d7--s-1-m-dngo-init-20-nn-5-agg-median-k-200-f-rosenbrock8D/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/903ea0d7--s-1-m-dngo-init-20-nn-5-agg-median-k-200-f-rosenbrock8D/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/903ea0d7--s-1-m-dngo-init-20-nn-5-agg-median-k-200-f-rosenbrock8D/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/939a992c--s-1-m-dngo-mcmc-20-k-200-f-goldsteinprice/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/939a992c--s-1-m-dngo-mcmc-20-k-200-f-goldsteinprice/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/939a992c--s-1-m-dngo-mcmc-20-k-200-f-goldsteinprice/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/939a992c--s-1-m-dngo-mcmc-20-k-200-f-goldsteinprice/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/939a992c--s-1-m-dngo-mcmc-20-k-200-f-goldsteinprice/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/939a992c--s-1-m-dngo-mcmc-20-k-200-f-goldsteinprice/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/969e5a3c--s-1-m-dngo-nn-5-agg-max-k-200-f-forrester/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/969e5a3c--s-1-m-dngo-nn-5-agg-max-k-200-f-forrester/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/969e5a3c--s-1-m-dngo-nn-5-agg-max-k-200-f-forrester/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/969e5a3c--s-1-m-dngo-nn-5-agg-max-k-200-f-forrester/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/969e5a3c--s-1-m-dngo-nn-5-agg-max-k-200-f-forrester/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/969e5a3c--s-1-m-dngo-nn-5-agg-max-k-200-f-forrester/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/9a2e2f09--s-1-m-dngo-nn-5-agg-median-k-200-f-sintwo/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/9a2e2f09--s-1-m-dngo-nn-5-agg-median-k-200-f-sintwo/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/9a2e2f09--s-1-m-dngo-nn-5-agg-median-k-200-f-sintwo/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/9a2e2f09--s-1-m-dngo-nn-5-agg-median-k-200-f-sintwo/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/9a2e2f09--s-1-m-dngo-nn-5-agg-median-k-200-f-sintwo/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/9a2e2f09--s-1-m-dngo-nn-5-agg-median-k-200-f-sintwo/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/9ac0e345--s-1-m-dngo-nn-5-agg-max-k-200-f-rosenbrock/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/9ac0e345--s-1-m-dngo-nn-5-agg-max-k-200-f-rosenbrock/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/9ac0e345--s-1-m-dngo-nn-5-agg-max-k-200-f-rosenbrock/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/9ac0e345--s-1-m-dngo-nn-5-agg-max-k-200-f-rosenbrock/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/9ac0e345--s-1-m-dngo-nn-5-agg-max-k-200-f-rosenbrock/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/9ac0e345--s-1-m-dngo-nn-5-agg-max-k-200-f-rosenbrock/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/a9f4c7cb--s-1-m-dngo-mcmc-20-k-200-f-sinone/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/a9f4c7cb--s-1-m-dngo-mcmc-20-k-200-f-sinone/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/a9f4c7cb--s-1-m-dngo-mcmc-20-k-200-f-sinone/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/a9f4c7cb--s-1-m-dngo-mcmc-20-k-200-f-sinone/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/a9f4c7cb--s-1-m-dngo-mcmc-20-k-200-f-sinone/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/a9f4c7cb--s-1-m-dngo-mcmc-20-k-200-f-sinone/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/af7fd78f--s-1-m-gp-k-200-f-logistic_regression_mnist/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/af7fd78f--s-1-m-gp-k-200-f-logistic_regression_mnist/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/af7fd78f--s-1-m-gp-k-200-f-logistic_regression_mnist/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/af7fd78f--s-1-m-gp-k-200-f-logistic_regression_mnist/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/af7fd78f--s-1-m-gp-k-200-f-logistic_regression_mnist/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/af7fd78f--s-1-m-gp-k-200-f-logistic_regression_mnist/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/b869f85a--s-1-m-dngo-mcmc-20-k-200-f-camelback/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/b869f85a--s-1-m-dngo-mcmc-20-k-200-f-camelback/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/b869f85a--s-1-m-dngo-mcmc-20-k-200-f-camelback/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/b869f85a--s-1-m-dngo-mcmc-20-k-200-f-camelback/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/b869f85a--s-1-m-dngo-mcmc-20-k-200-f-camelback/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/b869f85a--s-1-m-dngo-mcmc-20-k-200-f-camelback/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/c278a194--s-1-m-dngo-nn-5-agg-max-k-200-f-sinone/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/c278a194--s-1-m-dngo-nn-5-agg-max-k-200-f-sinone/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/c278a194--s-1-m-dngo-nn-5-agg-max-k-200-f-sinone/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/c278a194--s-1-m-dngo-nn-5-agg-max-k-200-f-sinone/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/c278a194--s-1-m-dngo-nn-5-agg-max-k-200-f-sinone/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/c278a194--s-1-m-dngo-nn-5-agg-max-k-200-f-sinone/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/c595b30a--s-1-m-dngo-init-20-nn-5-agg-max-k-200-f-rosenbrock8D/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/c595b30a--s-1-m-dngo-init-20-nn-5-agg-max-k-200-f-rosenbrock8D/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/c595b30a--s-1-m-dngo-init-20-nn-5-agg-max-k-200-f-rosenbrock8D/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/c595b30a--s-1-m-dngo-init-20-nn-5-agg-max-k-200-f-rosenbrock8D/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/c595b30a--s-1-m-dngo-init-20-nn-5-agg-max-k-200-f-rosenbrock8D/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/c595b30a--s-1-m-dngo-init-20-nn-5-agg-max-k-200-f-rosenbrock8D/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/c6cf5d20--s-1-m-gp-k-200-f-goldsteinprice/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/c6cf5d20--s-1-m-gp-k-200-f-goldsteinprice/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/c6cf5d20--s-1-m-gp-k-200-f-goldsteinprice/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/c6cf5d20--s-1-m-gp-k-200-f-goldsteinprice/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/c6cf5d20--s-1-m-gp-k-200-f-goldsteinprice/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/c6cf5d20--s-1-m-gp-k-200-f-goldsteinprice/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/cc1ffb7d--s-1-m-gp-init-20-k-200-f-goldsteinprice/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/cc1ffb7d--s-1-m-gp-init-20-k-200-f-goldsteinprice/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/cc1ffb7d--s-1-m-gp-init-20-k-200-f-goldsteinprice/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/cc1ffb7d--s-1-m-gp-init-20-k-200-f-goldsteinprice/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/cc1ffb7d--s-1-m-gp-init-20-k-200-f-goldsteinprice/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/cc1ffb7d--s-1-m-gp-init-20-k-200-f-goldsteinprice/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/d2e0d9df--s-1-m-dngo-mcmc-20-k-200-f-hartmann3/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/d2e0d9df--s-1-m-dngo-mcmc-20-k-200-f-hartmann3/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/d2e0d9df--s-1-m-dngo-mcmc-20-k-200-f-hartmann3/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/d2e0d9df--s-1-m-dngo-mcmc-20-k-200-f-hartmann3/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/d2e0d9df--s-1-m-dngo-mcmc-20-k-200-f-hartmann3/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/d2e0d9df--s-1-m-dngo-mcmc-20-k-200-f-hartmann3/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/da6215e6--s-1-m-dngo-nn-5-agg-median-k-200-f-camelback/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/da6215e6--s-1-m-dngo-nn-5-agg-median-k-200-f-camelback/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/da6215e6--s-1-m-dngo-nn-5-agg-median-k-200-f-camelback/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/da6215e6--s-1-m-dngo-nn-5-agg-median-k-200-f-camelback/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/da6215e6--s-1-m-dngo-nn-5-agg-median-k-200-f-camelback/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/da6215e6--s-1-m-dngo-nn-5-agg-median-k-200-f-camelback/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/db347b3d--s-1-m-gp-k-200-f-hartmann6/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/db347b3d--s-1-m-gp-k-200-f-hartmann6/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/db347b3d--s-1-m-gp-k-200-f-hartmann6/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/db347b3d--s-1-m-gp-k-200-f-hartmann6/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/db347b3d--s-1-m-gp-k-200-f-hartmann6/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/db347b3d--s-1-m-gp-k-200-f-hartmann6/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/dbd143e8--s-1-m-dngo-nn-5-agg-max-k-200-f-goldsteinprice/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/dbd143e8--s-1-m-dngo-nn-5-agg-max-k-200-f-goldsteinprice/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/dbd143e8--s-1-m-dngo-nn-5-agg-max-k-200-f-goldsteinprice/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/dbd143e8--s-1-m-dngo-nn-5-agg-max-k-200-f-goldsteinprice/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/dbd143e8--s-1-m-dngo-nn-5-agg-max-k-200-f-goldsteinprice/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/dbd143e8--s-1-m-dngo-nn-5-agg-max-k-200-f-goldsteinprice/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/debb003e--s-1-m-dngo-mcmc-20-k-200-f-sintwo/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/debb003e--s-1-m-dngo-mcmc-20-k-200-f-sintwo/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/debb003e--s-1-m-dngo-mcmc-20-k-200-f-sintwo/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/debb003e--s-1-m-dngo-mcmc-20-k-200-f-sintwo/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/debb003e--s-1-m-dngo-mcmc-20-k-200-f-sintwo/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/debb003e--s-1-m-dngo-mcmc-20-k-200-f-sintwo/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/e34133a7--s-1-m-gp-init-20-k-200-f-goldsteinprice/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/e34133a7--s-1-m-gp-init-20-k-200-f-goldsteinprice/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/e34133a7--s-1-m-gp-init-20-k-200-f-goldsteinprice/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/e34133a7--s-1-m-gp-init-20-k-200-f-goldsteinprice/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/e34133a7--s-1-m-gp-init-20-k-200-f-goldsteinprice/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/e34133a7--s-1-m-gp-init-20-k-200-f-goldsteinprice/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/ecb2ad2c--s-1-m-dngo-nn-5-agg-median-k-200-f-sinone/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/ecb2ad2c--s-1-m-dngo-nn-5-agg-median-k-200-f-sinone/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/ecb2ad2c--s-1-m-dngo-nn-5-agg-median-k-200-f-sinone/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/ecb2ad2c--s-1-m-dngo-nn-5-agg-median-k-200-f-sinone/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/ecb2ad2c--s-1-m-dngo-nn-5-agg-median-k-200-f-sinone/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/ecb2ad2c--s-1-m-dngo-nn-5-agg-median-k-200-f-sinone/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/efbabd82--g-minibatch-s-1-m-dngo-bs-10-init-20-k-200-f-sintwo/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/efbabd82--g-minibatch-s-1-m-dngo-bs-10-init-20-k-200-f-sintwo/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/efbabd82--g-minibatch-s-1-m-dngo-bs-10-init-20-k-200-f-sintwo/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/efbabd82--g-minibatch-s-1-m-dngo-bs-10-init-20-k-200-f-sintwo/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/efbabd82--g-minibatch-s-1-m-dngo-bs-10-init-20-k-200-f-sintwo/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/efbabd82--g-minibatch-s-1-m-dngo-bs-10-init-20-k-200-f-sintwo/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/entries.csv" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/entries.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/f124e924--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann3/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/f124e924--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann3/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/f124e924--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann3/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/f124e924--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann3/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/f124e924--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann3/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/f124e924--s-1-m-dngo-nn-5-agg-max-k-200-f-hartmann3/obs-Y.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/f24a098d--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann6/immediate_regret.png" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/f24a098d--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann6/immediate_regret.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/f24a098d--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann6/obs-X.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/f24a098d--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann6/obs-X.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/f24a098d--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann6/obs-Y.npy" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/f24a098d--s-1-m-dngo-nn-5-agg-median-k-200-f-hartmann6/obs-Y.npy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bo.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,7 +149,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/eth_project$run.coverage" NAME="run Coverage Results" MODIFIED="1534773406531" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/eth_project$run.coverage" NAME="run Coverage Results" MODIFIED="1534837398378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
@@ -60,34 +197,25 @@
         <counts>
           <entry key="dummy" value="31" />
           <entry key="md" value="260" />
-          <entry key="py" value="1629" />
+          <entry key="py" value="1679" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="260" />
           <entry key="PLAIN_TEXT" value="31" />
-          <entry key="Python" value="1629" />
+          <entry key="Python" value="1679" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/bo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="124">
-              <caret line="227" column="31" lean-forward="true" selection-start-line="227" selection-start-column="31" selection-end-line="227" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/anaconda3/envs/eth/lib/python3.6/site-packages/torch/nn/functional.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="1673" selection-start-line="1673" selection-end-line="1673" />
+            <state relative-caret-position="55">
+              <caret line="226" column="14" selection-start-line="226" selection-start-column="14" selection-end-line="226" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -107,8 +235,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1292">
-              <caret line="241" selection-start-line="241" selection-end-line="241" />
+            <state relative-caret-position="214">
+              <caret line="124" column="117" selection-start-line="124" selection-start-column="117" selection-end-line="124" selection-end-column="117" />
             </state>
           </provider>
         </entry>
@@ -122,11 +250,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="18" selection-start-line="18" selection-end-line="18" />
+            <state relative-caret-position="250">
+              <caret line="116" lean-forward="true" selection-start-line="116" selection-end-line="116" />
             </state>
           </provider>
         </entry>
@@ -183,6 +311,7 @@
       <find>plot_</find>
       <find>plot_prediction</find>
       <find>folder</find>
+      <find>print</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -205,10 +334,10 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/tests/test_models.py" />
         <option value="$PROJECT_DIR$/tests/test_bo.py" />
-        <option value="$PROJECT_DIR$/src/models.py" />
         <option value="$PROJECT_DIR$/src/bayesian_linear_regression.py" />
-        <option value="$PROJECT_DIR$/run.py" />
         <option value="$PROJECT_DIR$/src/bo.py" />
+        <option value="$PROJECT_DIR$/run.py" />
+        <option value="$PROJECT_DIR$/src/models.py" />
       </list>
     </option>
   </component>
@@ -313,7 +442,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run.py" />
-      <option name="PARAMETERS" value="--seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 100 -f branin" />
+      <option name="PARAMETERS" value="--seed 1 --model dngo -nn 10 -agg max --n_init 20 --n_iter 200 --embedding 30 100 -f branin" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -376,6 +505,17 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/models.py</url>
+          <line>119</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
       <expression>
@@ -385,6 +525,21 @@
       </expression>
     </expressions>
     <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>ensemble_agg.shape</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>ensemble_agg</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>hyper_average.shape</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>bo.bounds.shape</expression-string>
         <language-id>Python</language-id>
@@ -412,21 +567,6 @@
       </expression>
       <expression>
         <expression-string>xinput.shape</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>xinput</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>flattenxinput.shape</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>np.zeros([self._current_thetas.shape[0],1])</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -610,13 +750,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1292">
-          <caret line="241" selection-start-line="241" selection-end-line="241" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/neural_network.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="309">
@@ -627,17 +760,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/models.py">
+    <entry file="file://$PROJECT_DIR$/src/bo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
+        <state relative-caret-position="55">
+          <caret line="226" column="14" selection-start-line="226" selection-start-column="14" selection-end-line="226" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/bo.py">
+    <entry file="file://$PROJECT_DIR$/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="124">
-          <caret line="227" column="31" lean-forward="true" selection-start-line="227" selection-start-column="31" selection-end-line="227" selection-end-column="31" />
+        <state relative-caret-position="214">
+          <caret line="124" column="117" selection-start-line="124" selection-start-column="117" selection-end-line="124" selection-end-column="117" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="116" lean-forward="true" selection-start-line="116" selection-end-line="116" />
         </state>
       </provider>
     </entry>

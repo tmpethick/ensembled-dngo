@@ -197,8 +197,8 @@ class BO(object):
                 if x_new is not None:
                     plt.plot([x_new[0]], [x_new[1]], marker='x', markersize=20, color="white")
 
-        elif dims == 1:
-            X_line = np.linspace(bounds[0:1, 0], bounds[0:1, 1], 100)[:, None]
+        elif embedded_dims == 1:
+            X_line = np.linspace(bounds[0, 0], bounds[0, 1], 100)[:, None]
             if plot_embedded_subspace and self.embedded_dims is not None:
                 X_line_embedded = np.append(X_line, np.ones(X_line.shape[:-1] + (self.embedded_dims,)), axis=-1)
             else:
@@ -211,7 +211,7 @@ class BO(object):
 
             if plot_predictions:
                 plt.subplot(1, 2, 2)
-                self.model.plot_acq(X_line, self.acquisition_function.calc)
+                self.model.plot_acq(X_line_embedded, self.acquisition_function.calc)
         
         else:
             # Only plot or save if a figure has been constructed.

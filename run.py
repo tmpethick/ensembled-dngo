@@ -122,7 +122,7 @@ def create_model(args):
         kernel.variances.set_prior(GPy.priors.LogGaussian(0, 1))
         reg = GPyRegression(kernel=kernel, num_mcmc=args.num_mcmc, fix_noise=True)
         # reg = BayesianLinearRegression(num_mcmc=args.num_mcmc)
-        model = BOModel(nn, regressor=reg, num_nn=args.num_nn)
+        model = BOModel(nn, regressor=reg, num_nn=args.num_nn, ensemble_aggregator=nn_aggregators[args.nn_aggregator])
     elif args.model == "gp":
         kernel = GPy.kern.RBF(input_dim)
         kernel.variance.set_prior(GPy.priors.LogGaussian(0, 1))
