@@ -1,0 +1,2 @@
+run.py --group funcs -f fcnet_mnist --model gp --n_init 2 --n_iter 100
+python run.py --seed None --model gp --group funcs --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func fcnet_mnist --embedding None --acq UCB --n_iter 100 --n_init 2 --uuid 7093de6f --date 2018-08-26 17:32:13.099010 --name 7093de6f--g-funcs-f-fcnet_mnist-m-gp-init-2-k-100

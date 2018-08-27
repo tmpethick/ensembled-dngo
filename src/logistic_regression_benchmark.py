@@ -10,7 +10,10 @@ from hpolib.abstract_benchmark import AbstractBenchmark
 from hpolib.util.data_manager import DataManager
 import ConfigSpace as CS
 
-device = torch.device("cpu")
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+else:
+    device = torch.device("cpu")
 
 class LogisticRegression(object):
     """
@@ -51,7 +54,7 @@ class LogisticRegression(object):
                            [0, 1],     # l2 regularization
                            [20, 2000], # batch size
                            [0, .75]],  # dropout rate
-                'f_opt': 0,
+                'f_opt': None,
                 }
 
     def run(self, learning_rate=0.1, l2_reg=0.0,
@@ -91,14 +94,14 @@ class LogisticRegression(object):
         # Loss and Optimizer
         # Softmax is internally computed.
         # Set parameters to be updated.
-        criterion = nn.CrossEntropyLoss()  
-        optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate,weight_decay=l2_reg) 
+        criterion = nn.CrossEntropyLoss()
+        optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay=l2_reg) 
 
         # Training the Model
         for epoch in range(num_epochs):
             for i, (images, labels) in enumerate(train_loader):
-                images = Variable(images.view(-1, 28*28))
-                labels = Variable(labels)
+                images = Variable(images.view(-1, 28*28)).to(device)
+                labels = Variable(labels).to(device)
 
                 # Forward + Backward + Optimize
                 optimizer.zero_grad()
@@ -107,21 +110,23 @@ class LogisticRegression(object):
                 loss.backward()
                 optimizer.step()
 
-                # if (i+1) % 100 == 0:
-                #     print ('Epoch: [%d/%d], Step: [%d/%d], Loss: %.4f' 
-                #         % (epoch+1, num_epochs, i+1, len(train_dataset)//batch_size, loss.data[0]))
+                if (i+1) % 100 == 0:
+                    print ('Epoch: [%d/%d], Step: [%d/%d], Loss: %.4f' 
+                        % (epoch+1, num_epochs, i+1, len(train_dataset)//batch_size, loss.data.item()))
 
             # Test the Model
             correct = 0
             total = 0
             learning_curve = []
             for images, labels in test_loader:
-                images = Variable(images.view(-1, 28*28))
+                images = Variable(images.view(-1, 28*28)).to(device)
+                labels = labels.to(device)
+                
                 outputs = model(images)
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum()
-            learning_curve.append(correct.numpy() / total)
-            # print("validation", learning_curve[-1])
+            learning_curve.append(correct.cpu().numpy() / total)
+            print("validation", learning_curve[-1])
 
         return learning_curve

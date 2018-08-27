@@ -7,6 +7,7 @@ from src.utils import random_hypercube_samples, constrain_points
 from .priors import *
 from .acquisition_functions import UCB
 from .tests import acc_ir, plot_ir
+from src.models import DummyModel
 
 
 class BO(object):
@@ -46,6 +47,8 @@ class BO(object):
             if res.fun < min_y:
                 min_y = res.fun
                 min_x = res.x 
+            elif min_x is None: # fix if no point is <inf
+                min_x = res.x
 
         return min_x
 
@@ -247,14 +250,51 @@ class BO(object):
                 self.plot_prediction(x_new=x_new)
 
                 if i is not 0 and i % 20 == 0:
-                    if self.f_opt is not None:
-                        ir = acc_ir(self.model.Y, self.f_opt)
-                        plot_ir([ir])
-                        plt.show()
-                    else: 
-                        warnings.warn("`f_opt` is not provided, so plotting regret is impossible.")
+                    ir = acc_ir(self.model.Y, self.f_opt)
+                    plot_ir([ir])
+                    plt.show()
 
             self.model.add_observations(X_new, Y_new)
 
         if do_plot:
             self.plot_prediction()
+
+
+class RandomSearch(object):
+    def __init__(self, obj_func, n_iter = 10, bounds=np.array([[0,1]]), f_opt=None, rng=None):
+        self.i = 0
+        self.samples = random_hypercube_samples(n_iter, bounds, rng=rng)
+        self.bounds = bounds
+        self.n_iter = n_iter
+        self.obj_func = obj_func
+        self.f_opt = f_opt
+        self.model = DummyModel()
+       
+    def max_acq(self, n_starts=200):
+        return self.samples[self.i]
+       
+    def plot_2D_surface(self, use_plotly=False):
+        pass
+       
+    def plot_prediction(self, x_new=None, bounds=None, save_dist=None, plot_predictions=True, plot_embedded_subspace=False):
+        pass
+
+    def run(self, do_plot=True, periodic_interval=20, periodic_callback=None):
+        self.model.init(np.empty((0,self.bounds.shape[0])), np.empty((0,1)))
+
+        for i in range(0, self.n_iter):
+            print("... starting round", i, "/", self.n_iter)
+            self.i = i
+            
+            # new datapoint from acq
+            x_new = self.max_acq()
+            X_new = np.array([x_new])
+            X_new = constrain_points(X_new, self.bounds)
+            Y_new = self.obj_func(X_new)
+
+            if periodic_callback is not None \
+                and i is not 0 \
+                and i % periodic_interval == 0:
+                    periodic_callback(self, i, x_new)
+
+            self.model.add_observations(X_new, Y_new)

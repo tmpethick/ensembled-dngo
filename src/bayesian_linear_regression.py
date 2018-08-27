@@ -119,7 +119,8 @@ class BayesianLinearRegression(object):
 
 
 class GPyRegression(object):
-    def __init__(self, kernel, num_mcmc=0, do_optimize=True, noise_prior=None, fix_noise=False):
+    def __init__(self, kernel, num_mcmc=0, do_optimize=True, noise_prior=None, fix_noise=False,
+                n_burnin = 100, subsample_interval = 10, step_size = 1e-1, leapfrog_steps=20):
         self.gp = None
         self._current_thetas = None
 
@@ -131,6 +132,12 @@ class GPyRegression(object):
         self.fix_noise = fix_noise
 
         self.has_mcmc_warmup = False
+
+        self.n_burnin = n_burnin
+        self.subsample_interval = subsample_interval
+        self.step_size = step_size
+        self.leapfrog_steps = leapfrog_steps
+
 
     def fit(self, X, y):
         if self.gp is None:
@@ -149,11 +156,13 @@ class GPyRegression(object):
             if self.num_mcmc > 0:
                 if not self.has_mcmc_warmup:
                     # Most likely hyperparams given data
-                    self.hmc = GPy.inference.mcmc.HMC(self.gp, stepsize=1e-2)
-                    self.hmc.sample(num_samples=2000)  # Burn-in
+                    self.hmc = GPy.inference.mcmc.HMC(self.gp, stepsize=self.step_size)
+                    # self.hmc.sample(num_samples=100)  # Burn-in
                     self.has_mcmc_warmup = True
 
-                self._current_thetas = self.hmc.sample(num_samples=self.num_mcmc, hmc_iters=50)
+                ss = self.hmc.sample(num_samples=self.n_burnin + self.num_mcmc * self.subsample_interval, hmc_iters=self.leapfrog_steps)
+                self._current_thetas = ss[self.n_burnin::self.subsample_interval]
+                #self._current_thetas = self.hmc.sample(num_samples=self.num_mcmc, hmc_iters=50)
 
                 # Hack to add back Gaussian noise when fixed..
                 if self.fix_noise:

@@ -24,5 +24,5 @@ class UCB(object):
         self.model = model
 
     def calc(self, mean, var):
-        beta = 16
-        return mean + np.sqrt(beta) * np.sqrt(var)
+        beta = 2
+        return mean + beta * np.sqrt(var)

@@ -10,33 +10,39 @@ import GPy
 import numpy as np
 import matplotlib.pyplot as plt
 import hpolib.benchmarks.synthetic_functions as hpolib_funcs
-plt.switch_backend('agg')
+import hpolib.benchmarks.ml.conv_net
+import hpolib.benchmarks.ml.fully_connected_network
+import hpolib.benchmarks.ml.logistic_regression
+import hpolib.benchmarks.ml.svm_benchmark
 
 from src.tests import prepare_benchmark, plot_ir, acc_ir, embed
-from src.bo import BO
+from src.bo import BO, RandomSearch
 from src.acquisition_functions import EI, UCB
-from src.bayesian_linear_regression import GPyRegression
+from src.bayesian_linear_regression import GPyRegression, BayesianLinearRegression
 from src.models import BOModel, GPyBOModel
 from src.neural_network import TorchRegressionModel
 from src.logistic_regression_benchmark import LogisticRegression
 from src.rosenbrock_benchmark import Rosenbrock
+from src.priors import HalfT
 import config
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-s", "--seed",  type=int, default=None)
-parser.add_argument("-m", "--model", type=str, default="dngo", choices=["dngo", "gp"])
+parser.add_argument("-m", "--model", type=str, default="dngo", choices=["dngo", "gp", "rand", "test"])
 parser.add_argument("-g", "--group", type=str, default="standard")
 
 # nn
-parser.add_argument("-b", "--dim_basis",     type=int,   default=50)
-parser.add_argument("-h1", "--dim_h1",       type=int,   default=50)
-parser.add_argument("-h2", "--dim_h2",       type=int,   default=50)
-parser.add_argument("-nn", "--num_nn",       type=int,   default=1)
-parser.add_argument("-bs", "--batch_size",   type=int,   default=1000) # if none > n_iter
-parser.add_argument("-e", "--epochs",        type=int,   default=1000)
-parser.add_argument("-lr", "--lr",           type=float, default=0.01)
-parser.add_argument("-l2", "--weight_decay", type=float, default=0)
+parser.add_argument("-la", "--activations",      type=str,   default=["relu", "relu", "tanh"], nargs="+")
+parser.add_argument("-nnt", "--nn_training",     type=str,   default="fixed", choices=["fixed", "retrain", "retrain-reset"])
+parser.add_argument("-b", "--dim_basis",         type=int,   default=50)
+parser.add_argument("-h1", "--dim_h1",           type=int,   default=50)
+parser.add_argument("-h2", "--dim_h2",           type=int,   default=50)
+parser.add_argument("-nn", "--num_nn",           type=int,   default=1)
+parser.add_argument("-bs", "--batch_size",       type=int,   default=1000)
+parser.add_argument("-e", "--epochs",            type=int,   default=1000)
+parser.add_argument("-lr", "--lr",               type=float, default=0.01)
+parser.add_argument("-l2", "--weight_decay",     type=float, default=0)
 nn_aggregators = {
     "median": np.median,
     "max": np.max,
@@ -49,23 +55,27 @@ parser.add_argument("-mcmc", "--num_mcmc", type=int, default=0)
 
 # bo
 obj_functions = {
-    'branin': hpolib_funcs.Branin,
-    'hartmann3': hpolib_funcs.Hartmann3,
-    'hartmann6': hpolib_funcs.Hartmann6,
-    'camelback': hpolib_funcs.Camelback,
-    'forrester': hpolib_funcs.Forrester,
-    'bohachevsky': hpolib_funcs.Bohachevsky,
-    'goldsteinprice': hpolib_funcs.GoldsteinPrice,
-    'levy': hpolib_funcs.Levy,
-    'rosenbrock': hpolib_funcs.Rosenbrock,
-    'sinone': hpolib_funcs.SinOne,
-    'sintwo': hpolib_funcs.SinTwo,
+    'branin': hpolib_funcs.Branin(),
+    'hartmann3': hpolib_funcs.Hartmann3(),
+    'hartmann6': hpolib_funcs.Hartmann6(),
+    'camelback': hpolib_funcs.Camelback(),
+    'forrester': hpolib_funcs.Forrester(),
+    'bohachevsky': hpolib_funcs.Bohachevsky(),
+    'goldsteinprice': hpolib_funcs.GoldsteinPrice(),
+    'levy': hpolib_funcs.Levy(),
+    'rosenbrock': hpolib_funcs.Rosenbrock(),
+    'sinone': hpolib_funcs.SinOne(),
+    'sintwo': hpolib_funcs.SinTwo(),
+    'cnn_cifar10': hpolib.benchmarks.ml.conv_net.ConvolutionalNeuralNetworkOnCIFAR10(max_num_epochs=40),
+    'fcnet_mnist': hpolib.benchmarks.ml.fully_connected_network.FCNetOnMnist(max_num_epochs=100),
+    'lr_mnist': hpolib.benchmarks.ml.logistic_regression.LogisticRegressionOnMnist(),
+    'svm_mnist': hpolib.benchmarks.ml.svm_benchmark.SvmOnMnist(),
+    'logistic_regression_mnist': LogisticRegression(num_epochs=100),
+    'rosenbrock10D': Rosenbrock(d=10),
+    'rosenbrock8D': Rosenbrock(d=8),
 }
 
-obj_functions = {k: prepare_benchmark(Func()) for (k, Func) in obj_functions.items()}
-obj_functions['logistic_regression_mnist'] = prepare_benchmark(LogisticRegression(num_epochs=20))
-obj_functions['rosenbrock10D'] = prepare_benchmark(Rosenbrock(d=10))
-obj_functions['rosenbrock8D'] = prepare_benchmark(Rosenbrock(d=8))
+obj_functions = {k: prepare_benchmark(func) for (k, func) in obj_functions.items()}
 parser.add_argument("-f", "--obj_func", type=str, choices=obj_functions.keys(), default="branin")
 
 parser.add_argument("-em", "--embedding", nargs='+', type=float, default=None)
@@ -93,6 +103,20 @@ def create_model(args):
 
     input_dim = bounds.shape[0]
 
+    # nn training type
+    if args.nn_training == "fixed": 
+        retrain_nn = False
+        reset_weights = False
+    elif args.nn_training == "retrain":
+        retrain_nn = True
+        reset_weights = False
+    elif args.nn_training == "retrain-reset":
+        retrain_nn = True
+        reset_weights = True
+    else:
+        retrain_nn = True
+        reset_weights = True        
+
     # Embedding
     embedding = args_dict.get('embedding')
     if type(embedding) is tuple:
@@ -110,6 +134,7 @@ def create_model(args):
 
     if args.model == "dngo":
         nn = TorchRegressionModel(
+            activations=args_dict.get('activations', ['relu', 'relu', 'tanh']),
             input_dim=input_dim, 
             dim_basis=args.dim_basis, 
             dim_h1=args.dim_h1, 
@@ -118,15 +143,31 @@ def create_model(args):
             batch_size=args.batch_size, 
             lr=args.lr, 
             weight_decay=args.weight_decay)
-        kernel = GPy.kern.Linear(args.dim_basis)
-        kernel.variances.set_prior(GPy.priors.LogGaussian(0, 1))
-        reg = GPyRegression(kernel=kernel, num_mcmc=args.num_mcmc, fix_noise=True)
-        # reg = BayesianLinearRegression(num_mcmc=args.num_mcmc)
-        model = BOModel(nn, regressor=reg, num_nn=args.num_nn, ensemble_aggregator=nn_aggregators[args.nn_aggregator])
+        # kernel = GPy.kern.Linear(args.dim_basis)
+        # kernel.variances.set_prior(GPy.priors.LogGaussian(0, 1))
+        # reg = GPyRegression(kernel=kernel, num_mcmc=args.num_mcmc, GPy.priors.Gamma.from_EV(1,4))
+        reg = BayesianLinearRegression(num_mcmc=args.num_mcmc)
+        model = BOModel(nn, 
+            regressor=reg,
+            num_nn=args.num_nn,
+            ensemble_aggregator=nn_aggregators[args.nn_aggregator],
+            retrain_nn=retrain_nn,
+            reset_weights=reset_weights,)
     elif args.model == "gp":
         kernel = GPy.kern.RBF(input_dim)
+        #kernel.variance.set_prior(GPy.priors.Gamma.from_EV(2, 4))
+        kernel.lengthscale.set_prior(GPy.priors.LogGaussian(0, 1))
         kernel.variance.set_prior(GPy.priors.LogGaussian(0, 1))
-        model = GPyBOModel(kernel=kernel, num_mcmc=args.num_mcmc, fix_noise=True)
+        model = GPyBOModel(kernel=kernel, num_mcmc=args.num_mcmc, noise_prior=GPy.priors.LogGaussian(0, 1))
+        #model = GPyBOModel(kernel=kernel, num_mcmc=args.num_mcmc, noise_prior=GPyHorseshoePrior(0.1))
+        #model = GPyBOModel(kernel=kernel, num_mcmc=args.num_mcmc, noise_prior=HalfT(1, 4))
+    elif args.model == "rand":
+        bo = RandomSearch(f, 
+            n_iter=args.n_iter, 
+            bounds=bounds, 
+            f_opt=f_opt, 
+            rng=rng)
+        return bo
     else:
         raise Exception("`dngo` and `gp` should be the only two options")
 
@@ -142,7 +183,21 @@ def create_model(args):
     return bo
 
 if __name__ == '__main__':
+    plt.switch_backend('agg')
+
     args = parser.parse_args()
+
+    if args.model == 'test':
+        import torch
+        import torch.cuda
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+        else:
+            device = torch.device("cpu")
+        print(device)
+        exit(0)
+
+
     bo = create_model(args)
 
     # outputs/{model_shortname}/
@@ -180,6 +235,7 @@ if __name__ == '__main__':
     model_shortname = map(get_shorthand, model_shortname)
     model_shortname = "-".join(model_shortname)
     model_shortname = uid + "--" + model_shortname
+    print(model_shortname)
 
     conf = config.get_config()
     model_conf = config.get_model_config(uid, model_shortname, conf)
@@ -198,9 +254,13 @@ if __name__ == '__main__':
     with open(model_conf['command_path'], 'w') as file:
         file.writelines([command, "\n", command_full])
 
-    has_quick_eval = args.obj_func is not 'logistic_regression_mnist'
+    has_quick_eval = bo.f_opt is not None
 
     def backup(bo, i, x_new):
+        # Update row data
+        row['incumbent'] = bo.model.get_incumbent()[1]
+        row['num_steps'] = i
+
         if has_quick_eval:
             # Plot step
             path = os.path.join(model_conf['plot_folder'], "i-{}.png".format(i))
@@ -216,14 +276,13 @@ if __name__ == '__main__':
             plt.savefig(model_conf['regret_plot_path'])
             plt.close()
 
+            row['immediate_regret'] = ir[-1]
+        else:
+            row['immediate_regret'] = row['incumbent']
+
         # Update observation record
         np.save(model_conf['obs_X_path'], bo.model.X)
         np.save(model_conf['obs_Y_path'], bo.model.Y)
-
-        # Update row data
-        row['immediate_regret'] = ir[-1]
-        row['incumbent'] = bo.model.get_incumbent()[1]
-        row['num_steps'] = i
 
         try:
             df = pandas.read_csv(conf['database'])

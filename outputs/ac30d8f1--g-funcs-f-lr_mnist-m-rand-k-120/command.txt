@@ -1,0 +1,2 @@
+run.py --group funcs -f lr_mnist --model rand --n_iter 120
+python run.py --seed None --model rand --group funcs --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func lr_mnist --embedding None --acq UCB --n_iter 120 --n_init 2 --uuid ac30d8f1 --date 2018-08-27 10:15:23.234695 --name ac30d8f1--g-funcs-f-lr_mnist-m-rand-k-120

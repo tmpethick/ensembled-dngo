@@ -1,0 +1,2 @@
+run.py --group funcs --seed 1 --model dngo -l2 0.0001 -nn 10 -agg average --n_init 30 --n_iter 200 -f levy
+python run.py --seed 1 --model dngo --group funcs --activations ['relu', 'relu', 'tanh'] --nn_fixed True --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 10 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0.0001 --nn_aggregator average --num_mcmc 0 --obj_func levy --embedding None --acq UCB --n_iter 200 --n_init 30 --uuid 99feb170 --date 2018-08-23 13:37:13.028509 --name 99feb170--g-funcs-s-1-m-dngo-l2-0.0001-nn-10-agg-average-init-30-k-200-f-levy

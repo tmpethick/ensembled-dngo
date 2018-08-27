@@ -12,23 +12,23 @@ class BOBaseModel(object):
         i = np.argmax(self.Y)
         return self.X[i], self.Y[i]
 
-    def init(self, X, Y, train=True, **kwargs):
+    def init(self, X, Y, train=True):
         self.X = X
         self.Y = Y
         if train:
-            self.fit(self.X, self.Y, **kwargs)
+            self.fit(self.X, self.Y, is_initial=True)
 
-    def add_observations(self, X_new, Y_new, **kwargs):
+    def add_observations(self, X_new, Y_new):
         # Update data
         self.X = np.concatenate([self.X, X_new])
         self.Y = np.concatenate([self.Y, Y_new])
         
-        self.fit(self.X, self.Y, **kwargs)
+        self.fit(self.X, self.Y, is_initial=False)
 
     def plot_acq(self, X_line, acq):
         plt.plot(X_line, self.acq(X_line, acq), color="red")
 
-    def fit(self, X, Y): 
+    def fit(self, X, Y, is_initial=True): 
         raise NotImplementedError
 
     def acq(self, X, acq):
@@ -41,11 +41,16 @@ class BOBaseModel(object):
         raise NotImplementedError
 
 
+class DummyModel(BOBaseModel):
+    def fit(self, X, Y, is_initial=True):
+        pass
+
+
 class BOModel(BOBaseModel):
     # def __enter__(self)
     # def __exit__(self, exc_type, exc_value, tracepck)
 
-    def __init__(self, nn, regressor=None, num_nn=1, ensemble_aggregator=np.max, normalize_input=True, normalize_output=True):
+    def __init__(self, nn, regressor=None, num_nn=1, ensemble_aggregator=np.max, normalize_input=True, normalize_output=True, retrain_nn=False, reset_weights=True):
         # NN
         self.nn_models = [deepcopy(nn) for _ in range(num_nn)]
 
@@ -56,6 +61,8 @@ class BOModel(BOBaseModel):
                     m.reset_parameters()
             m.model.apply(weights_init)
 
+        self.retrain_nn = retrain_nn
+        self.reset_weights = reset_weights
 
         self.X_mean = None
         self.X_std = None
@@ -74,7 +81,7 @@ class BOModel(BOBaseModel):
         else:
             self.gps = [deepcopy(regressor) for _ in range(num_nn)]
 
-    def fit(self, X, Y, train_nn=True):
+    def fit(self, X, Y, is_initial=True):
         if self.normalize_input:
             self.transformed_X, self.X_mean, self.X_std = zero_mean_unit_var_normalization(X)
         else:
@@ -86,12 +93,15 @@ class BOModel(BOBaseModel):
             self.transformed_Y = Y
 
         for i, nn in enumerate(self.nn_models):
-            if train_nn:
-                # NN
-                nn.fit(self.transformed_X, self.transformed_Y)
-                transformed_D = nn.predict_basis(self.transformed_X)
+            # nn
+            if is_initial:
+                nn.fit(self.transformed_X, self.transformed_Y, reset_weights=True)
+            elif self.retrain_nn:
+                nn.fit(self.transformed_X, self.transformed_Y, reset_weights=self.reset_weights)
+            
+            transformed_D = nn.predict_basis(self.transformed_X)
 
-                self.gps[i].fit(transformed_D, self.transformed_Y)
+            self.gps[i].fit(transformed_D, self.transformed_Y)
 
     def acq(self, X, acq):
         """Note: prediction is done in normalized space.
@@ -191,7 +201,7 @@ class GPyBOModel(BOBaseModel):
 
         self.gp = GPyRegression(kernel, **kwargs)
 
-    def fit(self, X, Y):
+    def fit(self, X, Y, is_initial=True):
         if self.normalize_input:
             self.transformed_X, self.X_mean, self.X_std = zero_mean_unit_var_normalization(X)
         else:
@@ -229,9 +239,12 @@ class GPyBOModel(BOBaseModel):
         return np.stack([mean, var])
 
     def plot_prediction(self, X_line, Y_line, X_embedding=None, x_new=None, plot_predictions=True):
+        if X_embedding is None:
+            X_embedding = X_line
+
         if plot_predictions:
             for theta in self.gp._current_thetas:
-                summ = self.predict(X_line, theta=theta)
+                summ = self.predict(X_embedding, theta=theta)
                 mean = summ[0]
                 var = summ[1]
                 plt.fill_between(X_line.reshape(-1), (mean + np.sqrt(var)).reshape(-1), (mean - np.sqrt(var)).reshape(-1), alpha=.2)

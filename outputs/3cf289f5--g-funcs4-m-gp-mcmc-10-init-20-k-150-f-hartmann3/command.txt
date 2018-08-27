@@ -1,0 +1,2 @@
+run.py --group funcs4 --model gp -mcmc 10 --n_init 20 --n_iter 150 -f hartmann3
+python run.py --seed None --model gp --group funcs4 --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 10 --obj_func hartmann3 --embedding None --acq UCB --n_iter 150 --n_init 20 --uuid 3cf289f5 --date 2018-08-26 19:29:35.921422 --name 3cf289f5--g-funcs4-m-gp-mcmc-10-init-20-k-150-f-hartmann3

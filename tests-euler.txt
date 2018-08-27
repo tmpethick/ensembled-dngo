@@ -1,0 +1,62 @@
+make push
+make ARGS="--group funcs --model gp --n_init 20 --n_iter 150 -f branin" run
+make ARGS="--group funcs --model gp --n_init 20 --n_iter 150 -f hartmann3" run
+make ARGS="--group funcs --model gp --n_init 20 --n_iter 150 -f hartmann6" run
+
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 150 -f branin" run
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 150 -f hartmann3" run
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 150 -f hartmann6" run
+
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 20 --n_iter 150 -f branin" run
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 20 --n_iter 150 -f hartmann3" run
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 20 --n_iter 150 -f hartmann6" run
+
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain  --n_init 20 --n_iter 150 -f branin" run
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain  --n_init 20 --n_iter 150 -f hartmann3" run
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain  --n_init 20 --n_iter 150 -f hartmann6" run
+
+make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 20 --n_iter 150 -f branin" run
+make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 20 --n_iter 150 -f hartmann3" run
+make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 20 --n_iter 150 -f hartmann6" run
+
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 150 -f branin" run
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 150 -f hartmann3" run
+make ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 150 -f hartmann6" run
+
+make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 150 -f branin" run
+make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 150 -f hartmann3" run
+make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 150 -f hartmann6" run
+
+make W="24:00" ARGS="--group funcs --model gp -mcmc 10 --n_init 20 --n_iter 150 -f branin" run
+make W="24:00" ARGS="--group funcs --model gp -mcmc 10 --n_init 20 --n_iter 150 -f hartmann3" run
+make W="24:00" ARGS="--group funcs --model gp -mcmc 10 --n_init 20 --n_iter 150 -f hartmann6" run
+
+make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed -nn 5 -mcmc 8 -agg average --n_init 20 --n_iter 150 -f branin" run
+make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed -nn 5 -mcmc 8 -agg average --n_init 20 --n_iter 150 -f hartmann3" run
+make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed -nn 5 -mcmc 8 -agg average --n_init 20 --n_iter 150 -f hartmann6" run
+
+
+make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 100 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 200 --n_iter 200 --epochs 1000 -f hartmann3" run
+
+make ARGS="--group epoch --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 100 -f hartmann3" run
+make ARGS="--group epoch --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group epoch --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 10000 -f hartmann3" run
+
+make ARGS="--group epoch2 --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 50 --n_iter 200 --epochs 100 -f hartmann3" run
+make ARGS="--group epoch2 --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 50 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group epoch2 --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 50 --n_iter 200 --epochs 10000 -f hartmann3" run
+
+make ARGS="--group minibatch --model dngo --batch_size 10 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+make ARGS="--group minibatch --model dngo --batch_size 20 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+make ARGS="--group minibatch --model dngo --batch_size 40 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+make ARGS="--group minibatch --model dngo --batch_size 80 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+make ARGS="--group minibatch --model dngo --batch_size 160 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+make ARGS="--group minibatch --model dngo --batch_size 320 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+
+make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run

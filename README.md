@@ -26,7 +26,8 @@ Good resource: https://github.com/gpschool/gprs15b
 - Marginalize mixture: https://ieeexplore-ieee-org.proxy.findit.dtu.dk/stamp/stamp.jsp?arnumber=5499041
 - Horseshoe prior: http://proceedings.mlr.press/v5/carvalho09a/carvalho09a.pdf
 - lognorm and horseshoe (Snoek): https://arxiv.org/pdf/1406.3896.pdf
-
+- Gamma prior on noise: https://www.researchgate.net/figure/51717248_fig1_Gamma-prior-on-the-total-noise-variance-A-Gamma-prior-is-assumed-for-the-hyperparameter
+- HalfT: https://github.com/stan-dev/stan/releases/download/v2.16.0/stan-reference-2.16.0.pdf
 
 Problems:
 
@@ -71,9 +72,6 @@ peaks." – http://proceedings.mlr.press/v80/lyu18a/lyu18a.pdf
 Remember to give all models the same computational budget.
 
 TODO:
-- Fix groups (the pending ones have wrong timestamp)
-- Create group selector in notebook
-- Test adaptive
 
 - Find cases where RBF have problems.. (non-stationarity, jaggy/discrete)
 - metric transformation (euclidean does not work in high dimension)
@@ -207,12 +205,16 @@ python spearmint_plots.py .
 
 Note: incomplete
 
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+bash miniconda.sh
+
 ```
 conda create -n eth python=3.6
 source $HOME/miniconda/bin/activate
 source activate eth
-conda install -y pytorch-cpu torchvision-cpu -c pytorch
+conda install -y pytorch-cpu torchvision-cpu -c pytorch # gpu: conda install pytorch torchvision -c pytorch
 conda install -y -c conda-forge blas seaborn scipy matplotlib pandas gpy pathos emcee
+pip install pydot-ng
 git clone https://github.com/automl/HPOlib2.git
 cd HPOlib2
 for i in `cat requirements.txt`; do pip install $i; done
@@ -261,27 +263,183 @@ make pull
 ## Currently run experiments
 
 ```
+n_start
+make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 100 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 200 --n_iter 200 --epochs 1000 -f hartmann3" run
+
+# Activation
+make ARGS="--group activation --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -la tanh tanh tanh -f branin" run
+make ARGS="--group activation --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -la relu relu relu -f branin" run
+make ARGS="--group activation --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -la relu relu tanh -f branin" run
+
 # Epochs
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f levy" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f levy" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f levy" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f sintwo" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f sintwo" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f sintwo" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 100 -f hartmann3" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 1000 -f hartmann3" run
-make ARGS="--group epoch --seed 1 --model dngo --n_init 20 --n_iter 200 --epochs 10000 -f hartmann3" run
+make ARGS="--group epoch --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 100 -f branin" run
+make ARGS="--group epoch --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 1000 -f branin" run
+make ARGS="--group epoch --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 10000 -f branin" run
+
+make ARGS="--group epoch --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 100 -f hartmann3" run
+make ARGS="--group epoch --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group epoch --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 10000 -f hartmann3" run
 
 # Weight decay
-make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.01 -f goldsteinprice" run
-make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.001 -f goldsteinprice" run
-make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0001 -f goldsteinprice" run
-make ARGS="--group l2 --seed 1 --model dngo --n_init 20 --n_iter 200 --weight_decay 0.0 -f goldsteinprice" run
-make ARGS="--group l2 --seed 1 --model gp --n_init 20 --n_iter 200 -f goldsteinprice" run
+make ARGS="--group l2 --seed 1 --model dngo --nn_training fixed --n_init 50 --n_iter 200 -l2 0.001 -f branin" run
+make ARGS="--group l2 --seed 1 --model dngo --nn_training fixed --n_init 50 --n_iter 200 -l2 0.0001 -f branin" run
+make ARGS="--group l2 --seed 1 --model dngo --nn_training fixed --n_init 50 --n_iter 200 -l2 0.00001 -f branin" run
+make ARGS="--group l2 --seed 1 --model dngo --nn_training fixed --n_init 50 --n_iter 200 -l2 0.0 -f branin" run
+make ARGS="--group l2 --seed 1 --model gp --n_init 20 --n_iter 200 -f branin" run
+
+make ARGS="--group l2 --seed 1 --model dngo --nn_training fixed --n_init 20 --n_iter 200 -l2 0.001 -f sinone" run
+make ARGS="--group l2 --seed 1 --model dngo --nn_training fixed --n_init 20 --n_iter 200 -l2 0.0001 -f sinone" run
+make ARGS="--group l2 --seed 1 --model dngo --nn_training fixed --n_init 20 --n_iter 200 -l2 0.00001 -f sinone" run
+make ARGS="--group l2 --seed 1 --model dngo --nn_training fixed --n_init 20 --n_iter 200 -l2 0.0 -f sinone" run
+make ARGS="--group l2 --seed 1 --model gp --n_init 20 --n_iter 200 -f sinone" run
+
+
+# Ensemble size / aggregator
+make ARGS="--group ensemble --seed 1 --model gp --n_init 20 --n_iter 200 -f branin" run
+make ARGS="--group ensemble --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -f branin" run
+
+make ARGS="--group ensemble --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -f branin -nn 5 -agg max" run
+make ARGS="--group ensemble --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -f branin -nn 10 -agg max" run
+make ARGS="--group ensemble --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_xiter 200 -f branin -nn 15 -agg max" run
+
+make ARGS="--group ensemble --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -f branin -nn 5 -agg median" run
+make ARGS="--group ensemble --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -f branin -nn 10 -agg median" run
+make ARGS="--group ensemble --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -f branin -nn 15 -agg median" run
+
+make ARGS="--group ensemble --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -f branin -nn 5 -agg average" run
+make ARGS="--group ensemble --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -f branin -nn 10 -agg average" run
+make ARGS="--group ensemble --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 -f branin -nn 15 -agg average" run
+
+--------------
+
+# Funcs
+make ARGS="--group funcs --seed 4 --model gp --n_init 50 --n_iter 200 -f branin" run
+make ARGS="--group funcs --seed 4 --model gp --n_init 50 --n_iter 200 -f hartmann3" run
+make ARGS="--group funcs --seed 4 --model gp --n_init 50 --n_iter 200 -f hartmann6" run
+
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f branin" run
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f hartmann3" run
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f hartmann6" run
+
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f branin" run
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f hartmann3" run
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f hartmann6" run
+
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg max --n_init 50 --n_iter 200 -f branin" run
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg max --n_init 50 --n_iter 200 -f hartmann3" run
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg max --n_init 50 --n_iter 200 -f hartmann6" run
+
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f branin" run
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f hartmann3" run
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f hartmann6" run
+
+make W="24:00" ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f branin" run
+make W="24:00" ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f hartmann3" run
+make W="24:00" ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f hartmann6" run
+
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 50 --n_iter 200 -f branin" run
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 50 --n_iter 200 -f hartmann3" run
+make ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 50 --n_iter 200 -f hartmann6" run
+
+make W="24:00" ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f branin" run
+make W="24:00" ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f hartmann3" run
+make W="24:00" ARGS="--group funcs --seed 4 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f hartmann6" run
+
+# Func (rest)
+make ARGS="--group funcs --seed 1 --model gp --n_init 50 --n_iter 200 -f camelback" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 50 --n_iter 200 -f forrester" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 50 --n_iter 200 -f bohachevsky" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 50 --n_iter 200 -f goldsteinprice" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 50 --n_iter 200 -f levy" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 50 --n_iter 200 -f rosenbrock" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 50 --n_iter 200 -f sinone" run
+make ARGS="--group funcs --seed 1 --model gp --n_init 50 --n_iter 200 -f sintwo" run
+
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f camelback" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f forrester" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f bohachevsky" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f goldsteinprice" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f levy" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f rosenbrock" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f sinone" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 -f sintwo" run
+
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f camelback" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f forrester" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f bohachevsky" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f goldsteinprice" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f levy" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f rosenbrock" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f sinone" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training fixed -nn 10 -agg average --n_init 50 --n_iter 200 -f sintwo" run
+
+# Funcs (no weight reset)
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f camelback" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f forrester" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f bohachevsky" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f goldsteinprice" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f levy" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f rosenbrock" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f sinone" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain  --n_init 50 --n_iter 200 -f sintwo" run
+
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f camelback" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f forrester" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f bohachevsky" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f goldsteinprice" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f levy" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f rosenbrock" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f sinone" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain -nn 5 -agg average --n_init 50 --n_iter 200 -f sintwo" run
+
+# Funcs (weight reset)
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset  --n_init 50 --n_iter 200 -f camelback" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset  --n_init 50 --n_iter 200 -f forrester" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset  --n_init 50 --n_iter 200 -f bohachevsky" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset  --n_init 50 --n_iter 200 -f goldsteinprice" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset  --n_init 50 --n_iter 200 -f levy" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset  --n_init 50 --n_iter 200 -f rosenbrock" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset  --n_init 50 --n_iter 200 -f sinone" run
+make ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset  --n_init 50 --n_iter 200 -f sintwo" run
+
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f camelback" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f forrester" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f bohachevsky" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f goldsteinprice" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f levy" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f rosenbrock" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f sinone" run
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 50 --n_iter 200 -f sintwo" run
+
+-----------------------------------
+# GPU
+
+make W="24:00" ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 100 -f logistic_regression_mnist" run-leonhard
+make W="24:00" ARGS="--group funcs --seed 1 --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 100 -f logistic_regression_mnist" run-leonhard
+
+make W="24:00" ARGS="--group funcs --seed 1 -f cnn_cifar10 --model gp --n_init 2 --n_iter 100" run-leonhard
+make W="24:00" ARGS="--group funcs --seed 1 -f cnn_cifar10 --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 2 --n_iter 100" run-leonhard
+
+make W="24:00" ARGS="--group funcs --seed 1 -f fcnet_mnist --model gp --n_init 2 --n_iter 100" run-leonhard
+make W="24:00" ARGS="--group funcs --seed 1 -f fcnet_mnist --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 2 --n_iter 100" run-leonhard
+
+make W="24:00" ARGS="--group funcs --seed 1 -f lr_mnist --model gp --n_init 2 --n_iter 100" run-leonhard
+make W="24:00" ARGS="--group funcs --seed 1 -f lr_mnist --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 2 --n_iter 100" run-leonhard
+
+make W="24:00" ARGS="--group funcs --seed 1 -f svm_mnist --model gp --n_init 2 --n_iter 100" run-leonhard
+make W="24:00" ARGS="--group funcs --seed 1 -f svm_mnist --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 2 --n_iter 100" run-leonhard
+
+-----------------------------------
 
 # Embedding
-make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f sinone" run
-make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run
+
 make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f branin" run
 make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 -f branin" run
 make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 30 100 -f branin" run
@@ -294,12 +452,12 @@ make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 -nn 5 -
 make W="24:00" ARGS="--group embedding --seed 1 --model dngo --n_init 20 -mcmc 20 --n_iter 200 --embedding 0 -f sinone" run
 
 # Minibatches
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 10 --n_init 20 --n_iter 200 -f sintwo" run
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 20 --n_init 20 --n_iter 200 -f sintwo" run
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 40 --n_init 20 --n_iter 200 -f sintwo" run
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 80 --n_init 20 --n_iter 200 -f sintwo" run
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 160 --n_init 20 --n_iter 200 -f sintwo" run
-make ARGS="--group minibatch --seed 1 --model dngo --batch_size 320 --n_init 20 --n_iter 200 -f sintwo" run
+make ARGS="--group minibatch --model dngo --batch_size 10 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+make ARGS="--group minibatch --model dngo --batch_size 20 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+make ARGS="--group minibatch --model dngo --batch_size 40 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+make ARGS="--group minibatch --model dngo --batch_size 80 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+make ARGS="--group minibatch --model dngo --batch_size 160 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
+make ARGS="--group minibatch --model dngo --batch_size 320 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
 
 # Ensemble size
 make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 5 -agg max" run
@@ -311,7 +469,9 @@ make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n
 make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f camelback -nn 5 -agg median" run
 make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f camelback -nn 10 -agg median" run
 make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f camelback -nn 15 -agg median" run
-
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f camelback -nn 5 -agg mean" run
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f camelback -nn 10 -agg mean" run
+make W="24:00" ARGS="--group ensemble_size --seed 1 --model dngo --n_init 20 --n_iter 200 -f camelback -nn 15 -agg mean" run
 
 # Functions
 make ARGS="--group funcs --seed 1 --model gp --n_init 20 --n_iter 200 -f branin" run
@@ -416,18 +576,70 @@ https://bbcomp.ini.rub.de/
 
 ## Overview
 
+
 - Experiment
-  - weight decay
-  - highdim
-  - embedding
-  - epochs
+  - highdim (almost random)
+  - embedding (can capture periodic)
+  - compare fixed, retrain with reset, retrain
   - ensemble size
-  - mini batches
   - ensemble aggregator
 - going to
+  - massive dataset (why improve GP if only 200 observation otherwise?)
   - move it into febo (everything is built from the ground up currently. only dependency is mcmc and cholesky)
-    - few benchmark function (rosenbrock, embedding)
+    - few benchmark function
+      - rosenbrock
+      - embedding
+      - logistic regression mnist
+    - DNGO
+    - Ensemble
   - write report (have two weeks before semester starts)
 - Side effect:
   - hpc automation
   - Docker container for robo and spearmint
+- voice concern with best case effectiveness of ensemble
+- Not iid..
+- propose: adaptive epochs
+
+TODO:
+- fix gp noise prior
+- run (branin, hartmann3, hartmann6, LR, CNN)
+  - mcmc (DNGO)
+  - mcmc gp
+  - average ensemble
+
+- Long run on hartmann6
+- Logistic Regression (100), LDA (50), SVM (100) 
+  - (does not make sence before we know n_init)
+  - DNGO already comparable: so only do to verify DNGO implementation.
+- Multi-task
+
+do
+- confidence bounds
+- embedding
+- rosenbrock10
+- ensemble
+
+branin
+- 50 runs
+- faster convergence
+LR
+- converges after 20-40 with GP EI MCMC
+cartpole
+
+- Make dynamic groups..
+- count entries
+
+Presentation:
+- robust to parameter adjustment:
+  - weight decay
+  - epochs
+  - mini batches (stocastic needed when more observations)
+- n_init (sets a limit)
+  - Interesting? It converges faster if many initial samples. First samples can be 100% parallized. Fast wall-time.
+- epochs (not fixed)
+- ensemble might converge faster (with retrain)
+- minibatch when considering scale (explore how it behaves on smaller set)
+
+- Fitting without noise and no regularization: no variance in BLR layer. Possible fixes: (theoretically)
+  - ensure that alpha is never 0 (otherwise fits perfectly => no variance) (is this a hack?)
+- best case for retraining ensemble

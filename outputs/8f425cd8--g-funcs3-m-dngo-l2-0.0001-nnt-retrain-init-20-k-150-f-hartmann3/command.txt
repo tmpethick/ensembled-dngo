@@ -1,0 +1,2 @@
+run.py --group funcs3 --model dngo -l2 0.0001 --nn_training retrain --n_init 20 --n_iter 150 -f hartmann3
+python run.py --seed None --model dngo --group funcs3 --activations ['relu', 'relu', 'tanh'] --nn_training retrain --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0.0001 --nn_aggregator median --num_mcmc 0 --obj_func hartmann3 --embedding None --acq UCB --n_iter 150 --n_init 20 --uuid 8f425cd8 --date 2018-08-26 18:04:01.803868 --name 8f425cd8--g-funcs3-m-dngo-l2-0.0001-nnt-retrain-init-20-k-150-f-hartmann3

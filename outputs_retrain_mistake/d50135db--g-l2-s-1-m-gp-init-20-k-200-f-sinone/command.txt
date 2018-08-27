@@ -1,0 +1,2 @@
+run.py --group l2 --seed 1 --model gp --n_init 20 --n_iter 200 -f sinone
+python run.py --seed 1 --model gp --group l2 --activations ['relu', 'relu', 'tanh'] --nn_fixed True --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func sinone --embedding None --acq UCB --n_iter 200 --n_init 20 --uuid d50135db --date 2018-08-23 13:05:11.799124 --name d50135db--g-l2-s-1-m-gp-init-20-k-200-f-sinone

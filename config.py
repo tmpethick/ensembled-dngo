@@ -3,8 +3,7 @@ import os
 import uuid
 
 
-def get_config():
-    top_folder = "outputs"
+def get_config(top_folder = "outputs"):
     database = os.path.join(top_folder, "entries.csv")
     remote_temp_database = os.path.join(top_folder, "entries.remote.csv")
     return dict(

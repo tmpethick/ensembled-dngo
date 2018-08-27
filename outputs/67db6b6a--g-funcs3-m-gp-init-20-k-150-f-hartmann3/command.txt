@@ -1,0 +1,2 @@
+run.py --group funcs3 --model gp --n_init 20 --n_iter 150 -f hartmann3
+python run.py --seed None --model gp --group funcs3 --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func hartmann3 --embedding None --acq UCB --n_iter 150 --n_init 20 --uuid 67db6b6a --date 2018-08-26 17:47:31.899737 --name 67db6b6a--g-funcs3-m-gp-init-20-k-150-f-hartmann3

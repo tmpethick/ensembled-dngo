@@ -1,0 +1,2 @@
+run.py --group funcs --seed 1 --model dngo --n_init 50 --n_iter 200 -f sintwo
+python run.py --seed 1 --model dngo --group funcs --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func sintwo --embedding None --acq UCB --n_iter 200 --n_init 50 --uuid e64b805e --date 2018-08-24 12:22:58.931087 --name e64b805e--g-funcs-s-1-m-dngo-init-50-k-200-f-sintwo

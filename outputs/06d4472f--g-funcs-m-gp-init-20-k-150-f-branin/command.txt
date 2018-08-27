@@ -1,0 +1,2 @@
+run.py --group funcs --model gp --n_init 20 --n_iter 150 -f branin
+python run.py --seed None --model gp --group funcs --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func branin --embedding None --acq UCB --n_iter 150 --n_init 20 --uuid 06d4472f --date 2018-08-26 16:09:14.603558 --name 06d4472f--g-funcs-m-gp-init-20-k-150-f-branin

@@ -1,0 +1,2 @@
+run.py --group n_init --seed 1 --model dngo --n_init 40 --n_iter 200 --epochs 1000 -f branin
+python run.py --seed 1 --model dngo --group n_init --activations ['relu', 'relu', 'tanh'] --nn_fixed True --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func branin --embedding None --acq UCB --n_iter 200 --n_init 40 --uuid 78da8c35 --date 2018-08-23 13:04:41.907915 --name 78da8c35--g-init-s-1-m-dngo-init-40-k-200-e-1000-f-branin

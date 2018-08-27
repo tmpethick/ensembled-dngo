@@ -13,6 +13,7 @@ from src.utils import random_hypercube_samples, vectorize
 
 
 def immidiate_regret(y, y_opt):
+    y_opt = y_opt if y_opt is not None else 0
     return np.abs(y - y_opt)
 
 
@@ -39,12 +40,15 @@ def prepare_benchmark(func):
 
     info = func.get_meta_information()
     bounds = np.array(info['bounds'])
+    f_opt = info.get('f_opt', None)
+    if f_opt is not None:
+        f_opt = -f_opt
 
     @wraps(func)
     def wrapper(x):
         return -func(x)
     
-    return vectorize(wrapper), bounds, -info['f_opt']
+    return vectorize(wrapper), bounds, f_opt
 
 
 def test_random_sample(f, bounds, n_iter=100):

@@ -1,0 +1,2 @@
+run.py --group funcs -f cnn_cifar10 --model gp --n_init 2 --n_iter 100
+python run.py --seed None --model gp --group funcs --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func cnn_cifar10 --embedding None --acq UCB --n_iter 100 --n_init 2 --uuid a4926a46 --date 2018-08-27 13:37:43.210844 --name a4926a46--g-funcs-f-cnn_cifar10-m-gp-init-2-k-100

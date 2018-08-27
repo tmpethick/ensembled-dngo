@@ -1,0 +1,2 @@
+run.py --group funcs -f cnn_cifar10 --model rand --n_init 0 --n_iter 100
+python run.py --seed None --model rand --group funcs --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func cnn_cifar10 --embedding None --acq UCB --n_iter 100 --n_init 0 --uuid 999daa81 --date 2018-08-27 09:16:24.466686 --name 999daa81--g-funcs-f-cnn_cifar10-m-rand-init-0-k-100
