@@ -251,8 +251,8 @@ class GPyBOModel(BOBaseModel):
                 plt.plot(X_line, mean)
 
         if x_new is not None:
-            plt.axvline(x=x_new, ls='--', c='k', lw=1, label='Next sampling location')
+            plt.axvline(x=x_new[0], ls='--', c='k', lw=1, label='Next sampling location')
 
         # TODO: remember to normalize if normalization is pulled out into BOModel
-        plt.scatter(self.X, self.Y)
+        plt.scatter(self.X[:,0], self.Y)
         plt.plot(X_line, Y_line, dashes=[2, 2], color='black')

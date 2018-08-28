@@ -1,0 +1,2 @@
+run.py --group highdim --n_init 100 --n_iter 200 -f rosenbrock8D --model gp -mcmc 10
+python run.py --seed None --model gp --group highdim --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 10 --obj_func rosenbrock8D --embedding None --acq UCB --n_iter 200 --n_init 100 --uuid 0676c5c7 --date 2018-08-27 17:33:54.748113 --name 0676c5c7--g-highdim-init-100-k-200-f-rosenbrock8D-m-gp-mcmc-10

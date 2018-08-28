@@ -626,13 +626,19 @@ LR
 - converges after 20-40 with GP EI MCMC
 cartpole
 
-- Make dynamic groups..
-- count entries
+- run cifar10 with 100 init.
+- plot
+  - clean labels
+  - Make dynamic groups
+  - filter out mistake runs
+  - count number of runs
+  - run rand multiple times
+
 
 Presentation:
 - robust to parameter adjustment:
   - weight decay
-  - epochs
+  - epochs (default + different epochs + fixed init)
   - mini batches (stocastic needed when more observations)
 - n_init (sets a limit)
   - Interesting? It converges faster if many initial samples. First samples can be 100% parallized. Fast wall-time.

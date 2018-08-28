@@ -60,3 +60,9 @@ make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embe
 make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run
 make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 -f sinone" run
 make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset -nn 5 -agg average --n_init 2 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset -nn 5 -agg average --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run
+
+make W="24:00" ARGS="--group highdim  --n_init 100 --n_iter 200 -f rosenbrock8D --model gp -mcmc 10" run
+make W="24:00" ARGS="--group highdim  --n_init 100 --n_iter 200 -f rosenbrock8D --model dngo -l2 0.0001 --nn_training retrain-reset" run
+make W="24:00" ARGS="--group highdim  --n_init 100 --n_iter 200 -f rosenbrock8D --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average" run

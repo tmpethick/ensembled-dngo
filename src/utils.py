@@ -21,6 +21,22 @@ def random_hypercube_samples(n_samples, bounds, rng=None):
     # due to floating point precision.
     return constrain_points(samples, bounds)
 
+    # lower = bounds[:,0]
+    # upper = bounds[:,1]
+    # if rng is None:
+    #     rng = np.random.RandomState(np.random.randint(0, 10000))
+    # n_dims = lower.shape[0]
+    # # Generate bounds for random number generator
+    # s_bounds = np.array([np.linspace(lower[i], upper[i], n_points + 1) for i in range(n_dims)])
+    # s_lower = s_bounds[:, :-1]
+    # s_upper = s_bounds[:, 1:]
+    # # Generate samples
+    # samples = s_lower + rng.uniform(0, 1, s_lower.shape) * (s_upper - s_lower)
+    # # Shuffle samples in each dimension
+    # for i in range(n_dims):
+    #     rng.shuffle(samples[i, :])
+    # return samples.T
+
 
 def vectorize(f):
     @wraps(f)

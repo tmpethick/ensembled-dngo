@@ -86,11 +86,12 @@ parser.add_argument("-a", "--acq", type=str, choices=acquisition_functions.keys(
 
 parser.add_argument("-k",    "--n_iter", type=int, default=100)
 parser.add_argument("-init", "--n_init", type=int, default=2)
+parser.add_argument("-iuuid", "--init_src", type=str, default=None)
 
 
 # Constructing model
 
-def create_model(args):
+def create_model(args, init_data=None):
     args_dict = vars(args)
     seed = args_dict.get('seed', None)
     rng = np.random.RandomState(seed)
@@ -178,7 +179,8 @@ def create_model(args):
         n_iter=args.n_iter, 
         bounds=bounds, 
         embedded_dims=embedded_dims,
-        f_opt=f_opt, 
+        f_opt=f_opt,
+        init_data=init_data,
         rng=rng)
     return bo
 
@@ -196,9 +198,6 @@ if __name__ == '__main__':
             device = torch.device("cpu")
         print(device)
         exit(0)
-
-
-    bo = create_model(args)
 
     # outputs/{model_shortname}/
     #   command.txt
@@ -253,6 +252,21 @@ if __name__ == '__main__':
     command_full = "python run.py " + " ".join(["--{} {}".format(k, v) for k, v in vars(args).items()])
     with open(model_conf['command_path'], 'w') as file:
         file.writelines([command, "\n", command_full])
+
+    if args.init_src:
+        import pandas as pd
+        
+        df = pd.read_csv(conf['database'])
+        df = df.set_index('uuid')
+        name = df.loc[args.init_src]['name']
+        init_src_conf = config.get_model_config(args.init_src, name, conf)
+        X = np.load(init_src_conf['obs_X_path'])
+        Y = np.load(init_src_conf['obs_Y_path'])
+        init_data = (X,Y)
+    else:
+        init_data = None
+
+    bo = create_model(args, init_data=init_data)
 
     has_quick_eval = bo.f_opt is not None
 

@@ -11,7 +11,7 @@ from src.models import DummyModel
 
 
 class BO(object):
-    def __init__(self, obj_func, model, acquisition_function=None, n_init=20, n_iter = 10, bounds=np.array([[0,1]]), f_opt=None, rng=None, embedded_dims=None):
+    def __init__(self, obj_func, model, acquisition_function=None, n_init=20, init_data=None, n_iter = 10, bounds=np.array([[0,1]]), f_opt=None, rng=None, embedded_dims=None):
         self.n_iter = n_iter
         self.n_init = n_init
         self.bounds = bounds
@@ -19,6 +19,7 @@ class BO(object):
         self.model = model
         self.f_opt = f_opt
         self.embedded_dims = embedded_dims
+        self.init_data = init_data
 
         # Only used in random sample so far.
         if rng is not None:
@@ -228,8 +229,11 @@ class BO(object):
 
     def run(self, do_plot=True, periodic_interval=20, periodic_callback=None):
         # Data
-        X = random_hypercube_samples(self.n_init, self.bounds, rng=self.rng)
-        Y = self.obj_func(X)
+        if self.init_data:
+            X, Y = self.init_data
+        else:
+            X = random_hypercube_samples(self.n_init, self.bounds, rng=self.rng)
+            Y = self.obj_func(X)
         self.model.init(X,Y)
 
         for i in range(0, self.n_iter):

@@ -4,9 +4,11 @@
     <list default="true" id="73aae37e-770c-49c7-86b9-dfc0d57df91e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/BO-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/BO-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bo.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/bo.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hpc.sh" beforeDir="false" afterPath="$PROJECT_DIR$/hpc.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model_explorer.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/model_explorer.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/0025b941--g-minibatch-s-1-m-dngo-bs-80-init-20-k-200-f-sintwo/command.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/0025b941--g-minibatch-s-1-m-dngo-bs-80-init-20-k-200-f-sintwo/immediate_regret.png" beforeDir="false" />
@@ -1699,11 +1701,14 @@
       <change beforePath="$PROJECT_DIR$/outputs/fd84c367--g-funcs-s-1-m-dngo-nn-5-agg-max-init-20-k-200-f-bohachevsky/plots/i-70.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/fd84c367--g-funcs-s-1-m-dngo-nn-5-agg-max-init-20-k-200-f-bohachevsky/plots/i-80.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/outputs/fd84c367--g-funcs-s-1-m-dngo-nn-5-agg-max-init-20-k-200-f-bohachevsky/plots/i-90.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/recap.md" beforeDir="false" afterPath="$PROJECT_DIR$/recap.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/bayesian_linear_regression.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bayesian_linear_regression.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/bo.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/bo.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/logistic_regression_benchmark.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/logistic_regression_benchmark.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/neural_network.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/neural_network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -1817,8 +1822,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="121" column="23" selection-start-line="121" selection-start-column="23" selection-end-line="121" selection-end-column="23" />
+            <state relative-caret-position="405">
+              <caret line="126" column="23" selection-start-line="126" selection-start-column="23" selection-end-line="126" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -2073,7 +2078,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/models.py</url>
-          <line>127</line>
+          <line>132</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
@@ -2339,8 +2344,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="121" column="23" selection-start-line="121" selection-start-column="23" selection-end-line="121" selection-end-column="23" />
+        <state relative-caret-position="405">
+          <caret line="126" column="23" selection-start-line="126" selection-start-column="23" selection-end-line="126" selection-end-column="23" />
         </state>
       </provider>
     </entry>
