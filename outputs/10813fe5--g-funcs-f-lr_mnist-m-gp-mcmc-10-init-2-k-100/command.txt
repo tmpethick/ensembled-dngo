@@ -1,0 +1,2 @@
+run.py --group funcs -f lr_mnist --model gp -mcmc 10 --n_init 2 --n_iter 100
+python run.py --seed None --model gp --group funcs --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 10 --obj_func lr_mnist --embedding None --acq UCB --n_iter 100 --n_init 2 --init_src None --uuid 10813fe5 --date 2018-08-28 09:24:52.120026 --name 10813fe5--g-funcs-f-lr_mnist-m-gp-mcmc-10-init-2-k-100

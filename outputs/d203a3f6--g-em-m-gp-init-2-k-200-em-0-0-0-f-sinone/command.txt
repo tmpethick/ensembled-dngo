@@ -1,0 +1,2 @@
+run.py --group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 0 0 -f sinone
+python run.py --seed None --model gp --group embedding --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func sinone --embedding [0.0, 0.0, 0.0] --acq UCB --n_iter 200 --n_init 2 --init_src None --uuid d203a3f6 --date 2018-08-28 09:12:47.257282 --name d203a3f6--g-em-m-gp-init-2-k-200-em-0-0-0-f-sinone

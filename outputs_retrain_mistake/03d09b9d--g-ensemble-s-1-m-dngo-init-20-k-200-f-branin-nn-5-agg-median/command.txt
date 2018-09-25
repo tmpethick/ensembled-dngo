@@ -1,2 +1,0 @@
-run.py --group ensemble --seed 1 --model dngo --n_init 20 --n_iter 200 -f branin -nn 5 -agg median
-python run.py --seed 1 --model dngo --group ensemble --activations ['relu', 'relu', 'tanh'] --nn_fixed True --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 5 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func branin --embedding None --acq UCB --n_iter 200 --n_init 20 --uuid 03d09b9d --date 2018-08-23 12:01:27.532897 --name 03d09b9d--g-ensemble-s-1-m-dngo-init-20-k-200-f-branin-nn-5-agg-median

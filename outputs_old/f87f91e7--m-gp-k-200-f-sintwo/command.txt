@@ -1,2 +1,0 @@
-run.py --model gp --n_iter 200 -f sintwo
-python run.py --model gp --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func sintwo --acq UCB --n_iter 200 --uuid f87f91e7 --date 2018-08-15 09:52:06.911391 --name f87f91e7--m-gp-k-200-f-sintwo

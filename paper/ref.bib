@@ -1,0 +1,308 @@
+
+@book{rasmussen_gaussian_2006,
+	location = {Cambridge, Mass},
+	title = {Gaussian processes for machine learning},
+	isbn = {978-0-262-18253-9},
+	series = {Adaptive computation and machine learning},
+	pagetotal = {248},
+	publisher = {{MIT} Press},
+	author = {Rasmussen, Carl Edward and Williams, Christopher K. I.},
+	date = {2006},
+	note = {{OCLC}: ocm61285753},
+	keywords = {Data processing, Gaussian processes, Machine learning, Mathematical models}
+}
+
+@thesis{duvenaud_automatic_2014,
+	title = {Automatic model construction with Gaussian processes},
+	institution = {University of Cambridge},
+	type = {phdthesis},
+	author = {Duvenaud, David},
+	date = {2014}
+}
+
+@article{berg_introduction_2004,
+	title = {Introduction to Markov Chain Monte Carlo Simulations and their Statistical Analysis},
+	url = {http://arxiv.org/abs/cond-mat/0410490},
+	abstract = {This article is a tutorial on Markov chain Monte Carlo simulations and their statistical analysis. The theoretical concepts are illustrated through many numerical assignments from the author's book on the subject. Computer code (in Fortran) is available for all subjects covered and can be downloaded from the web.},
+	journaltitle = {{arXiv}:cond-mat/0410490},
+	author = {Berg, Bernd A.},
+	date = {2004-10-19},
+	eprinttype = {arxiv},
+	eprint = {cond-mat/0410490},
+	keywords = {Condensed Matter - Materials Science, Condensed Matter - Statistical Mechanics, High Energy Physics - Lattice, Physics - Biological Physics, Physics - Chemical Physics, Physics - Computational Physics, Physics - Physics Education}
+}
+
+@article{srinivas_gaussian_2012,
+	title = {Gaussian Process Optimization in the Bandit Setting: No Regret and Experimental Design},
+	volume = {58},
+	issn = {0018-9448, 1557-9654},
+	url = {http://arxiv.org/abs/0912.3995},
+	doi = {10.1109/TIT.2011.2182033},
+	shorttitle = {Gaussian Process Optimization in the Bandit Setting},
+	abstract = {Many applications require optimizing an unknown, noisy function that is expensive to evaluate. We formalize this task as a multi-armed bandit problem, where the payoff function is either sampled from a Gaussian process ({GP}) or has low {RKHS} norm. We resolve the important open problem of deriving regret bounds for this setting, which imply novel convergence rates for {GP} optimization. We analyze {GP}-{UCB}, an intuitive upper-confidence based algorithm, and bound its cumulative regret in terms of maximal information gain, establishing a novel connection between {GP} optimization and experimental design. Moreover, by bounding the latter in terms of operator spectra, we obtain explicit sublinear regret bounds for many commonly used covariance functions. In some important cases, our bounds have surprisingly weak dependence on the dimensionality. In our experiments on real sensor data, {GP}-{UCB} compares favorably with other heuristical {GP} optimization approaches.},
+	pages = {3250--3265},
+	number = {5},
+	journaltitle = {{IEEE} Transactions on Information Theory},
+	author = {Srinivas, Niranjan and Krause, Andreas and Kakade, Sham M. and Seeger, Matthias},
+	date = {2012-05},
+	eprinttype = {arxiv},
+	eprint = {0912.3995},
+	keywords = {Computer Science - Machine Learning}
+}
+
+@article{snoek_scalable_2015,
+	title = {Scalable Bayesian Optimization Using Deep Neural Networks},
+	url = {http://arxiv.org/abs/1502.05700},
+	abstract = {Bayesian optimization is an effective methodology for the global optimization of functions with expensive evaluations. It relies on querying a distribution over functions defined by a relatively cheap surrogate model. An accurate model for this distribution over functions is critical to the effectiveness of the approach, and is typically fit using Gaussian processes ({GPs}). However, since {GPs} scale cubically with the number of observations, it has been challenging to handle objectives whose optimization requires many evaluations, and as such, massively parallelizing the optimization. In this work, we explore the use of neural networks as an alternative to {GPs} to model distributions over functions. We show that performing adaptive basis function regression with a neural network as the parametric form performs competitively with state-of-the-art {GP}-based approaches, but scales linearly with the number of data rather than cubically. This allows us to achieve a previously intractable degree of parallelism, which we apply to large scale hyperparameter optimization, rapidly finding competitive models on benchmark object recognition tasks using convolutional networks, and image caption generation using neural language models.},
+	journaltitle = {{arXiv}:1502.05700 [stat]},
+	author = {Snoek, Jasper and Rippel, Oren and Swersky, Kevin and Kiros, Ryan and Satish, Nadathur and Sundaram, Narayanan and Patwary, Md Mostofa Ali and Prabhat and Adams, Ryan P.},
+	date = {2015-02-19},
+	eprinttype = {arxiv},
+	eprint = {1502.05700},
+	keywords = {Statistics - Machine Learning}
+}
+
+@article{snoek_practical_2012,
+	title = {Practical Bayesian Optimization of Machine Learning Algorithms},
+	url = {http://arxiv.org/abs/1206.2944},
+	abstract = {Machine learning algorithms frequently require careful tuning of model hyperparameters, regularization terms, and optimization parameters. Unfortunately, this tuning is often a "black art" that requires expert experience, unwritten rules of thumb, or sometimes brute-force search. Much more appealing is the idea of developing automatic approaches which can optimize the performance of a given learning algorithm to the task at hand. In this work, we consider the automatic tuning problem within the framework of Bayesian optimization, in which a learning algorithm's generalization performance is modeled as a sample from a Gaussian process ({GP}). The tractable posterior distribution induced by the {GP} leads to efficient use of the information gathered by previous experiments, enabling optimal choices about what parameters to try next. Here we show how the effects of the Gaussian process prior and the associated inference procedure can have a large impact on the success or failure of Bayesian optimization. We show that thoughtful choices can lead to results that exceed expert-level performance in tuning machine learning algorithms. We also describe new algorithms that take into account the variable cost (duration) of learning experiments and that can leverage the presence of multiple cores for parallel experimentation. We show that these proposed algorithms improve on previous automatic procedures and can reach or surpass human expert-level optimization on a diverse set of contemporary algorithms including latent Dirichlet allocation, structured {SVMs} and convolutional neural networks.},
+	journaltitle = {{arXiv}:1206.2944 [cs, stat]},
+	author = {Snoek, Jasper and Larochelle, Hugo and Adams, Ryan P.},
+	date = {2012-06-13},
+	eprinttype = {arxiv},
+	eprint = {1206.2944},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning}
+}
+
+@article{shahriari_taking_2016,
+	title = {Taking the Human Out of the Loop: A Review of Bayesian Optimization},
+	volume = {104},
+	issn = {0018-9219},
+	doi = {10.1109/JPROC.2015.2494218},
+	shorttitle = {Taking the Human Out of the Loop},
+	abstract = {Big Data applications are typically associated with systems involving large numbers of users, massive complex software systems, and large-scale heterogeneous computing and storage architectures. The construction of such systems involves many distributed design choices. The end products (e.g., recommendation systems, medical analysis tools, real-time game engines, speech recognizers) thus involve many tunable configuration parameters. These parameters are often specified and hard-coded into the software by various developers or teams. If optimized jointly, these parameters can result in significant improvements. Bayesian optimization is a powerful tool for the joint optimization of design choices that is gaining great popularity in recent years. It promises greater automation so as to increase both product quality and human productivity. This review paper introduces Bayesian optimization, highlights some of its methodological aspects, and showcases a wide range of applications.},
+	pages = {148--175},
+	number = {1},
+	journaltitle = {Proceedings of the {IEEE}},
+	author = {Shahriari, B. and Swersky, K. and Wang, Z. and Adams, R. P. and Freitas, N. de},
+	date = {2016-01},
+	keywords = {Bayesian optimization, Bayes methods, Big Data, Big data application, Decision making, Design of experiments, Genomes, genomic medicine, human productivity, large-scale heterogeneous computing, Linear programming, massive complex software system, optimisation, Optimization, product quality, response surface methodology, Statistical analysis, statistical learning, storage allocation, storage architecture}
+}
+
+@book{authors_gpyopt:_2016,
+	title = {{GPyOpt}: A Bayesian Optimization framework in python},
+	url = {http://github.com/SheffieldML/GPyOpt},
+	author = {authors, The {GPyOpt}},
+	date = {2016}
+}
+
+@article{wang_bayesian_2013,
+	title = {Bayesian Optimization in a Billion Dimensions via Random Embeddings},
+	url = {http://arxiv.org/abs/1301.1942},
+	abstract = {Bayesian optimization techniques have been successfully applied to robotics, planning, sensor placement, recommendation, advertising, intelligent user interfaces and automatic algorithm configuration. Despite these successes, the approach is restricted to problems of moderate dimension, and several workshops on Bayesian optimization have identified its scaling to high-dimensions as one of the holy grails of the field. In this paper, we introduce a novel random embedding idea to attack this problem. The resulting Random {EMbedding} Bayesian Optimization ({REMBO}) algorithm is very simple, has important invariance properties, and applies to domains with both categorical and continuous variables. We present a thorough theoretical analysis of {REMBO}. Empirical results confirm that {REMBO} can effectively solve problems with billions of dimensions, provided the intrinsic dimensionality is low. They also show that {REMBO} achieves state-of-the-art performance in optimizing the 47 discrete parameters of a popular mixed integer linear programming solver.},
+	journaltitle = {{arXiv}:1301.1942 [cs, stat]},
+	author = {Wang, Ziyu and Hutter, Frank and Zoghi, Masrour and Matheson, David and de Freitas, Nando},
+	date = {2013-01-09},
+	eprinttype = {arxiv},
+	eprint = {1301.1942},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning}
+}
+
+@article{li_hyperband:_2016,
+	title = {Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization},
+	url = {http://arxiv.org/abs/1603.06560},
+	shorttitle = {Hyperband},
+	abstract = {Performance of machine learning algorithms depends critically on identifying a good set of hyperparameters. While recent approaches use Bayesian optimization to adaptively select configurations, we focus on speeding up random search through adaptive resource allocation and early-stopping. We formulate hyperparameter optimization as a pure-exploration non-stochastic infinite-armed bandit problem where a predefined resource like iterations, data samples, or features is allocated to randomly sampled configurations. We introduce a novel algorithm, Hyperband, for this framework and analyze its theoretical properties, providing several desirable guarantees. Furthermore, we compare Hyperband with popular Bayesian optimization methods on a suite of hyperparameter optimization problems. We observe that Hyperband can provide over an order-of-magnitude speedup over our competitor set on a variety of deep-learning and kernel-based learning problems.},
+	journaltitle = {{arXiv}:1603.06560 [cs, stat]},
+	author = {Li, Lisha and Jamieson, Kevin and {DeSalvo}, Giulia and Rostamizadeh, Afshin and Talwalkar, Ameet},
+	date = {2016-03-21},
+	eprinttype = {arxiv},
+	eprint = {1603.06560},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning}
+}
+
+@inproceedings{bergstra_algorithms_2011,
+	title = {Algorithms for hyper-parameter optimization},
+	pages = {2546--2554},
+	booktitle = {Advances in neural information processing systems},
+	author = {Bergstra, James S and Bardenet, Rémi and Bengio, Yoshua and Kégl, Balázs},
+	date = {2011}
+}
+
+@inproceedings{golovin_google_2017,
+	location = {Halifax, {NS}, Canada},
+	title = {Google Vizier: A Service for Black-Box Optimization},
+	isbn = {978-1-4503-4887-4},
+	url = {http://dl.acm.org/citation.cfm?doid=3097983.3098043},
+	doi = {10.1145/3097983.3098043},
+	shorttitle = {Google Vizier},
+	eventtitle = {the 23rd {ACM} {SIGKDD} International Conference},
+	pages = {1487--1495},
+	booktitle = {Proceedings of the 23rd {ACM} {SIGKDD} International Conference on Knowledge Discovery and Data Mining  - {KDD} '17},
+	publisher = {{ACM} Press},
+	author = {Golovin, Daniel and Solnik, Benjamin and Moitra, Subhodeep and Kochanski, Greg and Karro, John and Sculley, D.},
+	urldate = {2018-09-10},
+	date = {2017},
+	langid = {english}
+}
+
+@article{kingma_adam:_2014,
+	title = {Adam: A Method for Stochastic Optimization},
+	url = {http://arxiv.org/abs/1412.6980},
+	shorttitle = {Adam},
+	abstract = {We introduce Adam, an algorithm for first-order gradient-based optimization of stochastic objective functions, based on adaptive estimates of lower-order moments. The method is straightforward to implement, is computationally efficient, has little memory requirements, is invariant to diagonal rescaling of the gradients, and is well suited for problems that are large in terms of data and/or parameters. The method is also appropriate for non-stationary objectives and problems with very noisy and/or sparse gradients. The hyper-parameters have intuitive interpretations and typically require little tuning. Some connections to related algorithms, on which Adam was inspired, are discussed. We also analyze the theoretical convergence properties of the algorithm and provide a regret bound on the convergence rate that is comparable to the best known results under the online convex optimization framework. Empirical results demonstrate that Adam works well in practice and compares favorably to other stochastic optimization methods. Finally, we discuss {AdaMax}, a variant of Adam based on the infinity norm.},
+	journaltitle = {{arXiv}:1412.6980 [cs]},
+	author = {Kingma, Diederik P. and Ba, Jimmy},
+	date = {2014-12-22},
+	eprinttype = {arxiv},
+	eprint = {1412.6980},
+	keywords = {Computer Science - Machine Learning}
+}
+
+@article{swersky_freeze-thaw_2014,
+	title = {Freeze-Thaw Bayesian Optimization},
+	url = {http://arxiv.org/abs/1406.3896},
+	abstract = {In this paper we develop a dynamic form of Bayesian optimization for machine learning models with the goal of rapidly finding good hyperparameter settings. Our method uses the partial information gained during the training of a machine learning model in order to decide whether to pause training and start a new model, or resume the training of a previously-considered model. We specifically tailor our method to machine learning problems by developing a novel positive-definite covariance kernel to capture a variety of training curves. Furthermore, we develop a Gaussian process prior that scales gracefully with additional temporal observations. Finally, we provide an information-theoretic framework to automate the decision process. Experiments on several common machine learning models show that our approach is extremely effective in practice.},
+	journaltitle = {{arXiv}:1406.3896 [cs, stat]},
+	author = {Swersky, Kevin and Snoek, Jasper and Adams, Ryan Prescott},
+	date = {2014-06-15},
+	eprinttype = {arxiv},
+	eprint = {1406.3896},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning}
+}
+
+@book{stan_development_team_stan_2017,
+	title = {Stan Modeling Language Users Guide and Reference},
+	url = {http://mc-stan.org/},
+	author = {{Stan Development Team}},
+	date = {2017}
+}
+
+@inproceedings{carvalho_handling_2009,
+	title = {Handling sparsity via the horseshoe},
+	pages = {73--80},
+	booktitle = {Artificial Intelligence and Statistics},
+	author = {Carvalho, Carlos M and Polson, Nicholas G and Scott, James G},
+	date = {2009}
+}
+
+@article{dewancker_stratified_2016,
+	title = {A Stratified Analysis of Bayesian Optimization Methods},
+	url = {http://arxiv.org/abs/1603.09441},
+	abstract = {Empirical analysis serves as an important complement to theoretical analysis for studying practical Bayesian optimization. Often empirical insights expose strengths and weaknesses inaccessible to theoretical analysis. We define two metrics for comparing the performance of Bayesian optimization methods and propose a ranking mechanism for summarizing performance within various genres or strata of test functions. These test functions serve to mimic the complexity of hyperparameter optimization problems, the most prominent application of Bayesian optimization, but with a closed form which allows for rapid evaluation and more predictable behavior. This offers a flexible and efficient way to investigate functions with specific properties of interest, such as oscillatory behavior or an optimum on the domain boundary.},
+	journaltitle = {{arXiv}:1603.09441 [cs, stat]},
+	author = {Dewancker, Ian and {McCourt}, Michael and Clark, Scott and Hayes, Patrick and Johnson, Alexandra and Ke, George},
+	date = {2016-03-30},
+	eprinttype = {arxiv},
+	eprint = {1603.09441},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning}
+}
+
+@inproceedings{eggensperger_towards_2013,
+	title = {Towards an empirical foundation for assessing bayesian optimization of hyperparameters},
+	volume = {10},
+	pages = {3},
+	booktitle = {{NIPS} workshop on Bayesian Optimization in Theory and Practice},
+	author = {Eggensperger, Katharina and Feurer, Matthias and Hutter, Frank and Bergstra, James and Snoek, Jasper and Hoos, Holger and Leyton-Brown, Kevin},
+	date = {2013}
+}
+
+@inproceedings{springenberg_bayesian_2016,
+	title = {Bayesian optimization with robust bayesian neural networks},
+	pages = {4134--4142},
+	booktitle = {Advances in Neural Information Processing Systems},
+	author = {Springenberg, Jost Tobias and Klein, Aaron and Falkner, Stefan and Hutter, Frank},
+	date = {2016}
+}
+
+@software{thomas_m._pethick_ensembled_2018,
+	title = {Ensembled {DNGO} Source Code},
+	url = {https://github.com/tmpethick/ensembled-dngo},
+	author = {{Thomas M. Pethick}},
+	date = {2018}
+}
+
+@article{bergstra_random_2012,
+	title = {Random search for hyper-parameter optimization},
+	volume = {13},
+	pages = {281--305},
+	issue = {Feb},
+	journaltitle = {Journal of Machine Learning Research},
+	author = {Bergstra, James and Bengio, Yoshua},
+	date = {2012}
+}
+
+@article{chen_joint_2012,
+	title = {Joint optimization and variable selection of high-dimensional Gaussian processes},
+	journaltitle = {{arXiv} preprint {arXiv}:1206.6396},
+	author = {Chen, Bo and Castro, Rui and Krause, Andreas},
+	date = {2012}
+}
+
+@inproceedings{lyu_batch_2018,
+	title = {Batch Bayesian Optimization via Multi-objective Acquisition Ensemble for Automated Analog Circuit Design},
+	pages = {3312--3320},
+	booktitle = {International Conference on Machine Learning},
+	author = {Lyu, Wenlong and Yang, Fan and Yan, Changhao and Zhou, Dian and Zeng, Xuan},
+	date = {2018}
+}
+
+@software{eggensperger_hpolib2_2018,
+	title = {{HPOlib}2},
+	url = {https://github.com/automl/HPOlib2},
+	author = {Eggensperger, Katharina and Feurer, Matthias and Klein, Aaron and Falkner, Stefan},
+	date = {2018}
+}
+
+@inproceedings{wilson_deep_2016,
+	title = {Deep kernel learning},
+	pages = {370--378},
+	booktitle = {Artificial Intelligence and Statistics},
+	author = {Wilson, Andrew Gordon and Hu, Zhiting and Salakhutdinov, Ruslan and Xing, Eric P},
+	date = {2016}
+}
+
+@inproceedings{wilson_kernel_2015,
+	title = {Kernel interpolation for scalable structured Gaussian processes ({KISS}-{GP})},
+	pages = {1775--1784},
+	booktitle = {International Conference on Machine Learning},
+	author = {Wilson, Andrew and Nickisch, Hannes},
+	date = {2015}
+}
+
+@article{garnelo_neural_2018,
+	title = {Neural Processes},
+	url = {http://arxiv.org/abs/1807.01622},
+	abstract = {A neural network ({NN}) is a parameterised function that can be tuned via gradient descent to approximate a labelled collection of data with high precision. A Gaussian process ({GP}), on the other hand, is a probabilistic model that defines a distribution over possible functions, and is updated in light of data via the rules of probabilistic inference. {GPs} are probabilistic, data-efficient and flexible, however they are also computationally intensive and thus limited in their applicability. We introduce a class of neural latent variable models which we call Neural Processes ({NPs}), combining the best of both worlds. Like {GPs}, {NPs} define distributions over functions, are capable of rapid adaptation to new observations, and can estimate the uncertainty in their predictions. Like {NNs}, {NPs} are computationally efficient during training and evaluation but also learn to adapt their priors to data. We demonstrate the performance of {NPs} on a range of learning tasks, including regression and optimisation, and compare and contrast with related models in the literature.},
+	journaltitle = {{arXiv}:1807.01622 [cs, stat]},
+	author = {Garnelo, Marta and Schwarz, Jonathan and Rosenbaum, Dan and Viola, Fabio and Rezende, Danilo J. and Eslami, S. M. Ali and Teh, Yee Whye},
+	date = {2018-07-04},
+	eprinttype = {arxiv},
+	eprint = {1807.01622},
+	keywords = {Computer Science - Machine Learning, Statistics - Machine Learning}
+}
+
+@inproceedings{bergstra_algorithms_2011-1,
+	title = {Algorithms for hyper-parameter optimization},
+	pages = {2546--2554},
+	booktitle = {Advances in neural information processing systems},
+	author = {Bergstra, James S. and Bardenet, Rémi and Bengio, Yoshua and Kégl, Balázs},
+	date = {2011}
+}
+
+@inproceedings{hutter_sequential_2011,
+	title = {Sequential model-based optimization for general algorithm configuration},
+	pages = {507--523},
+	booktitle = {International Conference on Learning and Intelligent Optimization},
+	publisher = {Springer},
+	author = {Hutter, Frank and Hoos, Holger H. and Leyton-Brown, Kevin},
+	date = {2011}
+}
+
+@inproceedings{contal_gaussian_2014,
+	title = {Gaussian process optimization with mutual information},
+	pages = {253--261},
+	booktitle = {International Conference on Machine Learning},
+	author = {Contal, Emile and Perchet, Vianney and Vayatis, Nicolas},
+	date = {2014}
+}

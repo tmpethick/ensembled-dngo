@@ -1,0 +1,1121 @@
+% !TEX program = xelatex
+% !BIB program = bibtex
+\documentclass[conference,compsoc]{IEEEtran} 
+% \usepackage[utf8]{inputenc}
+\usepackage{fontspec}
+\usepackage{array,multirow,graphicx}
+\usepackage{csquotes}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{braket}
+\usepackage{graphicx}
+\usepackage{verbatimbox}
+\usepackage{wrapfig, fancyvrb}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{pgfplots}
+\usepackage{placeins}
+
+% Make \paragraph bold
+\makeatletter
+\def\theparagraph{\thesubsubsection.\@arabic\c@paragraph}
+\def\paragraph{\@startsection{paragraph}{4}{\z@}%
+                                    {3.25ex \@plus1ex \@minus.2ex}%
+                                    {-1em}%
+                                    {\normalfont\normalsize\bfseries}}
+\makeatother
+
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\usepackage[backend=bibtex,style=authoryear]{biblatex}
+\usepackage{listings}
+\usepackage{tikz-qtree}
+
+\addbibresource{ref.bib}
+
+\newcommand{\action}[1]{\scriptsize{\textsc{#1}}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\title{Bayesian Optimisation using an Ensemble of Neural Networks}
+\author{Thomas M. Pethick}
+\date{September 2018}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{plain} % give it pagenumbers
+\pagestyle{plain}
+
+\begin{abstract}
+    State-of-the-art hyperparameter optimization of machine learning algorithms has been achieved with Bayesian Optimization using Gaussian Processes (GPs). 
+    However, computational cost for this model scales cubically in the number of observations.
+    Recent methods replaces the GP with a Bayesian linear regressor on basis functions learned by a neural network -- an approach that scale linearly.
+    The objective is to explore where this method fails and investigate whether an ensemble of neural networks improves convergence in those scenarios.
+    The preliminary investigation suggests that an ensemble is beneficial in problems with low effective dimensionality and in spaces of sufficient dimensionality (i.e. 6 or above).
+\end{abstract}
+
+\section{Introduction}
+
+    The performance of machine learning algorithms is heavily dependent on the configuration of so-called \emph{hyperparameters}.
+    In particular, for a deep neural network architecture this could be the number of units for each layer, the number of layers and the activation functions.
+    We can treat the possible collection of hyperparameters as a space which we will call the \emph{hyperparameter space}.
+    In this framework the objective is to find the point in this space that yields the best performance.
+    What we have done is to frame it as an optimization problem, more precisely formulated mathematically as finding the optimal configuration,
+        \begin{equation}
+            \bm{x}^\star = \argmax_{\bm{x}=\mathcal{X}}f(\bm{x}).
+        \end{equation}
+
+    \noindent where $\mathcal{X}$ in this particular instance is the hyperparameter space and $f$ is a function providing a measure of performance of the machine learning algorithm for a a certain hyperparameter configuration.
+
+    This problem belongs to an interesting subclass of optimization problems.
+    First of all, $f$ is very expensive to evaluate.
+    In our particular instance it is required to run the machine learning algorithm to completion to evaluate $f$.
+    This could take days for a single evaluation considering the training required for recent deep learning methods.
+    Secondly, $f$ is considered a "black-box" in the sense that it has no special structure such as linearity or concavity that would make the problem easy and no first- or second-order derivative is observed that would similarly simplify the problem.
+    %Optimization problems in which minimal assumptions are made about the problem .
+
+    Several solutions have been proposed to this problem.
+    Naive proposals include non-adaptive algorithms of which \textsc{Random Sampling} is one.
+    It samples $N$ points uniformly at random from $\mathcal{X}$ and picks the one that optimizes $f(\cdot)$.
+    Another similarly simple algorithms is the \textsc{Grid Search} which instead selects the $N$ points from a grid -- more precisely the cartesian product between a finite subset of each dimension.
+
+    If we instead query $f$ sequentially we can make an informed choice of the next point to evaluate given the already observed evaluations.
+    These methods are commonly referred to as \emph{Bayesian Optimization} since the way they update their belief about what point to pick based on previous observation is fundamentally Bayesian.
+    The assumption of expensive evaluation justifies spending computational effort on making informed choices.
+
+    Numerous suggestions on how to model the belief of $f$ exists with most methods capturing it (at least partially) using \emph{Gaussian Processes} (GPs).
+    Examples of this includes \textsc{Spearmint} \parencite{snoek_practical_2012} with a purely GP based approach, \textsc{SMAC} \parencite{hutter_sequential_2011} using Random Forest and \textsc{HyperOpt} \parencite{bergstra_algorithms_2011} using Tree-structured Parzen Estimator.
+    These methods are computationally restricted by an expensive cost of $\mathcal{O}(n^3)$ for $n$ observations.
+    
+    More recently, methods using a Bayesian linear regressor on features from a neural network were proposed to obtain \emph{scalable} Bayesian Optimization \parencite{snoek_scalable_2015}.
+    This was coined Deep Network for Global Optimization (DNGO).
+    
+    It is a well-known fact that the random initialization of neural network weights can have a significant impact on the networks performance.
+    To mitigate this effect it is natural to consider a common statistical method called bagging in which an ensemble of the model is aggregated.
+    Thus, we propose an extension of DNGO that uses an ensemble of neural networks.
+
+    \subsection{Contributions}
+        
+        Our contributions are two-fold:
+
+        \begin{itemize}
+            \item The behaviour of DNGO is badly understood.
+             We first present a qualitative analysis based on several categorized benchmarks in order to find failure cases in which an ensemble might help.
+            \item Secondly, we propose a generalization of DNGO which uses an ensemble of neural network and investigate in which scenarios this is advantageous.
+        \end{itemize}
+
+    % - assume familiarity with common linear algebra notation, gaussian distribution, neural network
+
+    \subsection{Related work}
+
+        Another extension of DNGO has been proposed in which a distribution is places on all weights thus obtaining a Bayesian neural network \parencite{springenberg_bayesian_2016}.
+        Even though it similarly attempts to make the method more robust it does so through other means.
+        It is natural to compare these methods however.
+
+        More recently it was proposed in \parencite{li_hyperband:_2016} that $2\times$\textsc{Random Search} (i.e. allowing to sample twice as many points) where competitive to Bayesian Optimization methods suggesting much simpler algorithms.
+        However, experimental results in \parencite{golovin_google_2017} suggest that this is only the case in sufficiently high dimensions (specifically 16 or more).
+
+    \subsection{Overview}
+
+        The paper will be structured as follows.
+        First the necessary background will be covered in \cref{sec:background} consisting of Bayesian Optimization specifically with a gaussian processes and the neural network approach referred to as DNGO.
+        We are then equipped in \cref{sec:method} to specify the three categories of models being tested: GP, DNGO and ensembled DNGO.
+        The results are then tested on several benchmarks and hyperparameter optimization tasks covered in \Cref{sec:exp}. We follow up by a discussion in \cref{sec:discussion} and close with a conclusion in \cref{sec:conclusion}.
+
+\section{Background}\label{sec:background}
+
+  \subsection{Bayesian Optimization}
+
+        Bayesian Optimization is a sequential optimization strategy well-suited for finding an optimum in few iterations.
+        It does so by incorporating a prior belief of the objective function $f$ and subsequently refining this through a Bayesian posterior as observations are made.
+        The posterior now expresses our updated belief of the objective function given data.
+        To know where to query the next observation an \emph{acquisition function} can be induced on the statistical model that guides exploration by using the uncertainty in the posterior.
+        Thus the next point $\bm{x}_{t+1}$ at time step $t$ is selected by maximizing the acquisition function.
+        \Cref{fig:bo} illustrates three steps of such a process where the input space is $\mathbb{R}^1$.
+
+        To summaries the process involves two components, namely the prior over the objective function and the acquisition function.
+        Since the acquisition function is defined based on the posterior function which arises from the prior, we will leave this topic until \cref{sec:acq}.
+        
+        Let $\mathcal{D}_{1:t} = \set{\bm{x}_{1:t}, y_{1:t}}$ be the sequence of observation up to time step $t$ in the Bayesian Optimization procedure.
+        We combine the \emph{prior distribution} $P(f)$ with the \emph{likelihood function} $P(D_{1:t}\mid f)$ to obtain the \emph{posterior distribution},
+        \begin{equation}
+            P(f\mid\mathcal{D}_{1:t}) = \frac{P(\mathcal{D}_{1:t}\mid f)P(f)}{P(\mathcal{D}_{1:t})} \propto P(\mathcal{D}_{1:t}\mid f)P(f).
+        \end{equation}
+
+        This is essentially what makes it Bayesian since it is an application of Bayes rule.
+        Notice that we can drop the normalization constant given it is irrelevant for an optimization task.
+        This posterior is sometimes also referred to as the \emph{response surface} or \emph{surrogate function} since it estimates the objective function.
+
+        One commonly used prior over $f$ is the Gaussian Process covered in \cref{sec:gp}.
+        It is interesting since it yields an analytical expression for the posterior as well as for other reasons which will become apparent in the subsequent section.
+
+        For a more complete treatment and overview of BO we refer to \parencite{shahriari_taking_2016}.
+
+        \begin{figure*}[t]
+            \centering
+            \input{fig/bo-toy-0.pgf}
+            \input{fig/bo-toy-1.pgf}
+            %\includegraphics[height=0.7\textwidth]{fig/bo.pdf}
+            \caption{
+                Two steps of Bayesian Optimization in which there are initially two observation.
+                At every step the posterior distribution is derived and the acquisition function is maximized to determine the next point to query.
+                Exactly how the acquisition function is connected to the mean and variance is covered \cref{sec:acq}.}
+            \label{fig:bo}
+        \end{figure*}
+
+    \subsection{Gaussian Processes}\label{sec:gp}
+        % \item Use a Gaussian Process (GP) to model $p_\mathcal{M}(f|\bm{\lambda})$. Under GP prior acquisition functions depends only on predictive mean function and predictive variance function.
+
+        % \item Assuming at every time step $t$, gaussian noise $\epsilon_t \sim \mathcal{N}(0,\sigma^2)$ on function evaluations $y_t = f(\bm{\lambda}_t) + \epsilon_t$. Denote observations $\mathcal{D}_t = \set{\bm{\lambda}_\tau, y_\tau}_\tau^t$,
+
+        % % say: Assuming $f$ is sampled from GP
+        % % noisy observation
+        % % fix observations
+
+        %     % \begin{equation}\mu(\bm{\lambda}; \set{\bm{\lambda}_n, f(\bm{\lambda}_n)}, \bm{\Theta})\end{equation}
+        %     % \begin{equation}\sigma^2(\bm{\lambda}; \set{\bm{\lambda}_n, f(\bm{\lambda}_n)}, \bm{\Theta}),\end{equation}
+        %     % TODO: specify
+        %     \begin{align}
+        %         \mu_t(\bm{\lambda}) &= \bm{k}_t(\bm{\lambda})^\top (\bm{K}_t + \sigma^2 \bm{I})^{-1} \bm{y}_t \\
+        %         \sigma^2_t(\bm{\lambda}) &= \bm{k}(\bm{\lambda}, \bm{\lambda}) - \bm{k}_t(\bm{\lambda})^\top (\bm{K}_t + \sigma^2 \bm{I})^{-1} \bm{k}_t(\bm{\lambda}),
+        %     \end{align}
+                
+        % where $\bm{K}_t = [\bm{k}(\bm{\lambda}_i,\bm{\lambda}_j)]_{\set{\bm{\lambda}_i,\bm{\lambda}_j\in \mathcal{D}_t}}$ and $\bm{k}_t(\bm{\lambda}) = [\bm{k}(\bm{\lambda}_i, \bm{\lambda})]_{\set{\bm{\lambda}_i \in \mathcal{D}_t}}$
+
+        % ... we can frame the problem in terms of nonlinear regression
+        What we have done by treating our belief about $f$ as a distribution over function and applying Bayes rule to obtain the posterior is essentially what is called \emph{nonlinear Bayesian regression}.
+
+        A GP is one possible prior over functions $P(f)$.
+        % TODO: ... with useful properties such as..
+
+        \begin{definition}{A Gaussian Process}
+            is a collection of random variables, any finite number of which have a joint Gaussian distribution \parencite{rasmussen_gaussian_2006}.
+        \end{definition}
+            
+        This can be viewed as an extension of the multivariate gaussian distribution to infinite dimensions.
+        The GP is a distribution over functions completely specified by its mean function $m$ and covariance function $k$ similarly to how a gaussian distribution is a distribution over a random variable fully specified by its mean and covariance.
+        We write it,
+            \begin{equation}
+                f(\bm{x}) \sim \mathcal{GP}(\mu(\bm{x}), k(\bm{x}, \bm{x}')).
+            \end{equation}
+            % TODO: what is x'?
+
+        To understand how it is a distribution over functions consider the GP to be defined on the continuous space $\mathbb{R}^D$ (consequently the GP assigns a random variable for every index $\bm{x}$ in the infinite index set $\set{\bm{x} \in \mathbb{R}^D}$).
+        Then $f(\bm{x})$ is the random variable for every location $\bm{x} \in \mathbb{R}^D$.
+        Thus sampling from this generative model gives you one possible function over the domain $\mathbb{R}^D$.
+        % TODO: mention that non-infinite set
+
+        %We will in the following chapter assume zero mean for simplicity of notation.
+        % TODO: why can we do this?
+
+        \subsubsection{Covariance Function}\label{sec:covar}
+
+            % The kernel trick allows us to specify an intuitive similarity between pairs of points, rather than a feature map %, which in practice can be hard to define (human loop)
+
+            The covariance function $k(\bm{x},\bm{x}')$ (also known as the \emph{kernel}) captures the correlation between points in the process and thus determines the structure of possible functions.
+            Notice, however, that it specifies the similarly between the \emph{function evaluation} of two points even though it is determined by the input.
+            A common choice of kernel is the \emph{Squared Exponential} (SE),
+            \begin{equation}
+                k(\bm{x},\bm{x}') = \sigma_0^2 \exp (-\frac{1}{2 l^2} |\bm{x} - \bm{x}'| ^ 2).
+            \end{equation}
+
+            It has two so-called \emph{hyperparameters}, the output variance $\sigma_0^2$ and $l$ referred to as the \emph{length scale}.
+            The parameter $\sigma_0^2$ is simply a scale factor that controls how far away from the function mean value varies, and is thus neglectable considering normalization of the output. % TODO: diagonal is sigma^2
+            More interesting is the length scale.
+            The effect on sampled functions from a GP based on the SE kernel using different length scales is apparent in \cref{fig:rbflengthscale}.
+            Intuitively, the length scale roughly corresponds to the distance necessary to move for a change to occur in the function value.
+            Thus samples from gaussian process prior with $l=0.02$ fluctuates the most.
+            Obviously, these hyperparameters have a big influence on how well we model the unknown function $f$.
+            In \cref{sec:choosehyper} we will cover various methods on how to learn these directly from data.
+            
+            The kernel has a few characteristics.
+            
+            First, notice how smoothly the sampled function varies in \cref{fig:rbflengthscale}.
+            This is a consequence of every prior of SE being infinitely differentiable. 
+            This is an important property since it becomes problematic when we want to model variables that are originally discrete (see \cref{sec:discussion}).
+
+            Secondly, if we disregard the output variance, the covariance between two points specified by the above kernel is almost 1 for very close inputs but decreases as the distance grows effectively capturing that inputs close to each other have high influence on each other.
+            This assumption is essential in allowing us to estimate which areas have potential in e.g. hyperparameter optimization.
+
+            Lastly, it should be noted that SE belongs to a whole class of kernels called \emph{stationary kernels} since they are translationally invariant.
+            This becomes apparent by observing that the kernel can be written as a function of the difference $|\bm{x}-\bm{x}'|$.
+            We will return to the importance of this in \cref{sec:discussion} as well.
+
+            Now, returning to the visualisation, the samples in \cref{fig:rbflengthscale} where drawn using the \emph{covariance matrix} which we denote by $\bm{K}$.
+            Given a set of points $X$, $\bm{K}$ can be constructed from the covariance function by element-wise application for all pairs of points,
+            \begin{equation}
+                \bm{K} = \begin{bmatrix}
+                k(\bm{x}_1, \bm{x}_1) & \cdots & k(\bm{x}_1, \bm{x}_t) \\
+                \vdots & \ddots & \vdots \\
+                k(\bm{x}_t, \bm{x}_1) & \cdots & k(\bm{x}_t, \bm{x}_t) \\
+            \end{bmatrix}
+            \end{equation}
+            
+            This notation will be useful when we discuss \emph{GP regression} in \cref{sec:gpreg}.
+
+            The literature on covariance function is rich including isotropic, non-stationary (such as periodic) and ways to combine kernels \parencite{duvenaud_automatic_2014}.
+            For a thorough overview we refer to \parencite[ch. 5]{rasmussen_gaussian_2006}.
+            % - positive semidefinite? ($v^TKv \geq 0$) => necessary for consistancy
+
+            \begin{figure*}[t]
+            \centering
+            \begin{subfigure}[t]{0.31\textwidth}
+                \centering
+                \input{fig/SE-prior-0.2.pgf}
+            \end{subfigure}
+            \begin{subfigure}[t]{0.31\textwidth}
+                \centering
+                \input{fig/SE-prior-0.05.pgf}
+            \end{subfigure}
+            \begin{subfigure}[t]{0.31\textwidth}
+                \centering
+                \input{fig/SE-prior-0.02.pgf}
+            \end{subfigure}
+            \caption{Each plot contains 10 sampled functions drawn form a gaussian process prior with SE covariance function using a length scale of $0.2$, $0.05$ and $0.02$ from left to right. Notice how the length scale intuitively governs how quickly the function value changes.}
+            \label{fig:rbflengthscale}
+            \end{figure*}
+
+
+        \subsubsection{Prior Mean}\label{sec:priormean}
+
+            So far we have only discussed the prior covariance effect on the GP by so far assuming zero mean throughout the input space.
+            It provides a principled way of incorporating expert knowledge as done by DNGO covered in \cref{sec:dngo}.
+            In practice the prior mean is mostly constant thus leaving the posterior mean to be inferred through the likelihood of the data.
+
+        \subsubsection{GP Regression}\label{sec:gpreg}
+      
+            For Bayesian Optimization we are interested in estimating the function value at an unobserved point based on the statistical model.
+            This is a Bayesian regression problem and specifically with a gaussian prior it is referred to as GP regression.
+
+            As exemplified by \cref{fig:rbflengthscale} it is possible to sample from the prior GP.
+            Recall that by the definition of GP a (finite) set of points induces a joint gaussian distribution.
+            Thus sampling from a GP prior $\mathcal{GP}(\mu(\bm{x}), k(\bm{x},\bm{x}'))$ is simply done through a gaussian distribution with covariance matrix $\bm{K}$ constructed from $k(\bm{x},\bm{x}')$,
+            \begin{equation}
+                f \sim \mathcal{N}(\mu(\bm{x}), \bm{K}).
+            \end{equation}
+        
+            We will now consider how to predict a new sample from a learned posterior function, i.e. define the \emph{predictive posterior distribution}.
+            This will be done for only single predictions, since this is sufficient in the context of Bayesian Optimization (see \parencite{rasmussen_gaussian_2006} for generalization).
+
+            Assume we have observed $\mathcal{D}_t = \set{\bm{x}_{1:t},\bm{\mathrm{f}}_{1:t}}$ for which we have constructed the covariance matrix $\bm{K}$ and we wish to predict $\mathrm{f}_{t+1}$ at $\bm{x}_{t+1}$.
+
+            To get a distribution over the prediction let us first imagine that all $\bm{\mathrm{f}}_{1:t+1}$ are drawn at the same time.
+            Again, by the property of the GP they are sampled from a joint Gaussian distribution,
+            \begin{equation} 
+                \begin{bmatrix}\bm{\mathrm{f}}_{1:t}\\\mathrm{f}_{t+1}\end{bmatrix} \sim \mathcal{N}(\mu(\bm{x}_{1:t+1}),
+                \begin{bmatrix}
+                \bm{K}&\bm{k}\\
+                \bm{k}^T&k(\bm{x}_{t+1},\bm{x}_{t+1})
+                \end{bmatrix}
+                ),
+            \end{equation}
+            
+            \noindent where $\bm{k} = [k(\bm{x}_{t+1}, \bm{x}_1), \cdots, k(\bm{x}_{t+1}, \bm{x}_t)]$. 
+            The primary difference is that the covariance matrix have been expanded to capture correlation between $\mathrm{f}_{t+1}$ and all previous evaluations.
+
+            From here it is relatively straightforward to condition on $\bm{\mathrm{f}}_{1:t}$, thus arriving at the predictive posterior distribution (see \parencite[A.2]{rasmussen_gaussian_2006} for the full derivation),
+            \begin{equation}\label{eq:gppred}%
+                \mathrm{f}_{t+1}\mid \bm{x}_{t+1},\bm{x}_{1:t},\bm{\mathrm{f}}_{1:t} \sim \bm{N}(\mu_t(\bm{x}_{t+1}),\sigma_t(\bm{x}_{t+1})^2)  
+            \end{equation}
+
+            where 
+            \begin{align}
+                \mu_t(\bm{x}_{t+1})          &= \bm{k}^\top\bm{K}^{-1}\bm{\mathrm{f}}_{1:t} \\
+                \text{and }\sigma_t(\bm{x}_{t+1})^2 &= k(\bm{x}_{t+1}, \bm{x}_{t+1}) − \bm{k}^\top \bm{K}^{-1}\bm{k}.
+            \end{align}
+
+            \noindent So the predictive posterior distribution is likewise gaussian, meaning $\mu_t(\cdot)$ and $\sigma_t^2(\cdot)$ are sufficient statistics.
+            
+            Returning to the Bayesian Optimization setting, our statistical model now captures a mean and variance over all points in the input space which is sufficient for defining the acquisition function. % TODO: rephrase when BO chapter have been done..
+
+            \paragraph{Noisy function evaluation}
+
+                In many application of Bayesian Optimization it is only possible to access $f$ through some noisy evaluation.
+
+                We add Gaussian noise $\epsilon_i \stackrel{iid}\sim \mathcal{N}(0,\sigma_{\mathrm{noise}}^2)$ to function evaluations $y_i = \mathrm{f}_i+ \epsilon_i$. Denote observations $\mathcal{D}_t = \set{\bm{x}_{1:t}, \bm{\mathrm{y}}_{1:t}}$ and the next point $\bm{x}_{t+1}$ with function evaluation $\bm{\mathrm{y}}_{t+1}$.
+                
+                The likelihood of $\bm{\mathrm{y}}_{1:t+1}$ thus becomes,
+                    \begin{equation}
+                        \bm{\mathrm{y}}_{1:t+1} \mid \bm{\mathrm{f}} \sim \mathcal{N}(\bm{\mathrm{f}}, \sigma_{\mathrm{noise}}^2 \bm{I}).
+                    \end{equation} 
+
+                Integrate out $\bm{\mathrm{f}}$ to get the marginal likelihood,
+                    \begin{equation}
+                        P(\bm{\mathrm{y}}) 
+                    = \int P(\bm{\mathrm{y}}\mid \bm{\mathrm{f}})P(\bm{\mathrm{f}})\ \mathrm{d} \bm{\mathrm{f}} 
+                    = \mathcal{N}(\mu(\bm{x}_{1:t+1}), \bm{K} + \sigma_{\mathrm{noise}}^2 \bm{I}).
+                    \end{equation}
+
+                From here the same method used to get \eqref{eq:gppred} by conditioning on $\mathcal{D}_t$ can be applied to obtain the predictive posterior distribution,
+                    \begin{equation}
+                        \mathrm{y}_{t+1} \mid \bm{\mathrm{y}}_{1:t} \sim \mathcal{N}(m_{t}(\bm{x}_{t+1}), \sigma_{t}^2(\bm{x}_{t+1}))
+                    \end{equation}
+
+                where
+                    \begin{align}
+                        \mu_t(\bm{x}_{t+1})          &= \bm{k}^\top (\bm{K} + \sigma_{\mathrm{noise}}^2 \bm{I})^{-1} \bm{\mathrm{y}}\label{eq:gppredmu} \\
+                        \text{and }\sigma_t^2(\bm{x}_{t+1}) &= k(\bm{x}_{t+1}, \bm{x}_{t+1}) - \bm{k}^\top (\bm{K} + \sigma_{\mathrm{noise}}^2 \bm{I})^{-1} \bm{k}.\label{eq:gppredsigma}
+                    \end{align}
+                    
+                What have changed from the noise free setting is simply the diagonal $\sigma_{\mathrm{noise}}^2$ term in the kernel and that we now observe $\bm{y}$ instead of $\bm{f}$ directly.
+
+            \paragraph{Running time}\label{sec:runningtime}
+
+                We have obtained an analytical expression for the predictive posterior distribution thus providing well-calibrated uncertainty estimates.
+                However, the cost of this exact inference is $\mathcal{O}(n^3)$ where $n$ is number of observations.
+                The cost is due to the need for inverting the covariance matrix $\bm{K}$ with size $n \times n$. % In practice the cholesky decomposition is computed.
+                By storing $\bm{K}^{-1}$ the mean and variance can be calculated in $\mathcal{O}(n^2)$ and $\mathcal{O}(n)$.
+
+                New samples in the Bayesian Optimization setting could easily be handled by adding the additional row and column for every update so subsequent predictions becomes $\mathcal{O}(n^2)$.
+                However, $\bm{K}^{-1}$ would have to be recomputed everytime the hyperparameters of the kernel are updated which is desireable to do based on data as covered in \cref{sec:choosehyper}.
+
+                This computational constraint is the motivation for DNGO introduced in \cref{sec:dngo}.
+
+        \subsubsection{Choosing hyperparameters}\label{sec:choosehyper}
+        
+            It became apparent in \cref{sec:covar} that the hyperparameters of the kernel have prevailing impact on the type of function the GP describes.
+            This section will cover how to infer these hyperparameters $\theta$ from observations $\mathcal{D}_t=\set{\bm{x}_{1:t},\bm{\mathrm{y}}_{1:t}}$.
+
+            \paragraph{MLE and MAP}
+                The simplest solution to consider is where we choose the hyperparameters $\theta$ which maximizes $P(\bm{\mathrm{y}}|\bm{x}_{1:t},\theta)$,
+                    \begin{equation}
+                        \hat{\theta}_n^{MLE} = \argmax_{\theta} P(\bm{\mathrm{y}}_{1:t}\mid\bm{x}_{1:t},\theta)
+                    \end{equation}
+
+                \noindent Since we are maximizing the likelihood this is referred to as the \emph{maximum likelihood estimation} (MLE).
+
+                A natural extension to MLE includes a prior over the hyperparameters (refered to as a \emph{hyperprior}), thus getting the \emph{maximum a posteriori} (MAP), 
+                    \begin{equation}\hat{\theta}_n^{MAP} = \argmax_{\theta} P(\bm{\mathrm{y}}_{1:t}\mid\bm{x}_{1:t},\theta) P(\theta)\end{equation}
+
+                \noindent We arrive at this by first considering maximizing the posterior $P(\theta\mid\bm{\mathrm{y}}_{1:t},\bm{x}_{1:t})$ instead.
+                Using bayes rule and dropping the normalization constant we obtain the expression,
+
+                \begin{equation}
+                    \begin{split}
+                        P(\theta\mid\bm{\mathrm{y}}_{1:t},\bm{x}_{1:t})
+                        &= \frac{P(\bm{\mathrm{y}}_{1:t}\mid\bm{x}_{1:t}, \theta)P(\theta)}
+                        {P(\bm{\mathrm{y}}_{1:t}\mid \bm{x}_{1:t})}\\
+                        &\propto P(\bm{\mathrm{y}}_{1:t}\mid\bm{x}_{1:t},\theta)P(\theta)
+                        .
+                    \end{split}
+                \end{equation}
+
+                We can use this unnormalized posterior since the normalization constant does not vary across the parameters we are optimizing.
+                Placing some kind of prior can be crucial, especially when few data points are available as is the case in Bayesian Optimization.
+                Common priors include uniform priors to specify hard constraints, normal priors to suggest it lies near some nominal value and log-normal for strictly positive parameters.
+                Notice how MLE is a special case of MAP in which a uniform prior has been placed over the hyperparameters.
+                The specific priors used for this problemset will be discussed in \cref{sec:priors}.
+
+                % In practise we minimize the negative log marginal likelihood l(θ)
+                % include expression (see human loop)
+                An analytical expression can be derived for both MLE and MAP \parencite{rasmussen_gaussian_2006} including their gradient.
+                Thus both can be optimized using gradient decent methods like Conjugate Gradient or quasi-Newton methods.
+                Note that in practice the \emph{negative logarithm} of the objective is minimized since optimization problem are commonly stated as minimization problems and secondly to prevent numerical overflow.
+
+            \paragraph{Fully Bayesian}\label{sec:hypmcmc}
+
+                Both MLE and MAP provides a \emph{point estimate} of the hyperparameters which are then used to get the predictive posterior distribution used for predicting $\mathrm{y}_{t+1}$ at $\bm{x}_{t+1}$.
+                We will now consider the so-called \emph{fully Bayesian} treatment in which the hyperparameters are marginalized out,
+                    \begin{equation} 
+                        P(\mathrm{y}_{t+1}|\bm{x}_{t+1},\mathcal{D}_t) = \int P(\mathrm{y}_{t+1}|\bm{x}_{t+1},\mathcal{D}_t,\theta) P(\theta|\mathcal{D}_t)\ \mathrm{d}\theta.
+                    \end{equation}
+
+                This integral is generally intractable so instead we approximate it by sampling $\theta$,
+                \begin{equation} 
+                    P(\mathrm{y}_{t+1}|\bm{x}_{t+1},\mathcal{D}_t) \approx \frac{1}{N} \sum_{\theta=1}^{N} P(\mathrm{y}_{t+1}|\bm{x}_{t+1},\mathcal{D}_t,\theta),
+                \end{equation}
+
+                \noindent in which $\set{\theta_n}_{n=1}^N$ is sampled from the posterior $P(\theta|\mathcal{D}_t)$. 
+                Since it is even impossible to sample directly from this posterior, Markov Chain Monte Carlo (MCMC) techniques are usually utilized to produce samples from an identical distribution in the limit of an infinitely long chain of samples. % TODO: what to call P(theta|D)
+                For further details on these techniques we refer to \parencite{berg_introduction_2004}.
+
+                % - hyperparameters directly from training data
+                % - (SVM, splines requires cross validation)
+   
+        \subsubsection{Automatic Relevance Detection}\label{sec:ard}
+          
+            Automatic Relevance Detection (ARD) is a method for multi-dimensional input useful when many dimensions are irrelevant.
+            In the case of the SE kernel it learns an individual length scale $l_d$ for each input dimension $x_d$,
+            \begin{equation}
+                k(\bm{x},\bm{x}') = \sigma^2 \exp \bigg[ -\frac{1}{2} \sum_{d=1}^{D} \Big(\frac{|x_d - x_d'|}{l_d}\Big)^2 \bigg].
+            \end{equation}
+        
+            \noindent This way a dimension $x_d$ can be rendered irrelevant by simply increasing $l_d$.
+
+    \subsection{Acquisition function}\label{sec:acq}
+    
+        Now that we have discussed the statistical model used to capture our belief about the unknown function $f$ we return to discuss how to decide which subsequent point to evaluate.
+
+        A whole range of different acquisition functions exist e.g. probability of improvement (PI),
+        expected improvement (EI), upper confidence bounds (UCB), which all try to trade off exploration and exploitation;
+        that is have optima either where uncertainty is high (exploration) or where the model prediction is high (exploitation).
+
+        To optimize the acquisition function we often need to query it many time.
+        It is therefore important that the acquisition function is much cheaper to evaluate (or approximate) than the black box $f$.
+        One way of achieving this is by defining the acquisition function on a statistical model with known analytical form such as the GP.
+
+        % motivate why
+        All the above mentioned acquisitions functions do this and we will focus on the UCB defined as,
+            \begin{equation}
+                \alpha_{UCB}(\bm{x}) = \mu(\bm{x}) + \kappa \sigma(\bm{x}).
+            \end{equation}
+            % TODO: decide on mu vs m
+
+        Together with PI and EI it is part of a class of acquisition function guided by the principle of \emph{being optimistic in the face of uncertainty}.
+        That is, higher variance at a given point can only lead to an increased acquisition value.
+        USB is especially attractive since it has a nice intuitive interpretation, follows directly from a visually plot of the underlying surrogate model (see \cref{fig:bo}) and provides fast convergence in Bayesian Optimization tasks. % TODO: add cite add ref to plot
+        Recently, good theoretical bounds for the \emph{Cumulative Regret} (see \cref{sec:performance} for definition) have even been shown by careful choice of a time depended $\kappa$ \parencite{srinivas_gaussian_2012}.
+
+        Let us turn to how we define the acquisition function when there is uncertainty about kernel hyperparameter $\theta$.
+        Define $\alpha(\bm{x};\theta)$ as the acquisition function with known hyperparameter $\theta$.
+        We can marginalize out $\theta$ given the data $\mathcal{D}_t$ at timestep $t$,
+            \begin{equation}
+            \alpha_t(\bm{x}) = \mathbb{E}_{\theta|\mathcal{D}_t}[\alpha(\bm{x};\theta)]
+                        = \int \alpha(\bm{x};\theta)p(\theta|\mathcal{D}_t) \ \mathrm{d}\theta.
+            \end{equation}
+
+        One simple way of dealing with this expression is to approximate $P(\theta|\mathcal{D}_t)$ by a point estimate (i.e. a Dirac distribution) at either $\hat{\theta}_t^{MLE}$ or $\hat{\theta}_t^{MAP}$ obtained as described in \cref{sec:choosehyper}.
+
+        However, since the uncertainty in the response surface is crucial to guide exploration in Bayesian Optimization, it is desirable to also incorporate the uncertainty about $\theta$.
+        Thus we approximate the marginalization by sampling $\theta$,
+            \begin{equation}
+              \mathbb{E}_{\theta|\mathcal{D}_t}[\alpha(x;\theta)] \approx \frac{1}{N} \sum_{i=1}^{N} \alpha(\bm{x};\theta_i).
+            \end{equation}
+            
+        \noindent with $N$ samples from the posterior $P(\theta|\mathcal{D}_t)$ using MCMC as in \cref{sec:hypmcmc}.
+        This effectively averages over the samples similarly to \cref{sec:hypmcmc} but maps the posterior statistics through the acquisition function before averaging.
+
+        % in all cases the acqusition function can now be 
+        % multistarted quasi-Newton hill climbers [e.g., the limitedmemory Broyden–Fletcher–Goldfarb–Shanno (L-BFGS) method]
+
+    \subsection{DNGO}\label{sec:dngo}
+
+        This section will describe the method proposed in \parencite{snoek_scalable_2015} for making Bayesian Optimization scalable.
+        The problem it addresses is that the running time at every step in GP based Bayesian Optimization is cubic in the number of observations (see \cref{sec:runningtime}).
+        This becomes prohibitively large when using a parallel Bayesian Optimization approach \parencite{snoek_practical_2012} which allows them to make many (expensive) function evaluations than previously possible with the common sequential approach.
+
+        The proposed solution proceeds in two steps in which DNGO first learns a set of basis function using a neural network. 
+        Subsequently it fits a Bayesian linear regressor to the input transformed by the neural network to capture the uncertainty.
+
+        To make this model precise denote the output of the neural network $\bm{\phi}(\cdot) = [\phi_1(\cdot), \cdots, \phi_D(\cdot)]^\top$ where $D$ is the number of basis functions.
+        Given an input set $\set{\bm{x}_i}_{i=1}^n$ we can define what is commonly referred to as the \emph{design matrix},
+        \begin{equation}
+            \bm{\Phi} = \begin{bmatrix}
+            \phi_1(\bm{x}_1) & \cdots & \phi_d(\bm{x}_1) \\
+            \vdots & \ddots & \vdots \\
+            \phi_1(\bm{x}_n) & \cdots & \phi_d(\bm{x}_n) \\
+        \end{bmatrix}.
+        \end{equation}
+
+        The network weights are trained by adding a linear layer and then training on a dataset $\set{(\bm{x}_i, \mathrm{y}_i)}_{i=1}^n$ using backpropagation and stocastic gradient descent with momentum.
+        Exactly what dataset will be covered in \cref{sec:methoddngo}.
+
+        Now, given observation $\mathcal{D}_t = \set{\bm{x}_{1:t},\bm{\mathrm{f}}_{1:t}}$ at step $t$ in the Bayesian Optimization procedure it constructs the design matrix by applying the neural network.
+        It then fits a Bayesian linear regressor providing predictive statistics as follows,
+
+            \begin{align}
+                % ; \set{\bm{\lambda}_n, f(\bm{\lambda}_n)}, \bm{\Theta}
+                % ; \set{\bm{\lambda}_n, f(\bm{\lambda}_n)}, \bm{\Theta}
+                \mu(\bm{x}) &= \bm{\mathrm{m}}^\top \bm{\phi}(\bm{x})\\ %+ \eta(\bm{x})
+                \sigma^2(\bm{x}) &= \bm{\phi}(\bm{x})^\top \bm{K}^{-1} \bm{\phi}(\bm{x}) + 1/\beta,
+            \end{align}
+
+        where 
+
+            \begin{align}
+                \bm{\mathrm{m}} & = \beta \bm{K}^{-1} \bm{\Phi}^\top \bm{\mathrm{y}}\\
+                \bm{K} & = \beta \bm{\Phi}^\top \bm{\Phi} + \bm{I} \alpha
+            \end{align}
+            
+        Notice the similarity with the predictive mean \eqref{eq:gppredmu} and variance \eqref{eq:gppredsigma} for GP.
+        The primary difference is that $\bm{K}$ now grows with the size of the output dimensionality of the neural network.
+        So the running time becomes $\mathcal{O}(n)$ instead of $\mathcal{O}(n^3)$ for $n$ observations. % TODO: why linear?
+
+        \subsubsection{network architecture}\label{sec:dngoarch}
+            
+            The original paper specifies a network of three layers with 50 units in each using the ReLU activation function in the first two layers and TanH in the final layer.
+
+\section{Method}\label{sec:method}
+
+    This section will cover the three models we are comparing, GP, DNGO and DNGO with an ensemble of neural networks, including details on how they are compared.
+
+    There are many choices to make both for the GP approach and the DNGO architecture.
+    This section summaries the choices and the reasons behind them.
+    For further detail we refer to the specific implementation at \parencite{thomas_m._pethick_ensembled_2018}.
+
+    \subsection{GP}
+        
+        The primary decision in GP is the choice of kernel.
+        Here we will compare DNGO against a GP using the SE kernel.
+        This is done for its smoothness assumption, simplicity and experimentally verified usefulness in Bayesian Optimization tasks \parencite{snoek_practical_2012, wang_bayesian_2013, bergstra_algorithms_2011}.
+        Hyperpriors for this kernel are discussed in \cref{sec:priors}.
+        
+        A critical reader might question why more complicated kernels like the Matérn \parencite{rasmussen_gaussian_2006} were not considered.
+        We decide to use the simplest kernel that performs well, which it is expected to do especially on the benchmark functions used, since most are smooth.
+
+        % MCMC was done with a burn-in of 100, sub sampling interval of 10, step size of $10^{-1}$ and leapfrog steps of 20 similarly to \parencite{gpyopt2016}.
+
+    \subsection{DNGO}\label{sec:methoddngo}
+
+        The original network architecture as described in \cref{sec:dngoarch} has been kept except for the use of the Adam optimizer \parencite{kingma_adam:_2014} instead of SGD.
+
+        It was not clear how they trained the neural network.
+        Thus we will experiment with three different approaches:
+        
+        \begin{itemize}
+            \item training on a fixed set $\mathcal{D}_{m}$ of $m$ randomly sampled observations;
+            \item retraining on all $\mathcal{D}_t$ observations at every timestep $t$ without resetting weights, and;
+            \item retraining on all $\mathcal{D}_t$ observations at every timestep $t$ but resetting the weight.
+        \end{itemize}
+
+        Results are covered in \cref{sec:exp} in which testing of hyperparameters such as weight decay and number of epochs are also included. % since exact specification was left out..
+
+    \subsection{Ensemble}
+
+        By introducing an ensemble of neural networks we obtain a set of values for the acquisition function at a given point -- one for each neural network.
+        This is because for all $N$ neural networks we fit a Bayesian linear regressor separately from which the acquisition function is evaluated.
+
+        The acquisition function $\alpha(\bm{x})$ is then defined as some \emph{aggregate} over this set of values,
+            \begin{equation}
+                \alpha(\bm{x}) = \mathsf{A}(\set{\alpha(\bm{x});\theta_i}_{i=1}{N}).
+            \end{equation}
+
+        \noindent where $\mathsf{A} :\mathbb{R}^{N}\to\mathbb R$ is the aggregator function
+        and $\theta_i$ denotes both the hyperparameters of the Bayesian linear regressor and the weights of $i$'th neural network. 
+        
+        Apart from varying $N$ we will consider different method of aggregating this set of values.
+        Specifically \emph{mean}, \emph{median} and \emph{max}, as these are naturally expected to make very different exploration-exploitation trade-offs.
+
+    \subsection{Normalization}
+        
+        Both the input and output space are normalized to have mean $0$ and variance $1$ in each dimension.
+        The primary benefit is that hyperpriors in the GP setting and the neural network become independent of the scale of the space.
+        This allows us to specify useful problem-independent hyperpriors.
+        %Additionally the optimization strategies such as BFGS used for hyperparameter optimization of the GP and the acquisition function are tailored for a small values.
+        %This is primarily because of ensured numerical stability in this interval.
+
+    \subsection{Hyperpriors}\label{sec:priors}
+
+        By normalizing to a fixed interval we can allow ourselves to give high prior weight to certain volumes of the hyperparameter space.
+        That is because e.g. a length scale above 1 would assume almost no change throughout the input space (recall that the length scale is approximately the distance required for a change to happen).
+        
+        Inspired by \parencite{swersky_freeze-thaw_2014} we choose the three hyperpriors for the GP to be,
+
+        \begin{equation}
+            \begin{split}
+                l                         & \sim \mathrm{lognormal}(0, 1) \\
+                \sigma_0^2                & \sim \mathrm{lognormal}(0, 1) \\
+                \sigma_{\mathrm{noise}}^2 & \sim \mathrm{horseshoe}(0.1)
+            \end{split}
+        \end{equation} % TODO: fix sigma_0. not necessary because of norrmaliation?
+
+        Similarly for the Bayesian linear regressor the following priors are picked,
+
+        \begin{equation}
+            \begin{split}
+                \alpha & \sim \mathrm{lognormal}(0, 1) \\
+                \beta  & \sim \mathrm{horseshoe}(0.1)
+            \end{split}
+        \end{equation}
+
+        The log-normal prior ensures positive values with a mean 1 thus preventing unnecessarily large values from being considered.
+        The horseshoe prior (described in detail in \parencite{carvalho_handling_2009}) puts high weight on 0.
+        Its Cauchy-like tail allows for strong observed values to remain large a posteriori but simultaneously allows for severe shrinkage for zero element.
+        We can thus completely disregard noise in a noiseless setting.
+
+        % - Fitting without noise and no regularization: no variance in BLR layer. Possible fixes: (theoretically)
+        % - ensure that alpha is never 0 (otherwise fits perfectly => no variance) (is this a hack?)
+
+        For guidelines on hyperpriors for gaussian processes we recommend the user guide to Stan \parencite{stan_development_team_stan_2017}.
+
+        %- Gamma prior on noise: \url{https://www.researchgate.net/figure/51717248_fig1_Gamma-prior-on-the-total-noise-variance-A-Gamma-prior-is-assumed-for-the-hype}rparameter
+        %- HalfT: \url{https://github.com/stan-dev/stan/releases/download/v2.16.0/stan-reference-2.16.0.pdf}
+    
+    \subsection{Performance Evaluation}\label{sec:performance}
+
+        We evaluate and compare the performance with two regret based metrices: \emph{Simple Regret} and \emph{Cumulative Regret}.
+
+        Simple Regret measures how far the current best point is from the true optimum.
+        To make it precise, define the optimal point as $\bm{x}^\star = \argmax_{\bm{x}\in \mathcal{X}}=f(\bm{x})$ and the current best at round $t$ as $\hat{\bm{x}}_t = \argmax_{\bm{x} \in \bm{x}_{1:t}} f(\bm{x})$.
+        Then Simple Regret as used in \parencite{snoek_scalable_2015, springenberg_bayesian_2016, golovin_google_2017} is,
+        \begin{equation}
+            r_t^{\mathrm{simple}} = |f(\bm{x}^\star) - f(\hat{\bm{x}}_t)|.
+        \end{equation}
+        
+        With this measure it is possible to compare how well different models have performed at a given round.
+        However, it does not give a clear indication of the exploration-exploitation trade-off being made.
+        % This only shows indirectly through the gradient if the Simple Regret is plotted over multiple steps, since a gradient of 0 indicates that no better s
+
+        To captures this Cumulative Regret is naturally considered.
+        Given the true optimum point $\bm{x}^\star$ and observation choice $\bm{x}_t$ at round $t$ \emph{instantanous regret} is defined as $r^{\mathrm{instant}}_t = |f(\bm{x}^\star) - f(\bm{x}_t)|$.
+        Cumulative Regret is defined as the sum of the instantaneous regret over all rounds \parencite{srinivas_gaussian_2012}, 
+            \begin{equation}
+                R^{\mathrm{cumulative}}_T = \sum_{t=1}^T r^{\mathrm{instant}}_t.
+            \end{equation}
+
+        % TODO: 
+        % This is stop exploring in the limit.
+        % This gives as indication as to how this metric can be used.
+        % if it hits a Plateau => stopped exploring
+        % This is not completely true as exploration could lead to 
+
+        % - acc regret for exploration/explotation tradeoff
+        % - only explore / only exploits => linear regret!
+        % - 
+        
+        % - Beale, Branin, Ellipsoidal, Rastrigin, Rosenbrock, Six, Hump Camel, Sphere, and Styblinski
+        When comparing models a model A is said to outperform a model B if the average Simple Regret across all runs in the final round is smaller for A than B. 
+        % Interchangeably, A performs better than B.
+        This is especially used in \cref{sec:exp}.
+
+\section{Experiments}\label{sec:exp}
+
+    For comparing and testing optimization it is beneficial to have benchmark functions that are fast to evaluate and have known global optima.
+    It is inherently problematic to decide on these synthetic function as the motivation for Bayesian Optimization is that $f$ is a black-box function.
+    The benchmarks might thus suffer from design biases -- common is a placement of the optimum at the domain midpoint.
+    However, they are still useful to understand the behavior of different methods.
+    In \parencite{dewancker_stratified_2016} it is attempted to avoid the design bias by introducing a collection of benchmark categories based on a broad range of characteristics.
+    We will focus on four categories that show interesting differences between GP, DNGO and DNGO ensemble:
+
+    \begin{itemize}
+        \item \textbf{Oscillatory} being a simple form of non-stationarity in which $f(x) = S(X) + T(x)$ where $T$ introduces a long-range trend while $S$ has a shorter scale oscillatory behaviour.
+        \item \textbf{Mostly boring} which can be seen as a type of non-stationarity having small gradient in most of the domain except a very small region in which the optimum is found.
+        \item \textbf{Nonsmooth} by having discontinuous
+        derivatives on manifolds of at least one dimension. % TODO: quotes directed.. 
+        \item \textbf{Discrete values} being a specifically interesting instance of nonsmooth function in the application of hyperparameter optimization.
+    \end{itemize}
+
+    % Apart from these categories we ensure to include bound_min, unscaled
+    % TODO: argue why
+    The specific benchmarks picked are a subset from both \parencite{eggensperger_towards_2013} and \parencite{dewancker_stratified_2016}.
+
+    We will not try to aggregate performance over several benchmark as is the original idea behind \parencite{dewancker_stratified_2016}.
+    This is primarily because a larger test set then the one picked is required.
+    We are not interested in overall performance but rather in providing a preliminary investigation of the characteristics of DNGO and the ensembled DNGO.
+    However, we do test it in a real hyperparameter optimization setting for a machine learning task as covered in \cref{sec:highdim}.
+
+    % High dim
+    The models are tested on some higher dimensional problems but we have chosen to restrict these to 10 dimensions so optimization of the acquisition function would not become a problem.
+    A characteristic of acquisition functions is that they are mostly boring \parencite{lyu_batch_2018}.
+    This is a problem in high dimension where optimization of the acquisition function from some set of random initialization cannot escape the large flat region.
+    This could easily become the limiting factor for the model and render a comparison useless.
+
+    For the 8D problems and higher (including machine learning tasks) we chose to initialize the Bayesian Optimization procedure with 100 random samples similarly to what is done in \parencite{lyu_batch_2018}.
+
+    % Focus will primarily be on these benchmarks but hyperparameter optimization for machine learning tasks are...
+
+    % Naming
+    All plots will adhere to a specific naming convention.
+    There are four different models \emph{GP}, \emph{DNGO fixed}, \emph{DNGO retrain} and \emph{DNGO retrain-reset} of which the last three refers to the different methods of training the neural network as described in \cref{sec:methoddngo}.
+    
+    MCMC will be added as suffix if the fully Bayesian approach is used.
+    For the DNGO methods a prefix is added indicating the size of the ensemble if one such is used.
+    
+    As an example \emph{10 $\times$ DNGO fixed MCMC} specifies an ensemble of 10 DNGO networks for which the neural network is trained on a fixed dataset and MCMC is used to sample hyperparameters for the Bayesian linear regressor.
+ 
+    In \cref{sec:exp-dngo} and \cref{sec:exp-training} we experiment with different hyperparameters of the DNGO architecture which are subsequently fixed for the remaining experiments.
+    In \cref{sec:exp-embeddings} the promising case of embedded function are presented.
+    Then the four categories of benchmarks are considered in \cref{sec:expbenchmark} and hyperparameter optimization in its own section \cref{sec:highdim}.
+    % Finally, in .. we consider properties related to the scalability of DNGO.
+    % TODO:
+
+    The experiments can be reproduced using the accompanying source code at \parencite{thomas_m._pethick_ensembled_2018}.
+
+    \subsection{Hyperparameter Settings for DNGO}\label{sec:exp-dngo}
+
+        We compared different configurations of number of training epoch and $l_2$ regularization for the network evaluated on Branin, Hartmann3 and Hartmann6 from \parencite{eggensperger_towards_2013}.
+        The model was rather robust with regards to these parameters so it was decided to use 1,000 epochs for pragmatic reasons and a small $l_2$ as suggested by \parencite{snoek_scalable_2015} of $10^{-4}$.
+
+    \subsection{Training}\label{sec:exp-training}
+
+        We investigated the effect of the size of the initial random samples for the DNGO with a trained network of fixed size.
+        This was done on Hartmann3 as it had previously been shown to yield small incremental improvements per round with low variance which made a good candidate for method comparison.
+
+        Increasing the sample size yielded faster convergence and, in the case of 200 samples also an improved optimum (see \cref{sec:apptraining}).
+        That the sample size sets an upper bound for how well $f$ can be modeled also shows across Branin, Hartmann3 and Hartmann6 when compared with the other training strategies from \cref{sec:methoddngo}.
+        \emph{DNGO retrain-reset} performs better than \emph{DNGO fixed} with the latter seemingly stuck.
+        Thus we have decided to continue further experiments with DNGO retrain-reset which is computationally more expensive (though not asymptotically!) but which can update the weights based on incoming observations.
+
+    \subsection{Embeddings}\label{sec:exp-embeddings}
+
+        Low effective dimensionality is known to be a common characteristic of hyperparameter optimization \parencite{bergstra_random_2012, chen_joint_2012, wang_bayesian_2013}.
+        In particular, a function of two variables is said to have low effective dimensionality if it can be approximated by a function of one variable.
+        Thus we consider embedding the objective function $f$ into a higher dimensional space: the additional dimensions have no effect on the function value.
+
+        The Simple Regret result is plotted in \cref{fig:embedding} for the embedding of the SinOne benchmark in a 2-, 3-, and 4-dimensional space.
+        In all cases the ensembled DNGO does better than DNGO and the DNGO better than GP when averaging over runs.
+        We will return to an explanation of this in the discussion.
+
+        It should be noted that the methods were indistinguishable from random sampling at higher dimensions.
+
+        %- Embedding
+        %- less confidence with ensemble (find measure)
+        % - Cccumulative Regret (ensemble stops exploring randomly at some point <= Acc regret stagnates)
+
+        \begin{figure*}[t]
+            \centering
+            \begin{subfigure}[t]{0.3\textwidth}
+                \centering
+                % \resizebox{.95\linewidth}{!}{}
+                \input{fig/sinone-em-1.pgf}
+            \end{subfigure}
+            \begin{subfigure}[t]{0.3\textwidth}
+                \centering
+                % \resizebox{.95\linewidth}{!}{}
+                \input{fig/sinone-em-2.pgf}
+            \end{subfigure}
+            \begin{subfigure}[t]{0.3\textwidth}
+                \centering
+                % \resizebox{.95\linewidth}{!}{}
+                \input{fig/sinone-em-3.pgf}
+            \end{subfigure}
+            \caption{All plots shows the average Simple Regret over 10 runs with a $1/4$ standard derivation confidence interval.
+            Note how the ensembled DNGO consistently outperforms the DNGO.
+            See \cref{sec:appembedding} for accompanying Cumulative Regret plots.}
+            \label{fig:embedding}
+        \end{figure*}
+
+    \subsection{Benchmarks}\label{sec:expbenchmark}
+
+        The benchmarks were divided into four categories.
+        However the most interesting observations are between different categories and has to do with dimensionality.
+
+        DNGO consistently outperforms GP on smaller dimensional problems if they are nonsmooth or oscillatory (see e.g. Alpine01 and Griewank in \cref{sec:appbenchmark} respectively).
+        For Alpone01 this most likely comes down to the choice of the infinitely differentiable SE kernel for the GP however, since it performs significantly better on the smooth Branin and Hartmann3 functions.
+        Further investigation of Griewank showed that the GP only captured the long-range trend of $T$ (as defined in \cref{sec:exp}).
+
+        Griewank provides an interesting insight into the ensemble in that you should not just blindly throw computational power after regularizing through an ensemble.
+        In this benchmark the ensemble performed \emph{worse} than DNGO.
+        The reason becomes apparent when plotting the sequence of observations made in the 2D space over time.
+        The ensemble tends to get stuck in a local optimum whereas DNGO explores a bigger part of the space.
+        This reinforced the intuition that an averaging ensemble would decrease random exploration which in some instances could be useful to some degree.
+        See \cref{sec:appbenchmark} for details and \cref{fig:braningexploit} for a similar effect.
+
+        There was no significant improvement by using an ensemble of DNGO in the low dimensions discussed so far.
+        However in higher dimensions an ensemble improved performance in different ways even though it did not significantly outperform GP across all benchmarks.
+        Firstly, it led to faster convergence for nonsmooth Corana 4D function and oscillatory Dolan 5D function.
+        More interestingly it outperformed DNGO on the mostly boring Hartmann6 and LennardJones6 as well as the higher dimensional Rosenbrock 8D (see \cref{fig:benchmark}).
+
+        We have to note though that these results most likely have been influenced by optimizing the network primarily on Hartmann3 and Branin.
+        This is problematic because we might overfit on lower dimensional spaces.
+        One could imagine that an improvement to the network could have made the gain achieved in higher dimensions by an ensemble insignificant.
+
+        \begin{figure*}[t]
+            \centering
+            \begin{subfigure}[t]{0.45\textwidth}
+                \centering
+                % \resizebox{\linewidth}{!}{}
+                \input{fig/corana.pgf}
+            \caption{Example showing the faster convergence for ensembled DNGO over DNGO on nonsmooth function.}
+            \end{subfigure}\qquad
+            \begin{subfigure}[t]{0.45\textwidth}
+                \centering
+                % \resizebox{\linewidth}{!}{}
+                \input{fig/lennardjones6.pgf}
+                \caption{Example showing that an ensemble improves on mostly boring functions in sufficently high dimensions (i.e. above 6).}
+            \end{subfigure}
+            \caption{Both plots shows the average Simple Regret over 10 runs with a $1/4$ standard derivation confidence interval.}
+            \label{fig:benchmark}
+        \end{figure*}
+
+    \subsection{Machine Learning Tasks}\label{sec:highdim}
+
+        We tried the methods on three machine learning tasks from \parencite{eggensperger_hpolib2_2018}:
+        
+            \begin{itemize}
+                \item \textbf{Logisitic Regression on MNIST} tuning learning rate, $l_2$ regularization, batch size and dropout rate of which one is discrete. 
+                \item \textbf{Convolution Neural Network (CNN) for CIFAR-10} tuning learning rate, batch size and the number of units in each of the three layers. Four parameters are discrete.
+                \item \textbf{Fully Connected Network for MNIST} tuning 10 parameters of which 3 are discrete.
+            \end{itemize}
+        
+        As stated, some of the parameters are discrete.
+        We deal with it by relaxing the problem to $\mathbb{R}$ in all dimensions and do rounding before evaluation of $f$.
+
+        For both CNN and the fully connected network there was no noticeable different from random sampling for any of the tested methods.
+        % TODO: Could be explained by being bad at discrete problems (does not seem to treat it much differently from GP. scalable shows how important choice of activation function is. Maybe this could improve)
+
+        For the logistic regression all Bayesian Optimization models did on average better than random sampling.
+        However, they all converged to the same suggested optimal value.
+        Thus it did not provide any insight into the behavior of the ensemble.
+        For further detail we refer to the appendix \cref{sec:appml}.
+
+    % \subsection{Scaling}
+
+    %     - Minibatch
+    %     - Scaling to big N might be problematic (minibatch size start having influence on performance <= extrapolate batch size / observations ratio)
+
+\section{Discussion}\label{sec:discussion}
+
+    This section will start by making observation about the behavior of DNGO in \cref{sec:disc-characteristic}.
+    Then \cref{sec:disc-diviations} follows up on results from \cref{sec:exp} by commenting on why they differ from the original paper.
+    The motivation behind DNGO is subsequently discussed in \cref{sec:disc-extensions} and, finally, different approaches to performance evaluation is considered in \cref{sec:disc-evaluation}.
+    
+    
+    \subsection{DNGO Characteristic}\label{sec:disc-characteristic}
+
+        We note several characteristics of the DNGO model.
+        First it seems generally worse at exploiting than GP.
+        This is illustrated with the Branin function in \cref{fig:braningexploit}.
+        This shows that when DNGO is exploiting (i.e. querying some local area) it does so in a relatively random fashion.
+
+        This could be explained by the second behavior which was observed, namely sudden fluctuations.
+        That is, high peaks in areas without observations which even had low variance.
+        Because of these it was chosen to use \emph{mean} as ensemble aggregator as it would behave as a regularizer.
+        \emph{Max} seemed to increase exploration but this was not thoroughly studied.
+        However, investigating how different quantile might effect the exploration-exploitating trade-off could be an interesting future avenue to pursue.
+        This is especially interesting considering the failure case of an ensemble in \cref{sec:expbenchmark}.
+
+        Concerning embedding functions, they provided a promising case over GP and indicated a class in which an ensemble might be especially useful.
+        However, the method is not competitive with specialized techniques like ARD covered in \cref{sec:ard}.
+        Neither does it scale to the same level of dimensions like REMBO \parencite{wang_bayesian_2013} which specifically exploits problems with low effective dimensionality.
+        Since similar assumption have not been made about the problem the hope is that ensembled DNGO usefulness will generalize to a broader class of problems.
+
+        \begin{figure}
+            % \resizebox{\linewidth}{!}{}
+            \input{fig/branin-exploration.pgf}
+            \caption{
+            These plots shows 200 observations of the Branin function using three different models each plotting the associated acquisition function.
+            Notice how the regularizing effect of the ensemble \emph{prevents} it from exploring the third optimum.
+            \emph{Top left}: the Branin function. 
+            \emph{Top right}: GP.
+            \emph{Bottom left}: DNGO retrain-reset.
+            \emph{Bottom right}: 5 $\times$ DNGO retrain-reset.}
+            \label{fig:braningexploit}
+        \end{figure}
+        
+        % SE is stationary
+        % function whose length scale does not change are well modelen by them
+        % misspecification, meanning it takes more observersation before convergence
+
+    \subsection{DNGO Deviations}\label{sec:disc-diviations}
+
+        The results obtained with DNGO on benchmarks from \parencite{eggensperger_towards_2013} are worse than in the original paper \parencite{snoek_scalable_2015}.
+        We propose two possible reasons for this.
+
+        Firstly, \parencite{snoek_scalable_2015} put a quadratic prior on their mean thus incorporating expert knowledge as explained in \cref{sec:priormean}. 
+        We have purposely left this prior out to make methods more comparable on the benchmark suite since \parencite{eggensperger_towards_2013} do in fact suffer from design bias of placing the optimum in the midpoint of the domain \parencite{dewancker_stratified_2016}.
+
+        Secondly, they optimized their architecture using Bayesian Optimization on an unknown training set where we instead hand-tuned a reimplementation of DNGO.
+        Considering that we are interested in comparing DNGO with its ensembled equivalent, this is not so problematic.
+
+    % TODO: ensemble aggregation method
+
+    % \subsection{Ensemble running time}\label{sec:disc-time}
+
+    %     - takes k more. but can be parallelised
+    %     - if k is small enough training time > prediction time
+    %     - voice concern with best case effectiveness of ensemble
+    %     - expect faster convergence but not necessary.. 
+
+
+    \subsection{Alternative Extensions}\label{sec:disc-extensions}
+
+        The need for a scalable method was based on parallisability -- we can obtain many more samples if we sample in parallel.
+        The original paper \parencite{snoek_scalable_2015} evaluates a maximum of 2500 points in their biggest experiment, however.
+        This is within the bounderies of what is already computational feasible with GPs.
+
+        This prompts the question of whether DNGO is useful because of it scalability or due to the possiblity of capturing non-stationarity.
+        The latter would seem to be the case considering the relatively positive results for DNGO on the oscillatory benchmarks.
+        However, these could also be because the GP generally have troubles in high dimensions. % TODO: really?
+
+        Either way, relaxing the requirement of scalability could open up interesting approaches.
+        One method is to jointly train the Bayesian linear regressor and neural network weights as referred to as Deep Kernel Learning by \parencite{wilson_deep_2016}.
+        Instead of only considering Bayesian linear regressors (which can be seen as a GP with a linear kernel) it considers more expressive kernels like the SE kernel and spectral mixture kernel.
+        This method is even made to scale linearly using KISS-GP \parencite{wilson_kernel_2015}.
+
+        Another interesting way to combine GPs and neural networks is the recently proposed Neural Processes \parencite{garnelo_neural_2018}.
+        They bear resemblance to variational autoencoders and provide an efficient way of learning a distribution over functions.
+    
+    \subsection{Performance Evaluation}\label{sec:disc-evaluation}
+        
+        We have provided a qualititive analysis on a small selection of benchmarks.
+        For a more thorough testing, some aggregate of performance over several benchmarks should be considered.
+        A simple approach used in \parencite{golovin_google_2017} is to normalize using Simple Regret for random search and average over all benchmarks.
+        The ranking in \parencite{dewancker_stratified_2016} is more suphisticated and considers which method converges faster if there is no significant difference in performance.
+        Most importantly, though, is to mitigate design bias, as was attempted in \parencite{dewancker_stratified_2016}.
+
+        When considering performance in Bayesian Optimization the computational budget is another important metric.
+        These are very practical methods for which even constants (which are usually disregarded in asymptotic analysis) relate directly to a very real expense.
+        An experimental comparison between DNGO and GP on Hartmann6 can already been found in \parencite{snoek_scalable_2015}.
+        DNGO is asymptotically much faster which shows even after only 300 rounds on Hartmann6.
+        Even though a test has not been conducted for the introduced ensembled method, it clearly only scales the budget by a factor $k$ in the worst case where $k$ is the size of the ensemble.
+
+\section{Conclusion}\label{sec:conclusion}
+    
+    This work has investigated the DNGO and ensembled DNGO and a collection of benchmark and three machine learning tasks.
+    The machine learning tasks turned out to be a fruitless attempt.
+    However the for embedded synthesised function and for sufficently high dimensional mostly boring benchmark the ensemble deamed a promising case.
+    However, to confirm this, more thorough testing is needed across multiple benchmarks and with a statistically significant number of runs.
+    This would also allow for comparison with existing methods such as BOHAMIANN \parencite{springenberg_bayesian_2016} and by applying deep kernel learning \parencite{wilson_deep_2016} to Bayesian Optimization.
+    Lastly, the effect of the ensemble aggregator was apparent, and this suggests a deeper investigation of its effect by looking into the effect of various quantiles.
+        
+\printbibliography
+
+%- NN could maybe get stuck in local maximum. Is it more probable than in 1D though?
+
+% ## Linear in O(n)
+
+% "The equations for linear regression can be performed in primal form (e.g. the regular normal equations), where there is one parameter per input variable, or dual form (e.g. kernel ridge regression with a linear kernel) where there is one parameter per training example. This means you can choose which form to use depending on which is more efficient, if N>>d then use the normal equation, which is O(N), if d>>N then use kernel ridge regression with a linear kernel, where d is the number of attributes. Bayesian linear regression is to GP with a linear covariance function what linear regression is to kernel ridge regression with a linear kernel."
+
+\appendices
+\onecolumn
+
+\section{Results}
+    Where otherwise noted, plots shows the average Simple Regret over 10 runs with a $1/4$ standard derivation confidence interval.
+    The naming convention for models is described in \cref{sec:exp}.
+
+    \subsection{Embedding}\label{sec:appembedding}
+
+    \begin{minipage}{\linewidth}
+        \centering
+        \begin{minipage}{0.3\linewidth}
+            \centering
+            \input{fig/sinone-em-1-cum.pgf}
+        \end{minipage}\qquad
+        \begin{minipage}{0.3\linewidth}
+            \centering
+            \input{fig/sinone-em-2-cum.pgf}
+        \end{minipage}\qquad
+        \begin{minipage}{0.3\linewidth}
+            \centering
+            \input{fig/sinone-em-3-cum.pgf}
+        \end{minipage}
+        \captionof{figure}{
+            For every embedded SinOne the Cumulative Regret is normalized by the round $t$ and plotted similarly to \parencite{contal_gaussian_2014}.
+            }
+    \end{minipage}
+
+
+    \subsection{Training}\label{sec:apptraining}
+
+        \begin{minipage}{\linewidth}
+            \centering
+            \input{fig/hartmann3-n-init.pgf}
+            \captionof{figure}{This plots shows Simple Regret for DNGO fixed with different initial samples sizes as described in \cref{sec:methoddngo}.}
+        \end{minipage}
+    
+        \begin{minipage}{0.47\linewidth}
+            \centering
+            \input{fig/branin-nn-training.pgf}
+        \end{minipage}\qquad
+        \begin{minipage}{0.47\linewidth}
+            \centering
+        \input{fig/hartmann3-nn-training.pgf}
+        \end{minipage}
+
+    \subsection{Benchmarks}\label{sec:appbenchmark}
+        \begin{minipage}{0.45\linewidth}
+            \centering
+            \input{fig/griewank.pgf}
+        \end{minipage}\qquad
+        \begin{minipage}{0.45\linewidth}
+            \centering
+            \begin{minipage}{0.45\linewidth}
+                \input{fig/griewank-exploration-1.pgf}
+            \end{minipage}
+            \begin{minipage}{0.45\linewidth}
+                \input{fig/griewank-exploration-2.pgf}
+            \end{minipage}
+            \begin{minipage}{0.45\linewidth}
+                \input{fig/griewank-exploration-3.pgf}
+            \end{minipage}
+            \begin{minipage}{0.45\linewidth}
+                \input{fig/griewank-exploration-4.pgf}
+            \end{minipage}
+            %     \input{fig/griewank-exploration.pgf}
+        \end{minipage}
+        \captionof{figure}{
+            These plots shows 200 observations of the Griekwank function using three different models each plotting the associated acquisition function.
+            The left plot shows the Simple Regret.
+            The right plot have four parts.
+            \emph{Top left}: the Griekwank function. 
+            \emph{Top right}: GP.
+            \emph{Bottom left}: DNGO retrain-reset.
+            \emph{Bottom right}: 5 $\times$ DNGO retrain-reset.}
+        \vfill
+        \newpage
+        \begin{minipage}{\linewidth}
+            \centering
+            \input{fig/alpine01.pgf}
+            \input{fig/hartmann6-nn-training.pgf}
+            \input{fig/rosenbrock8D.pgf}
+            \captionof{figure}{Shows the nonsmooth Alpine01 from \parencite{dewancker_stratified_2016} and Hartmann6 and Rosenbrock8D from \parencite{eggensperger_towards_2013}.}
+        \end{minipage}
+
+    \subsection{Machine Learning Hyperparameter Optimization Tasks}\label{sec:appml}
+    %These results have no confidence interval as each configuration was only run once.
+
+    \begin{minipage}{\linewidth}
+        \centering
+        \begin{tabular}{|l||c|c|c|}  
+            \hline
+            \textbf{Method} & \textbf{Logistic regression} & \textbf{Fully Connected Network} & \textbf{CNN} \\
+            \hline
+            5 $\times$ DNGO fixed    & 0.069  &        --        & -- \\
+            DNGO fixed               & 0.072  &        --        & -- \\
+            DNGO retrain-reset       & 0.069  & 0.0125           & 0.897  \\
+            DNGO retrain-reset MCMC  & 0.069  &        --        & -- \\
+            GP                       & 0.068  & 0.0119           & 0.897  \\
+            GP MCMC                  & 0.067  &        --        & -- \\
+            Random                   & 0.098  &        --        & 0.897  \\
+            \hline
+        \end{tabular}
+        % 5 x DNGO fixed           & -0.0689243168112 4.68117472733e-07 &        --        & -- \\
+        % DNGO fixed               & -0.0718365924113 6.12426049571e-06 &        --        & -- \\
+        % DNGO retrain-reset       & -0.0690516213337 7.34755313694e-08 & -0.0124999922514 & -0.89710643372 1.03975230477e-09 \\
+        % DNGO retrain-reset MCMC  & -0.0694848831195 8.69431609179e-07 &        --        & -- \\
+        % GP                       & -0.0678089527119 4.34300910663e-07 & -0.011869047662  & -0.896966526844 0.0 \\
+        % GP MCMC                  & -0.0674540907964 2.37421881001e-08 &        --        & -- \\
+        % Rand                     & -0.0976534200291 5.94025833014e-05 &        --        & -0.897074078582 1.15673764801e-08 \\
+        \captionof{table}{
+        Logistic Regression indicates average over 5 runs while the rest was run once. 
+        Some cells are empty because it was decided not to waste computational resources on a fruitless endevour.}
+    \end{minipage}
+    \begin{minipage}{\linewidth}
+        \centering
+        \input{fig/lr_mnist.pgf}
+    \end{minipage}
+    \vfill
+    \subsection{Miscellaneous}\label{sec:extra}
+
+    \begin{minipage}{\linewidth}
+        \centering
+        \input{fig/hartmann3-epoch.pgf}
+        %\caption{Epochs}
+    \end{minipage}
+    \begin{minipage}{\linewidth}
+        \centering
+        \input{fig/hartmann6-gp-vs-dngo.pgf}
+        %\caption{Hartmann6}
+    \end{minipage}
+
+\end{document}
+
+% - Problems:
+%   - DNGO exploring corners
+%   - Why is the speed dropping dramatically?
+
+% - How it was done:
+%   - Finding good weight decay:
+%     - use gpy points
+%     - run one step of DNGO BO
+%     - Plot the mean and acq restricted to the exploited area
+
+% Properties of method:
+% - gp very similar to nn
+% - low variance..
+% - Sudden spikes in variance because of basis function fit
+% - local exploration bad (exploitation?)
+
+% - Removing data: doesn't this lead to miscalibrated uncertainty estimates? => prediction wrong about something of which it should be certain. (inspired by (2))
+% - Test Dropout? (Inspired by (1) and (2))
+% - Need to train for longer to overfit/be different. Is this good/desireable?
+% - Better for e.g. noisy data?

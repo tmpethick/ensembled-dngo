@@ -21,15 +21,15 @@ push:
 	rsync -av ./hpc.sh pethickt@euler.ethz.ch:~/bonn
 	rsync -av ./hpc_euler.sh pethickt@euler.ethz.ch:~/bonn
 
-run:
-	ssh pethickt@euler.ethz.ch 'cd $$HOME/bonn && bsub -W ${W} sh hpc_euler.sh ${ARGS}'
-
 push-leonhard:
 	rsync -avu ./src pethickt@login.leonhard.ethz.ch:~/bonn
 	rsync -av ./run.py pethickt@login.leonhard.ethz.ch:~/bonn
 	rsync -av ./config.py pethickt@login.leonhard.ethz.ch:~/bonn
 	rsync -av ./hpc.sh pethickt@login.leonhard.ethz.ch:~/bonn
 	rsync -av ./hpc_leonhard.sh pethickt@login.leonhard.ethz.ch:~/bonn
+
+run:
+	ssh pethickt@euler.ethz.ch 'cd $$HOME/bonn && bsub -W ${W} sh hpc_euler.sh ${ARGS}'
 
 run-leonhard:
 	ssh pethickt@login.leonhard.ethz.ch 'cd $$HOME/bonn && bsub -R "rusage[mem=8000,ngpus_excl_p=1]" -W ${W} sh hpc_leonhard.sh ${ARGS}'

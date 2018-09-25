@@ -2,9 +2,9 @@ import GPy
 import numpy as np
 import matplotlib.pyplot as plt
 
-from src.bayesian_linear_regression import BayesianLinearRegression
-from src.models import GPyBOModel, BOModel
-from src.neural_network import TorchRegressionModel
+from src.models.regression import BayesianLinearRegression
+from src.models.models import GPModel, DNGOModel
+from src.models.neural_network import FeatureExtractorNetwork
 
 
 def test_gp():
@@ -17,7 +17,7 @@ def test_gp():
 
     kernel = GPy.kern.RBF(1)
     # kernel.variance.set_prior(GPy.priors.LogGaussian(0.005, 1)) # log_prior()
-    model = GPyBOModel(kernel=kernel, num_mcmc=0, fix_noise=True)
+    model = GPModel(kernel=kernel, num_mcmc=0, fix_noise=True)
     model.init(x_train, y_train)
 
     x = (np.linspace(0, 1, 100))[:,None]
@@ -34,9 +34,9 @@ def test_dngo_MAP():
   x_train = rng.uniform(0, 1, 10)[:, None]
   y_train = f(x_train)
 
-  nn = TorchRegressionModel(dim_basis=50, epochs=1000, batch_size=10)
+  nn = FeatureExtractorNetwork(dim_basis=50, epochs=1000, batch_size=10)
   reg = BayesianLinearRegression(num_mcmc=0, burn_in=1000, mcmc_steps=1000)
-  model = BOModel(nn, regressor=reg)
+  model = DNGOModel(nn, regressor=reg)
   model.init(x_train, y_train)
 
   x = (np.linspace(0, 1, 100))[:,None]
@@ -53,9 +53,9 @@ def test_dngo_approximate_marginalisation_of_hyperparameters():
   x_train = rng.uniform(0, 1, 10)[:, None]
   y_train = f(x_train)
 
-  nn = TorchRegressionModel(dim_basis=50, epochs=1000, batch_size=10)
+  nn = FeatureExtractorNetwork(dim_basis=50, epochs=1000, batch_size=10)
   reg = BayesianLinearRegression(num_mcmc=20, burn_in=10, mcmc_steps=10)
-  model = BOModel(nn, regressor=reg)
+  model = DNGOModel(nn, regressor=reg)
   model.init(x_train, y_train)
 
   x = (np.linspace(0, 1, 100))[:,None]
@@ -71,9 +71,9 @@ def test_dngo_ensemble():
     x_train = rng.uniform(0, 1, 10)[:, None]
     y_train = f(x_train)
 
-    nn = TorchRegressionModel(dim_basis=50, epochs=1000, batch_size=10)
+    nn = FeatureExtractorNetwork(dim_basis=50, epochs=1000, batch_size=10)
     reg = BayesianLinearRegression(num_mcmc=0, burn_in=1000, mcmc_steps=1000)
-    model = BOModel(nn, regressor=reg, num_nn=5)
+    model = DNGOModel(nn, regressor=reg, num_nn=5)
     model.init(x_train, y_train)
 
     x = (np.linspace(0, 1, 100))[:, None]

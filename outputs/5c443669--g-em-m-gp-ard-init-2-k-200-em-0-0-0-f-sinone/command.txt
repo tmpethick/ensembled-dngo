@@ -1,0 +1,2 @@
+run.py --group embedding --model gp --ard --n_init 2 --n_iter 200 --embedding 0 0 0 -f sinone
+python run.py --seed None --model gp --group embedding --ard True --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func sinone --embedding [0.0, 0.0, 0.0] --acq UCB --n_iter 200 --n_init 2 --init_src None --uuid 5c443669 --date 2018-09-03 15:50:12.132670 --name 5c443669--g-em-m-gp-ard-init-2-k-200-em-0-0-0-f-sinone

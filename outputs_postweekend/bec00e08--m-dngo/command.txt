@@ -1,2 +1,0 @@
-run.py --model dngo
-python run.py --seed None --model dngo --group standard --activations ['relu', 'relu', 'tanh'] --nn_training fixed --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func branin --embedding None --acq UCB --n_iter 100 --n_init 2 --uuid bec00e08 --date 2018-08-25 07:26:25.871382 --name bec00e08--m-dngo

@@ -1,2 +1,0 @@
-run.py --model dngo -nn 5 -agg median --n_iter 200 -f hartmann6
-python run.py --model dngo --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 5 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func hartmann6 --acq UCB --n_iter 200 --uuid 63c6cb1c --date 2018-08-16 13:17:59.478939 --name 63c6cb1c--m-dngo-nn-5-agg-median-k-200-f-hartmann6

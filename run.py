@@ -14,16 +14,17 @@ import hpolib.benchmarks.ml.conv_net
 import hpolib.benchmarks.ml.fully_connected_network
 import hpolib.benchmarks.ml.logistic_regression
 import hpolib.benchmarks.ml.svm_benchmark
+import evalset.test_funcs as stratified
 
-from src.tests import prepare_benchmark, plot_ir, acc_ir, embed
-from src.bo import BO, RandomSearch
+from src.environments.embedding import embed
+from src.utils import accumulate_immediate_regret, prepare_stratified_benchmark, prepare_benchmark
+from src.algorithm import AcquisitionAlgorithm, RandomSearch
 from src.acquisition_functions import EI, UCB
-from src.bayesian_linear_regression import GPyRegression, BayesianLinearRegression
-from src.models import BOModel, GPyBOModel
-from src.neural_network import TorchRegressionModel
-from src.logistic_regression_benchmark import LogisticRegression
-from src.rosenbrock_benchmark import Rosenbrock
-from src.priors import HalfT
+from src.models.regression import BayesianLinearRegression
+from src.models.models import DNGOModel, GPModel
+from src.models.neural_network import FeatureExtractorNetwork
+from src.environments.logistic_regression import LogisticRegression
+from src.environments.rosenbrock_benchmark import Rosenbrock
 import config
 
 parser = argparse.ArgumentParser()
@@ -32,17 +33,22 @@ parser.add_argument("-s", "--seed",  type=int, default=None)
 parser.add_argument("-m", "--model", type=str, default="dngo", choices=["dngo", "gp", "rand", "test"])
 parser.add_argument("-g", "--group", type=str, default="standard")
 
+ard_parser = parser.add_mutually_exclusive_group(required=False)
+ard_parser.add_argument('--ard', dest='ard', action='store_true')
+ard_parser.add_argument('--no-ard', dest='ard', action='store_false')
+parser.set_defaults(ard=False)
+
 # nn
-parser.add_argument("-la", "--activations",      type=str,   default=["relu", "relu", "tanh"], nargs="+")
-parser.add_argument("-nnt", "--nn_training",     type=str,   default="fixed", choices=["fixed", "retrain", "retrain-reset"])
-parser.add_argument("-b", "--dim_basis",         type=int,   default=50)
-parser.add_argument("-h1", "--dim_h1",           type=int,   default=50)
-parser.add_argument("-h2", "--dim_h2",           type=int,   default=50)
-parser.add_argument("-nn", "--num_nn",           type=int,   default=1)
-parser.add_argument("-bs", "--batch_size",       type=int,   default=1000)
-parser.add_argument("-e", "--epochs",            type=int,   default=1000)
-parser.add_argument("-lr", "--lr",               type=float, default=0.01)
-parser.add_argument("-l2", "--weight_decay",     type=float, default=0)
+parser.add_argument("-la", "--activations",  type=str,   default=["relu", "relu", "tanh"], nargs="+")
+parser.add_argument("-nnt", "--nn_training", type=str,   default="fixed", choices=["fixed", "retrain", "retrain-reset"])
+parser.add_argument("-b", "--dim_basis",     type=int,   default=50)
+parser.add_argument("-h1", "--dim_h1",       type=int,   default=50)
+parser.add_argument("-h2", "--dim_h2",       type=int,   default=50)
+parser.add_argument("-nn", "--num_nn",       type=int,   default=1)
+parser.add_argument("-bs", "--batch_size",   type=int,   default=1000)
+parser.add_argument("-e", "--epochs",        type=int,   default=1000)
+parser.add_argument("-lr", "--lr",           type=float, default=0.01)
+parser.add_argument("-l2", "--weight_decay", type=float, default=0)
 nn_aggregators = {
     "median": np.median,
     "max": np.max,
@@ -74,8 +80,21 @@ obj_functions = {
     'rosenbrock10D': Rosenbrock(d=10),
     'rosenbrock8D': Rosenbrock(d=8),
 }
-
+stratified_obj_functions = {
+    'cube': stratified.Cube(),
+    'lennardjones6': stratified.LennardJones6(),
+    'alpine01': stratified.Alpine01(),
+    'corana': stratified.Corana(),
+    'plateau': stratified.Plateau(),
+    'gear': stratified.Gear(),
+    'griewank': stratified.Griewank(),
+    'dolan': stratified.Dolan(),
+    'jennrichsampson': stratified.JennrichSampson(),
+}
+stratified_obj_functions = {k: prepare_stratified_benchmark(func) for (k, func) in stratified_obj_functions.items()}
 obj_functions = {k: prepare_benchmark(func) for (k, func) in obj_functions.items()}
+obj_functions.update(stratified_obj_functions)
+
 parser.add_argument("-f", "--obj_func", type=str, choices=obj_functions.keys(), default="branin")
 
 parser.add_argument("-em", "--embedding", nargs='+', type=float, default=None)
@@ -87,7 +106,6 @@ parser.add_argument("-a", "--acq", type=str, choices=acquisition_functions.keys(
 parser.add_argument("-k",    "--n_iter", type=int, default=100)
 parser.add_argument("-init", "--n_init", type=int, default=2)
 parser.add_argument("-iuuid", "--init_src", type=str, default=None)
-
 
 # Constructing model
 
@@ -134,7 +152,7 @@ def create_model(args, init_data=None):
         embedded_dims = None
 
     if args.model == "dngo":
-        nn = TorchRegressionModel(
+        nn = FeatureExtractorNetwork(
             activations=args_dict.get('activations', ['relu', 'relu', 'tanh']),
             input_dim=input_dim, 
             dim_basis=args.dim_basis, 
@@ -148,20 +166,18 @@ def create_model(args, init_data=None):
         # kernel.variances.set_prior(GPy.priors.LogGaussian(0, 1))
         # reg = GPyRegression(kernel=kernel, num_mcmc=args.num_mcmc, GPy.priors.Gamma.from_EV(1,4))
         reg = BayesianLinearRegression(num_mcmc=args.num_mcmc)
-        model = BOModel(nn, 
-            regressor=reg,
-            num_nn=args.num_nn,
-            ensemble_aggregator=nn_aggregators[args.nn_aggregator],
-            retrain_nn=retrain_nn,
-            reset_weights=reset_weights,)
+        model = DNGOModel(nn,
+                          regressor=reg,
+                          num_nn=args.num_nn,
+                          ensemble_aggregator=nn_aggregators[args.nn_aggregator],
+                          retrain_nn=retrain_nn,
+                          reset_weights=reset_weights, )
     elif args.model == "gp":
-        kernel = GPy.kern.RBF(input_dim)
-        #kernel.variance.set_prior(GPy.priors.Gamma.from_EV(2, 4))
+        kernel = GPy.kern.RBF(input_dim, ARD=args.ard)
         kernel.lengthscale.set_prior(GPy.priors.LogGaussian(0, 1))
         kernel.variance.set_prior(GPy.priors.LogGaussian(0, 1))
-        model = GPyBOModel(kernel=kernel, num_mcmc=args.num_mcmc, noise_prior=GPy.priors.LogGaussian(0, 1))
+        model = GPModel(kernel=kernel, num_mcmc=args.num_mcmc, noise_prior=GPy.priors.LogGaussian(0, 1))
         #model = GPyBOModel(kernel=kernel, num_mcmc=args.num_mcmc, noise_prior=GPyHorseshoePrior(0.1))
-        #model = GPyBOModel(kernel=kernel, num_mcmc=args.num_mcmc, noise_prior=HalfT(1, 4))
     elif args.model == "rand":
         bo = RandomSearch(f, 
             n_iter=args.n_iter, 
@@ -173,16 +189,17 @@ def create_model(args, init_data=None):
         raise Exception("`dngo` and `gp` should be the only two options")
 
     acq = acquisition_functions[args.acq](model)
-    bo = BO(f, model, 
-        acquisition_function=acq, 
-        n_init=args_dict.get('n_init', 2), 
-        n_iter=args.n_iter, 
-        bounds=bounds, 
-        embedded_dims=embedded_dims,
-        f_opt=f_opt,
-        init_data=init_data,
-        rng=rng)
+    bo = AcquisitionAlgorithm(f, model,
+                              acquisition_function=acq,
+                              n_init=args_dict.get('n_init', 2),
+                              n_iter=args.n_iter,
+                              bounds=bounds,
+                              embedded_dims=embedded_dims,
+                              f_opt=f_opt,
+                              init_data=init_data,
+                              rng=rng)
     return bo
+
 
 if __name__ == '__main__':
     plt.switch_backend('agg')
@@ -277,18 +294,18 @@ if __name__ == '__main__':
 
         if has_quick_eval:
             # Plot step
-            path = os.path.join(model_conf['plot_folder'], "i-{}.png".format(i))
-            bo.plot_prediction(x_new=x_new, save_dist=path)
+            # path = os.path.join(model_conf['plot_folder'], "i-{}.png".format(i))
+            # bo.plot_prediction(x_new=x_new, save_dist=path)
             
-            if args.embedding is not None:
-                path = os.path.join(model_conf['plot_folder'], "i-embedding-{}.png".format(i))
-                bo.plot_prediction(x_new=x_new, save_dist=path, plot_embedded_subspace=True)
+            # if args.embedding is not None:
+            #     path = os.path.join(model_conf['plot_folder'], "i-embedding-{}.png".format(i))
+            #     bo.plot_prediction(x_new=x_new, save_dist=path, plot_embedded_subspace=True)
 
-            # Plot regret
-            ir = acc_ir(bo.model.Y, bo.f_opt)
-            plot_ir([ir])
-            plt.savefig(model_conf['regret_plot_path'])
-            plt.close()
+            # # Plot regret
+            ir = accumulate_immediate_regret(bo.model.Y, bo.f_opt)
+            # plot_ir([ir])
+            # plt.savefig(model_conf['regret_plot_path'])
+            # plt.close()
 
             row['immediate_regret'] = ir[-1]
         else:

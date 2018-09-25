@@ -1,2 +1,0 @@
-run.py --group minibatch --seed 1 --model dngo --batch_size 40 --n_init 20 --n_iter 200 -f sintwo
-python run.py --seed 1 --model dngo --group minibatch --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 40 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func sintwo --embedding None --acq UCB --n_iter 200 --n_init 20 --uuid f2684074 --date 2018-08-21 10:46:12.300302 --name f2684074--g-minibatch-s-1-m-dngo-bs-40-init-20-k-200-f-sintwo

@@ -1,2 +1,0 @@
-run.py --group highdim --seed 1 --model dngo --n_init 100 -mcmc 20 --n_iter 200 -f rosenbrock10D
-python run.py --seed 1 --model dngo --group highdim --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 20 --obj_func rosenbrock10D --embedding None --acq UCB --n_iter 200 --n_init 100 --uuid b14cdcef --date 2018-08-21 13:23:25.773079 --name b14cdcef--g-highdim-s-1-m-dngo-init-100-mcmc-20-k-200-f-rosenbrock10D

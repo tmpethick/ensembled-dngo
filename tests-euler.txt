@@ -36,7 +36,7 @@ make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed -
 make W="24:00" ARGS="--group funcs --model dngo -l2 0.0001 --nn_training fixed -nn 5 -mcmc 8 -agg average --n_init 20 --n_iter 150 -f hartmann6" run
 
 
-make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 200 --epochs 1000 -f hartmann3" run
+make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 20 --n_iter 250 --epochs 1000 -f hartmann3" run
 make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 50 --n_iter 200 --epochs 1000 -f hartmann3" run
 make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 100 --n_iter 200 --epochs 1000 -f hartmann3" run
 make ARGS="--group n_init --model dngo -l2 0.0001 --nn_training fixed --n_init 200 --n_iter 200 --epochs 1000 -f hartmann3" run
@@ -56,13 +56,68 @@ make ARGS="--group minibatch --model dngo --batch_size 80 --nn_training retrain-
 make ARGS="--group minibatch --model dngo --batch_size 160 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
 make ARGS="--group minibatch --model dngo --batch_size 320 --nn_training retrain-reset --n_init 2 --n_iter 200 -f hartmann3" run
 
+make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 -f sinone" run
 make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 -f sinone" run
 make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --n_init 2 --n_iter 200 --embedding 0 0 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --ard --n_init 2 --n_iter 200 --embedding 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --ard --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --ard --n_init 2 --n_iter 200 --embedding 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --ard --n_init 2 --n_iter 200 --embedding 0 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model gp --ard --n_init 2 --n_iter 200 --embedding 0 0 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 -f sinone" run
 make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 -f sinone" run
 make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset --n_init 2 --n_iter 200 --embedding 0 0 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset -nn 5 -agg average --n_init 2 --n_iter 200 -f sinone" run
 make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset -nn 5 -agg average --n_init 2 --n_iter 200 --embedding 0 -f sinone" run
 make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset -nn 5 -agg average --n_init 2 --n_iter 200 --embedding 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset -nn 5 -agg average --n_init 2 --n_iter 200 --embedding 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset -nn 5 -agg average --n_init 2 --n_iter 200 --embedding 0 0 0 0 -f sinone" run
+make W="24:00" ARGS="--group embedding --model dngo --nn_training retrain-reset -nn 5 -agg average --n_init 2 --n_iter 200 --embedding 0 0 0 0 0 -f sinone" run
 
 make W="24:00" ARGS="--group highdim  --n_init 100 --n_iter 200 -f rosenbrock8D --model gp -mcmc 10" run
+make W="24:00" ARGS="--group highdim  --n_init 100 --n_iter 200 -f rosenbrock8D --model gp" run
 make W="24:00" ARGS="--group highdim  --n_init 100 --n_iter 200 -f rosenbrock8D --model dngo -l2 0.0001 --nn_training retrain-reset" run
 make W="24:00" ARGS="--group highdim  --n_init 100 --n_iter 200 -f rosenbrock8D --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average" run
+
+
+make ARGS="--group stratified --model gp --n_init 20 --n_iter 200 -f cube" run
+make ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 200 -f cube" run
+make W="24:00" ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 200 -f cube" run
+
+make ARGS="--group stratified --model gp --n_init 20 --n_iter 200 -f lennardjones6" run
+make ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 200 -f lennardjones6" run
+make W="24:00" ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 200 -f lennardjones6" run
+
+make ARGS="--group stratified --model gp --n_init 20 --n_iter 200 -f alpine01" run
+make ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 200 -f alpine01" run
+make W="24:00" ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 200 -f alpine01" run
+
+make ARGS="--group stratified --model gp --n_init 20 --n_iter 200 -f corana" run
+make ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 200 -f corana" run
+make W="24:00" ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 200 -f corana" run
+
+make ARGS="--group stratified --model gp --n_init 20 --n_iter 200 -f plateau" run
+make ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 200 -f plateau" run
+make W="24:00" ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 200 -f plateau" run
+
+make ARGS="--group stratified --model gp --n_init 20 --n_iter 200 -f gear" run
+make ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 200 -f gear" run
+make W="24:00" ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 200 -f gear" run
+
+make ARGS="--group stratified --model gp --n_init 20 --n_iter 200 -f griewank" run
+make ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 200 -f griewank" run
+make W="24:00" ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 200 -f griewank" run
+
+make ARGS="--group stratified --model gp --n_init 20 --n_iter 200 -f dolan" run
+make ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 200 -f dolan" run
+make W="24:00" ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 200 -f dolan" run
+
+make ARGS="--group stratified --model gp --n_init 20 --n_iter 200 -f jennrichsampson" run
+make ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset --n_init 20 --n_iter 200 -f jennrichsampson" run
+make W="24:00" ARGS="--group stratified --model dngo -l2 0.0001 --nn_training retrain-reset -nn 5 -agg average --n_init 20 --n_iter 200 -f jennrichsampson" run

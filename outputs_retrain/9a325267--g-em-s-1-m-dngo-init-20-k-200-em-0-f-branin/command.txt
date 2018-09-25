@@ -1,2 +1,0 @@
-run.py --group embedding --seed 1 --model dngo --n_init 20 --n_iter 200 --embedding 0 -f branin
-python run.py --seed 1 --model dngo --group embedding --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func branin --embedding [0.0] --acq UCB --n_iter 200 --n_init 20 --uuid 9a325267 --date 2018-08-21 10:45:41.416710 --name 9a325267--g-em-s-1-m-dngo-init-20-k-200-em-0-f-branin

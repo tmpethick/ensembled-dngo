@@ -1,2 +1,0 @@
-run.py --group funcs --seed 1 --model dngo --n_init 20 --n_iter 200 -f rosenbrock
-python run.py --seed 1 --model dngo --group funcs --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func rosenbrock --embedding None --acq UCB --n_iter 200 --n_init 20 --uuid 2f08e6ed --date 2018-08-21 11:30:13.058596 --name 2f08e6ed--g-funcs-s-1-m-dngo-init-20-k-200-f-rosenbrock

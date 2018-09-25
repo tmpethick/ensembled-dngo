@@ -1,2 +1,0 @@
-run.py --group highdim --seed 1 --model dngo --n_init 100 -nn 5 -agg median --n_iter 200 -f rosenbrock8D
-python run.py --seed 1 --model dngo --group highdim --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 5 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 0 --obj_func rosenbrock8D --embedding None --acq UCB --n_iter 200 --n_init 100 --uuid b19e56fd --date 2018-08-21 16:45:34.911798 --name b19e56fd--g-highdim-s-1-m-dngo-init-100-nn-5-agg-median-k-200-f-rosenbrock8D

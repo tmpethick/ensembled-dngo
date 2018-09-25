@@ -1,2 +1,0 @@
-run.py --model dngo -nn 5 -agg max --n_iter 200 -f sintwo
-python run.py --model dngo --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 5 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator max --num_mcmc 0 --obj_func sintwo --acq UCB --n_iter 200 --uuid eef74176 --date 2018-08-15 11:55:21.443984 --name eef74176--m-dngo-nn-5-agg-max-k-200-f-sintwo

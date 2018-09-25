@@ -1,2 +1,0 @@
-run.py --model dngo -mcmc 20 --n_iter 200 -f sinone
-python run.py --model dngo --dim_basis 50 --dim_h1 50 --dim_h2 50 --num_nn 1 --batch_size 1000 --epochs 1000 --lr 0.01 --weight_decay 0 --nn_aggregator median --num_mcmc 20 --obj_func sinone --acq UCB --n_iter 200 --uuid 6f223c65 --date 2018-08-16 16:29:32.640649 --name 6f223c65--m-dngo-mcmc-20-k-200-f-sinone
